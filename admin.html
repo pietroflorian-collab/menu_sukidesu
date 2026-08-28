@@ -196,7 +196,7 @@
                     <option class="bg-[#242424] text-white">Especiales</option>
                     <option class="bg-[#242424] text-white">Ramen</option>
                     <option class="bg-[#242424] text-white">Combos y Promos</option>
-                    <option class="bg-[#242424] text-white">Bebidas</option>
+                    <option class="bg-[#242424] text-white">Barra y Bebidas</option>
                   </select>
                 </div>
               </div>
@@ -206,16 +206,11 @@
                 <textarea id="item-descripcion" rows="2" oninput="updateModalPreview()" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white placeholder:text-secondary/40 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-sm resize-none" placeholder="Describe los ingredientes..."></textarea>
               </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 pt-2 border-t border-outline-variant/30">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-outline-variant/30">
                 <label class="flex items-center gap-2 cursor-pointer">
                   <input id="item-picante" type="checkbox" class="rounded bg-[#242424] border-outline-variant text-primary focus:ring-primary h-4 w-4"/>
                   <span class="font-label-bold text-xs text-on-surface">Picante</span>
                   <span class="material-symbols-outlined text-primary text-[16px]">local_fire_department</span>
-                </label>
-                <label class="flex items-center gap-2 cursor-pointer">
-                  <input id="item-recomendado" type="checkbox" class="rounded bg-[#242424] border-outline-variant text-primary focus:ring-primary h-4 w-4"/>
-                  <span class="font-label-bold text-xs text-on-surface">Recomendado</span>
-                  <span class="material-symbols-outlined text-wasabi-green text-[16px]">soup_kitchen</span>
                 </label>
                 <label class="flex items-center gap-2 cursor-pointer">
                   <input id="item-pausado" type="checkbox" class="rounded bg-[#242424] border-outline-variant text-primary-container focus:ring-primary-container h-4 w-4"/>
@@ -309,11 +304,26 @@
     }
 
     function setupAdminCategories() {
-      const categories = ["Entradas", ...new Set(adminItems.map(i => i.categoria).filter(Boolean))];
+      // Categorías fijas constantes en el panel de administración
+      const categories = [
+        "Entradas", 
+        "Rollos Clásicos", 
+        "Rollos de Autor", 
+        "Sushi Perros", 
+        "Especiales", 
+        "Ramen", 
+        "Combos y Promos", 
+        "Barra y Bebidas"
+      ];
+
+      if (!categories.includes(selectedCategory)) {
+        selectedCategory = categories[0];
+      }
+
       const categoryBar = document.getElementById("admin-category-bar");
       categoryBar.innerHTML = categories.map(cat => `
         <button onclick="filterAdminCategory('${cat}')" 
-          class="px-6 py-2 rounded-full font-label-bold text-label-bold whitespace-nowrap shrink-0 transition-all ${
+          class="w-44 h-11 px-3 py-2 rounded-full font-label-bold text-xs sm:text-sm text-center flex items-center justify-center shrink-0 transition-all ${
             selectedCategory === cat ? 'bg-primary-container text-sushi-white font-bold shadow-md' : 'bg-surface-variant text-tertiary hover:bg-surface-bright border border-outline-variant/20'
           }">${cat}</button>
       `).join("");
@@ -325,14 +335,13 @@
     function renderAdminGrid() {
       const grid = document.getElementById("admin-grid");
       const filtered = adminItems.filter(item => {
-        const matchesCategory = selectedCategory === "Entradas" || item.categoria === selectedCategory;
+        const matchesCategory = item.categoria === selectedCategory;
         const matchesSearch = !searchQuery || item.nombre.toLowerCase().includes(searchQuery);
         return matchesCategory && matchesSearch;
       });
 
       const itemsHTML = filtered.map(item => {
         const isPausado = item.es_pausado === true || item.es_pausado === "true";
-        const isRecomendado = item.es_recomendado === true || item.es_recomendado === "true";
 
         return `
         <div class="menu-card bg-[#121212] rounded-lg border border-primary-container/20 overflow-hidden flex flex-col sm:flex-row glow-hover transition-all duration-300 relative group ${isPausado ? 'opacity-60 grayscale-[40%] border-primary-container/40' : ''}">
@@ -355,7 +364,6 @@
                 <h3 class="font-headline-lg-mobile text-xl text-primary-fixed leading-tight">${item.nombre}</h3>
                 <div class="flex items-center gap-1">
                   ${item.es_picante ? `<span class="material-symbols-outlined text-primary text-sm">local_fire_department</span>` : ''}
-                  ${isRecomendado ? `<span class="material-symbols-outlined text-wasabi-green text-sm">soup_kitchen</span>` : ''}
                 </div>
               </div>
               <div class="bg-black px-3 py-1 rounded-full font-price-display text-base text-sushi-white border border-outline-variant/50 shadow-md shrink-0">
@@ -367,16 +375,28 @@
             
             <div class="flex justify-end gap-2 pt-4 border-t border-outline-variant/20 mt-auto">
               <div class="relative group/tooltip">
-                <button onclick="toggleRecomendado('${item.id}')" class="w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isRecomendado ? 'bg-primary-container text-sushi-white' : 'bg-surface-variant text-on-surface hover:bg-primary/20 hover:text-primary'}"><span class="material-symbols-outlined text-[20px]">soup_kitchen</span></button>
+                <button onclick="togglePausado('${item.id}')" title="Retira el plato del Menú" class="w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isPausado ? 'bg-primary-container text-sushi-white' : 'bg-surface-variant text-on-surface hover:bg-surface-bright'}">
+                  <span class="material-symbols-outlined text-[20px]">pause_circle</span>
+                </button>
+                <span class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover/tooltip:flex bg-surface-bright text-sushi-white text-[11px] font-label-bold px-2 py-1 rounded shadow-lg whitespace-nowrap z-20 pointer-events-none border border-outline-variant/40">
+                  Retira el plato del Menú
+                </span>
               </div>
               <div class="relative group/tooltip">
-                <button onclick="togglePausado('${item.id}')" class="w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isPausado ? 'bg-primary-container text-sushi-white' : 'bg-surface-variant text-on-surface hover:bg-surface-bright'}"><span class="material-symbols-outlined text-[20px]">pause_circle</span></button>
+                <button onclick="editItem('${item.id}')" title="Editar Plato" class="w-10 h-10 rounded-full bg-surface-variant text-on-surface flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-colors">
+                  <span class="material-symbols-outlined text-[20px]">edit</span>
+                </button>
+                <span class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover/tooltip:flex bg-surface-bright text-sushi-white text-[11px] font-label-bold px-2 py-1 rounded shadow-lg whitespace-nowrap z-20 pointer-events-none border border-outline-variant/40">
+                  Editar Plato
+                </span>
               </div>
               <div class="relative group/tooltip">
-                <button onclick="editItem('${item.id}')" class="w-10 h-10 rounded-full bg-surface-variant text-on-surface flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
-              </div>
-              <div class="relative group/tooltip">
-                <button onclick="deleteItem('${item.id}')" class="w-10 h-10 rounded-full bg-surface-variant text-on-surface flex items-center justify-center hover:bg-primary-container/20 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+                <button onclick="deleteItem('${item.id}')" title="Borrar Plato" class="w-10 h-10 rounded-full bg-surface-variant text-on-surface flex items-center justify-center hover:bg-primary-container/20 hover:text-primary transition-colors">
+                  <span class="material-symbols-outlined text-[20px]">delete</span>
+                </button>
+                <span class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover/tooltip:flex bg-surface-bright text-sushi-white text-[11px] font-label-bold px-2 py-1 rounded shadow-lg whitespace-nowrap z-20 pointer-events-none border border-outline-variant/40">
+                  Borrar Plato
+                </span>
               </div>
             </div>
           </div>
@@ -440,14 +460,6 @@
       }
     }
 
-    async function toggleRecomendado(id) {
-      const item = adminItems.find(i => i.id == id);
-      if (!item) return;
-      item.es_recomendado = !(item.es_recomendado === true || item.es_recomendado === "true");
-      await MenuAPI.updateItem(item);
-      renderAdminGrid();
-    }
-
     async function togglePausado(id) {
       const item = adminItems.find(i => i.id == id);
       if (!item) return;
@@ -474,7 +486,6 @@
         document.getElementById("item-link-drive").value = item.imagen_url || "";
         document.getElementById("item-descripcion").value = item.descripcion || "";
         document.getElementById("item-picante").checked = !!(item.es_picante === true || item.es_picante === "true");
-        document.getElementById("item-recomendado").checked = !!(item.es_recomendado === true || item.es_recomendado === "true");
         document.getElementById("item-pausado").checked = !!(item.es_pausado === true || item.es_pausado === "true");
 
         if (item.imagen_url) {
@@ -529,7 +540,6 @@
         imagen_url: document.getElementById("item-imagen-url").value,
         descripcion: document.getElementById("item-descripcion").value,
         es_picante: document.getElementById("item-picante").checked,
-        es_recomendado: document.getElementById("item-recomendado").checked,
         es_pausado: document.getElementById("item-pausado").checked
       };
 

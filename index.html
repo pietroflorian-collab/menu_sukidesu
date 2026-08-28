@@ -94,7 +94,7 @@
     ::-webkit-scrollbar-thumb:hover { background: theme('colors.primary'); }
   </style>
 </head>
-<body class="font-body-md antialiased min-h-logo flex flex-col">
+<body class="font-body-md antialiased min-h-screen flex flex-col">
   <nav class="bg-background dark:bg-surface-container-lowest font-label-bold text-label-bold docked full-width top-0 border-b border-outline-variant/20 shadow-sm z-50 sticky">
     <div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 w-full max-w-container-max-width mx-auto">
       <div class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary uppercase tracking-tighter">
@@ -111,13 +111,11 @@
     <section class="relative rounded-xl overflow-hidden mb-6 bg-surface-container border border-outline-variant/20">
       <div class="flex flex-col md:flex-row items-center p-4 md:p-6 gap-4 relative z-10">
         <div class="flex-1 space-y-2">
-          <!-- Texto reducido 2 puntos (46px) -->
           <h1 class="font-headline-xl text-3xl md:text-[46px] text-primary leading-tight">¡QUÉ CHIMBA DE SUSHI!</h1>
           <p class="font-body-md text-sm md:text-base text-on-surface max-w-lg">
             Experimenta los sabores más audaces de la ciudad. Enrollados a mano a la perfección, servidos con una sonrisa.
           </p>
         </div>
-        <!-- Logo reducido para recortar espacio vertical a la mitad -->
         <div class="flex-1 flex justify-center items-center">
           <img alt="SUKIDESU Mascot" class="w-40 h-40 md:w-60 md:h-50 object-contain animate-bounce" src="https://lh3.googleusercontent.com/aida/AEtjO1WmhdYrchSQhf5OCE1ee54fVkfb0oyBaitEWcnLNpkPM8G2O-8SGzybI5c9kex4Vsi04kwCqyCKd_m4xcsmmmRFBRRWQI4EI9Byh-1PILvUzMrlGauhA1GGCq3VjxQdrlwray_AFFRlLWeraz3xly10cH5gnfb6Andd04t7matOGU3dkg1EVSRGi4VPCd_nDj7LfYjvJqG6DnvXOhnstEh3e-Ew8j-sLsCJIdBEAfoHMgb2Q_45d-wcGFs" style="animation-duration: 3s;"/>
         </div>
@@ -125,7 +123,7 @@
       <div class="absolute right-0 top-0 w-1/2 h-full opacity-10 pointer-events-none" style="background-image: repeating-linear-gradient(45deg, #AD2020 0, #AD2020 2px, transparent 2px, transparent 8px);"></div>
     </section>
 
-    <!-- Contenedor fijo wrapping para botones de categorías (Sin scroll horizontal) -->
+    <!-- Contenedor fijo wrapping para botones de categorías ajustados homogéneamente -->
     <section class="bg-surface-container/60 border border-outline-variant/20 rounded-xl p-4 mb-8">
       <div id="category-bar" class="flex flex-wrap gap-2 md:gap-3 justify-center md:justify-start"></div>
     </section>
@@ -173,33 +171,28 @@
     });
 
     function setupCategoryFilter() {
-  // Lista de respaldo para visualización si no hay conexión a la base de datos
-  const defaultCategories = ["Entradas", "Rollos Clásicos", "Rollos de Autor", "Sushi Perros", "Especiales", "Ramen", "Combos y Promos", "Bebidas"];
-  
-  // Extraer categorías dinámicas si existen platos
-  const rawCategories = [...new Set(allItems.map(i => i.categoria).filter(Boolean))];
-  
-  // Usar las categorías de la BD si existen; de lo contrario, mostrar las de respaldo
-  const categories = rawCategories.length > 0 ? rawCategories : defaultCategories;
-  
-  if (!selectedCategory || !categories.includes(selectedCategory)) {
-    selectedCategory = categories[0];
-  }
-  
-  const categoryBar = document.getElementById("category-bar");
-  categoryBar.innerHTML = categories.map(cat => `
-    <button onclick="filterCategory('${cat}')" 
-      class="px-5 py-2 rounded-full font-label-bold text-sm transition-all ${
-        selectedCategory === cat 
-          ? 'bg-primary-container text-sushi-white font-bold shadow-md' 
-          : 'bg-surface-variant text-tertiary hover:bg-surface-bright border border-outline-variant/20'
-      }">${cat}</button>
-  `).join("");
+      const defaultCategories = ["Entradas", "Rollos Clásicos", "Rollos de Autor", "Sushi Perros", "Especiales", "Ramen", "Combos y Promos", "Barra y Bebidas"];
+      const rawCategories = [...new Set(allItems.map(i => i.categoria).filter(Boolean))];
+      const categories = rawCategories.length > 0 ? rawCategories : defaultCategories;
+      
+      if (!selectedCategory || !categories.includes(selectedCategory)) {
+        selectedCategory = categories[0];
+      }
+      
+      const categoryBar = document.getElementById("category-bar");
+      categoryBar.innerHTML = categories.map(cat => `
+        <button onclick="filterCategory('${cat}')" 
+          class="w-[145px] h-10 px-2 py-1 rounded-full font-label-bold text-xs sm:text-sm text-center flex items-center justify-center shrink-0 transition-all ${
+            selectedCategory === cat 
+              ? 'bg-primary-container text-sushi-white font-bold shadow-md' 
+              : 'bg-surface-variant text-tertiary hover:bg-surface-bright border border-outline-variant/20'
+          }">${cat}</button>
+      `).join("");
 
-  if (selectedCategory) {
-    document.getElementById("current-category-title").innerHTML = `<span class="material-symbols-outlined mr-2 text-primary">restaurant_menu</span> ${selectedCategory}`;
-  }
-}
+      if (selectedCategory) {
+        document.getElementById("current-category-title").innerHTML = `<span class="material-symbols-outlined mr-2 text-primary">restaurant_menu</span> ${selectedCategory}`;
+      }
+    }
 
     function filterCategory(cat) {
       selectedCategory = cat;
@@ -221,7 +214,7 @@
           
           <div class="menu-card-img-wrapper w-full sm:w-2/5 min-h-[240px] relative bg-surface-container-highest flex items-center justify-center shrink-0">
             ${item.imagen_url 
-              ? `<img src="${item.imagen_url}" alt="${item.nombre}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />` 
+              ? `<img src="${item.imagen_url}" alt="${item.nombre}" loading="lazy" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />` 
               : `<span class="font-label-bold text-secondary">Sin imagen</span>`}
             
             <div class="absolute top-3 left-3 flex flex-col gap-2 pointer-events-none z-10">
