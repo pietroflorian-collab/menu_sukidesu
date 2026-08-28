@@ -15,56 +15,38 @@
       theme: {
         extend: {
           "colors": {
-            "tertiary": "#d1c4b9",
-            "on-tertiary-fixed-variant": "#4e453d",
-            "outline-variant": "#5b403e",
-            "error-container": "#93000a",
-            "wasabi-green": "#ACC677",
-            "on-secondary-container": "#ff9e9c",
-            "salmon-light": "#FFB2A6",
-            "on-error": "#690005",
-            "inverse-surface": "#e2e2e2",
-            "primary-fixed": "#ffdad6",
-            "primary-container": "#b71f22",
-            "on-secondary-fixed-variant": "#7d2a2d",
-            "surface-dim": "#131313",
-            "on-tertiary-fixed": "#211a14",
-            "secondary-fixed-dim": "#ffb3b1",
-            "secondary-fixed": "#ffdad8",
-            "surface-bright": "#393939",
-            "surface-variant": "#353535",
-            "secondary": "#ffb3b1",
-            "inverse-primary": "#b81f22",
-            "on-secondary": "#5f1319",
-            "primary": "#ffb3ac",
-            "surface-container-low": "#1b1b1b",
-            "tertiary-container": "#665c53",
-            "inverse-on-surface": "#303030",
-            "tertiary-fixed-dim": "#d1c4b9",
-            "secondary-container": "#802c2f",
-            "sushi-white": "#FFFFFF",
-            "primary-fixed-dim": "#ffb3ac",
-            "surface-container-high": "#2a2a2a",
-            "surface-container-lowest": "#0e0e0e",
-            "on-tertiary-container": "#e3d5ca",
-            "surface-container": "#1f1f1f",
-            "on-background": "#e2e2e2",
-            "on-primary": "#680008",
-            "background": "#131313",
-            "on-surface-variant": "#e3beba",
-            "surface-container-highest": "#353535",
-            "error": "#ffb4ab",
-            "on-tertiary": "#372f27",
-            "on-secondary-fixed": "#410007",
-            "surface-tint": "#ffb3ac",
-            "on-primary-fixed-variant": "#93000f",
-            "on-primary-fixed": "#410003",
-            "tertiary-fixed": "#eee0d5",
-            "outline": "#aa8985",
-            "on-surface": "#e2e2e2",
-            "surface": "#131313",
-            "on-error-container": "#ffdad6",
-            "on-primary-container": "#ffccc7"
+            "primary": "#D56D6D",
+            "primary-container": "#AD2020",
+            "primary-fixed": "#D56D6D",
+            "primary-fixed-dim": "#D56D6D",
+            "on-primary": "#FFFFFF",
+            "on-primary-container": "#FFFFFF",
+            "secondary": "#BCB56F",
+            "secondary-fixed": "#BCB56F",
+            "secondary-fixed-dim": "#BCB56F",
+            "secondary-container": "#AD2020",
+            "tertiary": "#BCB56F",
+            "tertiary-container": "#4a4524",
+            "wasabi-green": "#09DF52",
+            "salmon-light": "#D56D6D",
+            "background": "#000000",
+            "surface": "#000000",
+            "surface-dim": "#0a0a0a",
+            "surface-bright": "#222222",
+            "surface-container-lowest": "#000000",
+            "surface-container-low": "#101010",
+            "surface-container": "#141414",
+            "surface-container-high": "#1a1a1a",
+            "surface-container-highest": "#242424",
+            "surface-variant": "#1f1f1f",
+            "on-background": "#E2E2E2",
+            "on-surface": "#E2E2E2",
+            "on-surface-variant": "#BCB56F",
+            "outline": "#AD2020",
+            "outline-variant": "#5b2020",
+            "error": "#D56D6D",
+            "error-container": "#AD2020",
+            "sushi-white": "#FFFFFF"
           },
           "borderRadius": {
             "DEFAULT": "0.25rem",
@@ -111,7 +93,7 @@
     .menu-card-img-wrapper { overflow: hidden; }
     .menu-card-img-wrapper img { transition: transform 0.3s ease; }
     .menu-card:hover .menu-card-img-wrapper img { transform: scale(1.05); }
-    .glow-hover:hover { box-shadow: 0 0 15px rgba(183, 31, 34, 0.4); }
+    .glow-hover:hover { box-shadow: 0 0 15px rgba(173, 32, 32, 0.4); }
 
     .scroll-container { cursor: grab; user-select: none; }
     .scroll-container:active { cursor: grabbing; }
@@ -152,12 +134,12 @@
     <header class="px-margin-mobile md:px-margin-desktop py-8 md:py-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 z-10 shrink-0">
       <div>
         <h2 class="font-headline-xl text-headline-xl text-sushi-white tracking-tighter mb-2">Gestor de Menú</h2>
-        <p class="font-body-lg text-body-lg text-on-surface-variant">Ver, editar y organizar tus ofertas culinarias.</p>
+        <p class="font-body-lg text-body-lg text-secondary">Ver, editar y organizar tus ofertas culinarias.</p>
       </div>
       <div class="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
         <div class="relative w-full sm:w-72">
           <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary">search</span>
-          <input id="admin-search-input" oninput="handleSearch(this.value)" class="w-full bg-[#1e1e1e] border border-outline-variant/60 rounded-lg pl-10 pr-4 py-2 text-white placeholder-on-surface-variant/50 focus:outline-none focus:border-primary text-sm font-body-md" placeholder="Buscar por nombre..." type="text"/>
+          <input id="admin-search-input" oninput="handleSearch(this.value)" class="w-full bg-[#1e1e1e] border border-outline-variant/60 rounded-lg pl-10 pr-4 py-2 text-white placeholder-secondary/50 focus:outline-none focus:border-primary text-sm font-body-md" placeholder="Buscar por nombre..." type="text"/>
         </div>
         <button class="md:hidden w-full sm:w-auto bg-primary-container text-on-primary-container font-label-bold text-label-bold px-6 py-2 rounded-lg hover:bg-primary transition-colors whitespace-nowrap" onclick="openModal()">
           Nuevo
@@ -169,9 +151,8 @@
       <div id="admin-category-bar" class="scroll-container flex gap-3 mb-8 overflow-x-auto pb-3 -mx-margin-mobile px-margin-mobile md:mx-0 md:px-0 flex-nowrap"></div>
       <div id="admin-loading" class="text-center py-12">
         <span class="material-symbols-outlined text-primary text-4xl animate-spin">progress_activity</span>
-        <p class="mt-2 text-on-surface-variant font-body-md">Cargando platos desde Sheets...</p>
+        <p class="mt-2 text-secondary font-body-md">Cargando platos desde Sheets...</p>
       </div>
-      <!-- Grid principal: Acomodado para tarjetas horizontales de dos columnas -->
       <div id="admin-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-gutter md:gap-6 hidden"></div>
     </div>
   </main>
@@ -181,15 +162,13 @@
     <div class="absolute inset-0 bg-black/80 backdrop-blur-md transition-opacity" onclick="closeModal()"></div>
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl bg-[#181818] rounded-xl shadow-2xl border border-primary-container/40 flex flex-col max-h-[90vh] overflow-hidden">
       
-      <!-- Header del Modal: Reducido de py-5 a py-3 -->
       <div class="px-5 py-3 border-b border-outline-variant/30 flex justify-between items-center bg-[#121212]">
         <h3 id="modal-title" class="font-headline-lg-mobile text-xl text-primary-fixed">Añadir Nuevo Plato</h3>
-        <button class="text-on-surface-variant hover:text-error transition-colors p-1" onclick="closeModal()">
+        <button class="text-secondary hover:text-primary transition-colors p-1" onclick="closeModal()">
           <span class="material-symbols-outlined">close</span>
         </button>
       </div>
 
-      <!-- Cuerpo del Formulario: Reducido de p-6 a p-4 y gaps menores -->
       <div class="p-4 overflow-y-auto custom-scrollbar bg-[#181818]">
         <form id="itemForm" onsubmit="handleFormSubmit(event)" class="space-y-4">
           <input type="hidden" id="item-id" />
@@ -199,13 +178,13 @@
             <div class="space-y-3">
               <div>
                 <label class="block mb-1 text-primary-fixed font-label-bold text-sm">Nombre del Plato</label>
-                <input id="item-nombre" required oninput="updateModalPreview()" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white placeholder:text-on-surface-variant/40 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-sm" placeholder="ej., Dragon Roll" type="text"/>
+                <input id="item-nombre" required oninput="updateModalPreview()" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white placeholder:text-secondary/40 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-sm" placeholder="ej., Dragon Roll" type="text"/>
               </div>
               
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label class="block mb-1 text-primary-fixed font-label-bold text-sm">Precio ($)</label>
-                  <input id="item-precio" required step="1" oninput="updateModalPreview()" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white placeholder:text-on-surface-variant/40 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-sm" placeholder="0" type="number"/>
+                  <input id="item-precio" required step="1" oninput="updateModalPreview()" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white placeholder:text-secondary/40 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-sm" placeholder="0" type="number"/>
                 </div>
                 <div>
                   <label class="block mb-1 text-primary-fixed font-label-bold text-sm">Categoría</label>
@@ -224,24 +203,24 @@
 
               <div>
                 <label class="block mb-1 text-primary-fixed font-label-bold text-sm">Descripción</label>
-                <textarea id="item-descripcion" rows="2" oninput="updateModalPreview()" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white placeholder:text-on-surface-variant/40 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-sm resize-none" placeholder="Describe los ingredientes..."></textarea>
+                <textarea id="item-descripcion" rows="2" oninput="updateModalPreview()" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white placeholder:text-secondary/40 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-sm resize-none" placeholder="Describe los ingredientes..."></textarea>
               </div>
 
               <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 pt-2 border-t border-outline-variant/30">
                 <label class="flex items-center gap-2 cursor-pointer">
                   <input id="item-picante" type="checkbox" class="rounded bg-[#242424] border-outline-variant text-primary focus:ring-primary h-4 w-4"/>
                   <span class="font-label-bold text-xs text-on-surface">Picante</span>
-                  <span class="material-symbols-outlined text-error text-[16px]">local_fire_department</span>
+                  <span class="material-symbols-outlined text-primary text-[16px]">local_fire_department</span>
                 </label>
                 <label class="flex items-center gap-2 cursor-pointer">
                   <input id="item-recomendado" type="checkbox" class="rounded bg-[#242424] border-outline-variant text-primary focus:ring-primary h-4 w-4"/>
                   <span class="font-label-bold text-xs text-on-surface">Recomendado</span>
-                  <span class="material-symbols-outlined text-primary text-[16px]">soup_kitchen</span>
+                  <span class="material-symbols-outlined text-wasabi-green text-[16px]">soup_kitchen</span>
                 </label>
                 <label class="flex items-center gap-2 cursor-pointer">
-                  <input id="item-pausado" type="checkbox" class="rounded bg-[#242424] border-outline-variant text-error focus:ring-error h-4 w-4"/>
+                  <input id="item-pausado" type="checkbox" class="rounded bg-[#242424] border-outline-variant text-primary-container focus:ring-primary-container h-4 w-4"/>
                   <span class="font-label-bold text-xs text-on-surface">Pausar Plato</span>
-                  <span class="material-symbols-outlined text-error text-[16px]">pause_circle</span>
+                  <span class="material-symbols-outlined text-primary-container text-[16px]">pause_circle</span>
                 </label>
               </div>
             </div>
@@ -249,18 +228,16 @@
             <!-- Columna Derecha -->
             <div class="flex flex-col bg-[#121212] p-4 rounded-lg border border-outline-variant/30">
               <label class="block mb-1 text-primary-fixed font-label-bold text-sm">Enlace de Google Drive</label>
-              <input id="item-link-drive" type="text" oninput="processDriveLink()" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white font-body-md text-sm placeholder:text-on-surface-variant/40 focus:outline-none focus:border-primary focus:ring-1" placeholder="Pega el enlace público..."/>
+              <input id="item-link-drive" type="text" oninput="processDriveLink()" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white font-body-md text-sm placeholder:text-secondary/40 focus:outline-none focus:border-primary focus:ring-1" placeholder="Pega el enlace público..."/>
               <input type="hidden" id="item-imagen-url" />
 
               <div class="mt-4">
-                <span class="block mb-2 text-xs text-on-surface-variant font-label-bold uppercase tracking-wider">Vista previa final:</span>
+                <span class="block mb-2 text-xs text-secondary font-label-bold uppercase tracking-wider">Vista previa final:</span>
                 
-                <!-- Tarjeta a 2 Columnas (Vista Previa más pequeña) -->
                 <div class="menu-card bg-[#121212] rounded-lg border border-primary-container/20 overflow-hidden flex flex-col sm:flex-row w-full shadow-lg">
-                  <!-- Imagen Izquierda: min-h reducido a 140px -->
                   <div class="menu-card-img-wrapper w-full sm:w-2/5 min-h-[140px] relative bg-surface-container-highest flex items-center justify-center shrink-0">
                     <img id="image-preview" src="" alt="Vista previa" class="absolute inset-0 w-full h-full object-cover hidden" />
-                    <span id="preview-placeholder" class="font-label-bold text-on-surface-variant text-xs">Pegar enlace</span>
+                    <span id="preview-placeholder" class="font-label-bold text-secondary text-xs">Pegar enlace</span>
                     
                     <div id="preview-badges" class="absolute top-2 left-2 flex flex-col gap-1 pointer-events-none z-10 hidden">
                       <div class="bg-surface-container-high/90 px-2 py-0.5 rounded-full border border-outline-variant/50 w-fit max-w-full">
@@ -268,7 +245,6 @@
                       </div>
                     </div>
                   </div>
-                  <!-- Información Derecha -->
                   <div class="p-3 w-full sm:w-3/5 flex flex-col flex-grow">
                     <div class="flex items-start justify-between gap-1 mb-1">
                       <h3 id="preview-name-text" class="font-headline-lg-mobile text-sm text-primary-fixed leading-tight">Nombre Plato</h3>
@@ -276,14 +252,13 @@
                         <span id="preview-price-text">$0</span>
                       </div>
                     </div>
-                    <p id="preview-desc-text" class="font-body-md text-on-surface-variant text-[11px] leading-tight flex-grow line-clamp-3">Descripción...</p>
+                    <p id="preview-desc-text" class="font-body-md text-secondary text-[11px] leading-tight flex-grow line-clamp-3">Descripción...</p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Footer de Botones: Ajustado a los nuevos márgenes -->
           <div class="px-5 py-3 border-t border-outline-variant/30 bg-[#121212] flex justify-end gap-3 -mx-4 -mb-4 mt-2">
             <button type="button" class="px-5 py-2 rounded-lg font-label-bold text-sm border border-outline-variant text-on-surface hover:bg-surface-variant transition-colors" onclick="closeModal()">
               Cancelar
@@ -339,7 +314,7 @@
       categoryBar.innerHTML = categories.map(cat => `
         <button onclick="filterAdminCategory('${cat}')" 
           class="px-6 py-2 rounded-full font-label-bold text-label-bold whitespace-nowrap shrink-0 transition-all ${
-            selectedCategory === cat ? 'bg-primary text-on-primary font-bold shadow-md' : 'bg-surface-variant text-tertiary hover:bg-surface-bright border border-outline-variant/20'
+            selectedCategory === cat ? 'bg-primary-container text-sushi-white font-bold shadow-md' : 'bg-surface-variant text-tertiary hover:bg-surface-bright border border-outline-variant/20'
           }">${cat}</button>
       `).join("");
     }
@@ -360,13 +335,12 @@
         const isRecomendado = item.es_recomendado === true || item.es_recomendado === "true";
 
         return `
-        <div class="menu-card bg-[#121212] rounded-lg border border-primary-container/20 overflow-hidden flex flex-col sm:flex-row glow-hover transition-all duration-300 relative group ${isPausado ? 'opacity-60 grayscale-[40%] border-error/40' : ''}">
+        <div class="menu-card bg-[#121212] rounded-lg border border-primary-container/20 overflow-hidden flex flex-col sm:flex-row glow-hover transition-all duration-300 relative group ${isPausado ? 'opacity-60 grayscale-[40%] border-primary-container/40' : ''}">
           
-          <!-- Columna Imagen -->
           <div class="menu-card-img-wrapper w-full sm:w-2/5 min-h-[240px] relative bg-surface-container-highest flex items-center justify-center shrink-0">
             ${item.imagen_url 
               ? `<img src="${item.imagen_url}" alt="${item.nombre}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />` 
-              : `<span class="font-label-bold text-on-surface-variant">Sin imagen</span>`}
+              : `<span class="font-label-bold text-secondary">Sin imagen</span>`}
             
             <div class="absolute top-3 left-3 flex flex-col gap-2 pointer-events-none z-10">
               <div class="bg-surface-container-high/90 px-3 py-1 rounded-full border border-outline-variant/50 w-fit max-w-full">
@@ -375,14 +349,13 @@
             </div>
           </div>
           
-          <!-- Columna Información -->
           <div class="p-5 w-full sm:w-3/5 flex flex-col flex-grow">
             <div class="flex items-start justify-between gap-2 mb-2">
               <div class="flex flex-col gap-1">
                 <h3 class="font-headline-lg-mobile text-xl text-primary-fixed leading-tight">${item.nombre}</h3>
                 <div class="flex items-center gap-1">
-                  ${item.es_picante ? `<span class="material-symbols-outlined text-error text-sm">local_fire_department</span>` : ''}
-                  ${isRecomendado ? `<span class="material-symbols-outlined text-primary text-sm">soup_kitchen</span>` : ''}
+                  ${item.es_picante ? `<span class="material-symbols-outlined text-primary text-sm">local_fire_department</span>` : ''}
+                  ${isRecomendado ? `<span class="material-symbols-outlined text-wasabi-green text-sm">soup_kitchen</span>` : ''}
                 </div>
               </div>
               <div class="bg-black px-3 py-1 rounded-full font-price-display text-base text-sushi-white border border-outline-variant/50 shadow-md shrink-0">
@@ -390,20 +363,20 @@
               </div>
             </div>
             
-            <p class="font-body-md text-on-surface-variant text-sm mb-4 flex-grow line-clamp-3">${item.descripcion || ''}</p>
+            <p class="font-body-md text-secondary text-sm mb-4 flex-grow line-clamp-3">${item.descripcion || ''}</p>
             
             <div class="flex justify-end gap-2 pt-4 border-t border-outline-variant/20 mt-auto">
               <div class="relative group/tooltip">
                 <button onclick="toggleRecomendado('${item.id}')" class="w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isRecomendado ? 'bg-primary-container text-sushi-white' : 'bg-surface-variant text-on-surface hover:bg-primary/20 hover:text-primary'}"><span class="material-symbols-outlined text-[20px]">soup_kitchen</span></button>
               </div>
               <div class="relative group/tooltip">
-                <button onclick="togglePausado('${item.id}')" class="w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isPausado ? 'bg-error-container text-error' : 'bg-surface-variant text-on-surface hover:bg-surface-bright'}"><span class="material-symbols-outlined text-[20px]">pause_circle</span></button>
+                <button onclick="togglePausado('${item.id}')" class="w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isPausado ? 'bg-primary-container text-sushi-white' : 'bg-surface-variant text-on-surface hover:bg-surface-bright'}"><span class="material-symbols-outlined text-[20px]">pause_circle</span></button>
               </div>
               <div class="relative group/tooltip">
                 <button onclick="editItem('${item.id}')" class="w-10 h-10 rounded-full bg-surface-variant text-on-surface flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
               </div>
               <div class="relative group/tooltip">
-                <button onclick="deleteItem('${item.id}')" class="w-10 h-10 rounded-full bg-surface-variant text-on-surface flex items-center justify-center hover:bg-error/20 hover:text-error transition-colors"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+                <button onclick="deleteItem('${item.id}')" class="w-10 h-10 rounded-full bg-surface-variant text-on-surface flex items-center justify-center hover:bg-primary-container/20 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">delete</span></button>
               </div>
             </div>
           </div>
@@ -413,7 +386,7 @@
 
       const addCardHTML = `
         <div onclick="openModal()" class="rounded-xl overflow-hidden border-2 border-dashed border-outline-variant/40 hover:border-primary/60 hover:bg-primary/5 transition-colors duration-300 flex flex-col items-center justify-center min-h-[240px] cursor-pointer group">
-          <div class="w-16 h-16 rounded-full bg-surface-variant flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-on-primary transition-colors">
+          <div class="w-16 h-16 rounded-full bg-surface-variant flex items-center justify-center mb-4 group-hover:bg-primary-container group-hover:text-sushi-white transition-colors">
             <span class="material-symbols-outlined text-3xl">add</span>
           </div>
           <span class="font-label-bold text-label-bold text-tertiary group-hover:text-primary transition-colors">Añadir Nuevo</span>
@@ -435,7 +408,6 @@
       document.getElementById("preview-price-text").innerText = formatPrice ? formatPrice(priceVal) : `$${priceVal}`;
     }
 
-    // Convertidor inteligente de URL de Drive
     function processDriveLink() {
       const input = document.getElementById("item-link-drive").value.trim();
       const urlField = document.getElementById("item-imagen-url");
@@ -444,15 +416,13 @@
       const badges = document.getElementById("preview-badges");
 
       let finalUrl = "";
-
-      // Extraer ID de Drive
       const regex = /(?:file\/d\/|id=)([\w-]+)/;
       const match = input.match(regex);
 
       if (match && match[1]) {
         finalUrl = `https://drive.google.com/thumbnail?id=${match[1]}&sz=w800`;
       } else if (input.startsWith('http')) {
-        finalUrl = input; // Soporte para enlaces directos de otras fuentes
+        finalUrl = input;
       }
 
       urlField.value = finalUrl;
