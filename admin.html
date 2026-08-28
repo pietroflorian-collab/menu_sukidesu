@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>SUKIDESU SUSHI - Panel de Administración</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Anybody:ital,wght@0,100..900;1,100..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;family=Space+Grotesk:wght@300..700&amp;display=swap" rel="stylesheet"/>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "tertiary": "#d1c4b9",
+            "on-tertiary-fixed-variant": "#4e453d",
+            "outline-variant": "#5b403e",
+            "error-container": "#93000a",
+            "wasabi-green": "#ACC677",
+            "on-secondary-container": "#ff9e9c",
+            "salmon-light": "#FFB2A6",
+            "on-error": "#690005",
+            "inverse-surface": "#e2e2e2",
+            "primary-fixed": "#ffdad6",
+            "primary-container": "#b71f22",
+            "on-secondary-fixed-variant": "#7d2a2d",
+            "surface-dim": "#131313",
+            "on-tertiary-fixed": "#211a14",
+            "secondary-fixed-dim": "#ffb3b1",
+            "secondary-fixed": "#ffdad8",
+            "surface-bright": "#393939",
+            "surface-variant": "#353535",
+            "secondary": "#ffb3b1",
+            "inverse-primary": "#b81f22",
+            "on-secondary": "#5f1319",
+            "primary": "#ffb3ac",
+            "surface-container-low": "#1b1b1b",
+            "tertiary-container": "#665c53",
+            "inverse-on-surface": "#303030",
+            "tertiary-fixed-dim": "#d1c4b9",
+            "secondary-container": "#802c2f",
+            "sushi-white": "#FFFFFF",
+            "primary-fixed-dim": "#ffb3ac",
+            "surface-container-high": "#2a2a2a",
+            "surface-container-lowest": "#0e0e0e",
+            "on-tertiary-container": "#e3d5ca",
+            "surface-container": "#1f1f1f",
+            "on-background": "#e2e2e2",
+            "on-primary": "#680008",
+            "background": "#131313",
+            "on-surface-variant": "#e3beba",
+            "surface-container-highest": "#353535",
+            "error": "#ffb4ab",
+            "on-tertiary": "#372f27",
+            "on-secondary-fixed": "#410007",
+            "surface-tint": "#ffb3ac",
+            "on-primary-fixed-variant": "#93000f",
+            "on-primary-fixed": "#410003",
+            "tertiary-fixed": "#eee0d5",
+            "outline": "#aa8985",
+            "on-surface": "#e2e2e2",
+            "surface": "#131313",
+            "on-error-container": "#ffdad6",
+            "on-primary-container": "#ffccc7"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "margin-desktop": "48px",
+            "margin-mobile": "20px",
+            "base": "8px",
+            "gutter": "16px",
+            "container-max-width": "1200px"
+          },
+          "fontFamily": {
+            "label-bold": ["Space Grotesk"],
+            "price-display": ["Space Grotesk"],
+            "headline-lg-mobile": ["Anybody"],
+            "body-lg": ["Plus Jakarta Sans"],
+            "body-md": ["Plus Jakarta Sans"],
+            "headline-lg": ["Anybody"],
+            "headline-xl": ["Anybody"]
+          },
+          "fontSize": {
+            "label-bold": ["14px", { "lineHeight": "20px", "fontWeight": "700" }],
+            "price-display": ["24px", { "lineHeight": "24px", "letterSpacing": "0.05em", "fontWeight": "700" }],
+            "headline-lg-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "700" }],
+            "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+            "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
+            "headline-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800" }]
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body { background-color: #000000; color: theme('colors.on-background'); }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: theme('colors.surface-container'); }
+    ::-webkit-scrollbar-thumb { background: theme('colors.surface-variant'); border-radius: theme('borderRadius.full'); }
+    ::-webkit-scrollbar-thumb:hover { background: theme('colors.primary'); }
+    
+    .menu-card-img-wrapper { overflow: hidden; }
+    .menu-card-img-wrapper img { transition: transform 0.3s ease; }
+    .menu-card:hover .menu-card-img-wrapper img { transform: scale(1.05); }
+    .glow-hover:hover { box-shadow: 0 0 15px rgba(183, 31, 34, 0.4); }
+
+    .scroll-container { cursor: grab; user-select: none; }
+    .scroll-container:active { cursor: grabbing; }
+  </style>
+</head>
+<body class="flex h-screen overflow-hidden font-body-md text-body-md">
+  <nav class="hidden md:flex h-screen w-64 fixed left-0 top-0 bg-surface-container dark:bg-surface-container-high border-r border-outline-variant/20 shadow-md flex-col h-full p-base z-40">
+    <div class="mb-6 px-4 py-4 text-center border-b border-outline-variant/20">
+      <div class="w-24 h-24 mx-auto mb-3 rounded-full overflow-hidden border-2 border-primary">
+        <img class="w-full h-full object-cover" alt="Mascota Sushi" src="https://lh3.googleusercontent.com/aida/AEtjO1WmhdYrchSQhf5OCE1ee54fVkfb0oyBaitEWcnLNpkPM8G2O-8SGzybI5c9kex4Vsi04kwCqyCKd_m4xcsmmmRFBRRWQI4EI9Byh-1PILvUzMrlGauhA1GGCq3VjxQdrlwray_AFFRlLWeraz3xly10cH5gnfb6Andd04t7matOGU3dkg1EVSRGi4VPCd_nDj7LfYjvJqG6DnvXOhnstEh3e-Ew8j-sLsCJIdBEAfoHMgb2Q_45d-wcGFs"/>
+      </div>
+      <h1 class="font-headline-lg text-lg text-primary tracking-tighter uppercase mb-0.5">Panel de Administración</h1>
+    </div>
+    <div class="flex-1 space-y-2 px-2 overflow-y-auto">
+      <a class="flex items-center px-4 py-3 text-primary bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors group border border-primary/30 mb-4" href="index.html" target="_blank" rel="noopener noreferrer">
+        <span class="material-symbols-outlined mr-3 text-primary">storefront</span>
+        <span class="font-label-bold text-body-md">Ver Menú (Cliente)</span>
+      </a>
+    </div>
+    <div class="px-4 py-4 mt-auto border-t border-outline-variant/20">
+      <button class="w-full bg-primary-container text-on-primary-container font-label-bold text-label-bold py-3 rounded-lg hover:bg-primary transition-colors flex items-center justify-center transition-transform" onclick="openModal()">
+        <span class="material-symbols-outlined mr-2">add</span> Añadir Nuevo
+      </button>
+    </div>
+  </nav>
+
+  <main class="flex-1 ml-0 md:ml-64 h-full flex flex-col relative overflow-hidden bg-transparent">
+    <div class="md:hidden flex justify-between items-center px-margin-mobile py-4 bg-surface-container-high border-b border-outline-variant/20 z-30">
+      <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tighter uppercase">Panel</h1>
+      <div class="flex items-center gap-3">
+        <a class="inline-flex items-center gap-1 text-xs text-primary font-label-bold border border-primary/40 px-3 py-1.5 rounded-md hover:bg-primary/10 transition-colors" href="index.html" target="_blank" rel="noopener noreferrer">
+          <span class="material-symbols-outlined text-sm">storefront</span>
+          <span>Ver Menú</span>
+        </a>
+      </div>
+    </div>
+
+    <header class="px-margin-mobile md:px-margin-desktop py-8 md:py-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 z-10 shrink-0">
+      <div>
+        <h2 class="font-headline-xl text-headline-xl text-sushi-white tracking-tighter mb-2">Gestor de Menú</h2>
+        <p class="font-body-lg text-body-lg text-on-surface-variant">Ver, editar y organizar tus ofertas culinarias.</p>
+      </div>
+      <div class="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
+        <div class="relative w-full sm:w-72">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary">search</span>
+          <input id="admin-search-input" oninput="handleSearch(this.value)" class="w-full bg-[#1e1e1e] border border-outline-variant/60 rounded-lg pl-10 pr-4 py-2 text-white placeholder-on-surface-variant/50 focus:outline-none focus:border-primary text-sm font-body-md" placeholder="Buscar por nombre..." type="text"/>
+        </div>
+        <button class="md:hidden w-full sm:w-auto bg-primary-container text-on-primary-container font-label-bold text-label-bold px-6 py-2 rounded-lg hover:bg-primary transition-colors whitespace-nowrap" onclick="openModal()">
+          Nuevo
+        </button>
+      </div>
+    </header>
+
+    <div class="flex-1 overflow-y-auto px-margin-mobile md:px-margin-desktop pb-12 z-10">
+      <div id="admin-category-bar" class="scroll-container flex gap-3 mb-8 overflow-x-auto pb-3 -mx-margin-mobile px-margin-mobile md:mx-0 md:px-0 flex-nowrap"></div>
+      <div id="admin-loading" class="text-center py-12">
+        <span class="material-symbols-outlined text-primary text-4xl animate-spin">progress_activity</span>
+        <p class="mt-2 text-on-surface-variant font-body-md">Cargando platos desde Sheets...</p>
+      </div>
+      <!-- Grid principal: Acomodado para tarjetas horizontales de dos columnas -->
+      <div id="admin-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-gutter md:gap-6 hidden"></div>
+    </div>
+  </main>
+
+  <!-- Add/Edit Modal (Versión Compacta) -->
+  <div class="fixed inset-0 z-50 hidden" id="itemModal">
+    <div class="absolute inset-0 bg-black/80 backdrop-blur-md transition-opacity" onclick="closeModal()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl bg-[#181818] rounded-xl shadow-2xl border border-primary-container/40 flex flex-col max-h-[90vh] overflow-hidden">
+      
+      <!-- Header del Modal: Reducido de py-5 a py-3 -->
+      <div class="px-5 py-3 border-b border-outline-variant/30 flex justify-between items-center bg-[#121212]">
+        <h3 id="modal-title" class="font-headline-lg-mobile text-xl text-primary-fixed">Añadir Nuevo Plato</h3>
+        <button class="text-on-surface-variant hover:text-error transition-colors p-1" onclick="closeModal()">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+
+      <!-- Cuerpo del Formulario: Reducido de p-6 a p-4 y gaps menores -->
+      <div class="p-4 overflow-y-auto custom-scrollbar bg-[#181818]">
+        <form id="itemForm" onsubmit="handleFormSubmit(event)" class="space-y-4">
+          <input type="hidden" id="item-id" />
+          
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <!-- Columna Izquierda -->
+            <div class="space-y-3">
+              <div>
+                <label class="block mb-1 text-primary-fixed font-label-bold text-sm">Nombre del Plato</label>
+                <input id="item-nombre" required oninput="updateModalPreview()" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white placeholder:text-on-surface-variant/40 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-sm" placeholder="ej., Dragon Roll" type="text"/>
+              </div>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block mb-1 text-primary-fixed font-label-bold text-sm">Precio ($)</label>
+                  <input id="item-precio" required step="1" oninput="updateModalPreview()" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white placeholder:text-on-surface-variant/40 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-sm" placeholder="0" type="number"/>
+                </div>
+                <div>
+                  <label class="block mb-1 text-primary-fixed font-label-bold text-sm">Categoría</label>
+                  <select id="item-categoria" onchange="updateModalPreview()" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-sm">
+                    <option class="bg-[#242424] text-white">Entradas</option>
+                    <option class="bg-[#242424] text-white">Rollos Clásicos</option>
+                    <option class="bg-[#242424] text-white">Rollos de Autor</option>
+                    <option class="bg-[#242424] text-white">Sushi Perros</option>
+                    <option class="bg-[#242424] text-white">Especiales</option>
+                    <option class="bg-[#242424] text-white">Ramen</option>
+                    <option class="bg-[#242424] text-white">Combos y Promos</option>
+                    <option class="bg-[#242424] text-white">Barra y Bebidas</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label class="block mb-1 text-primary-fixed font-label-bold text-sm">Descripción</label>
+                <textarea id="item-descripcion" rows="2" oninput="updateModalPreview()" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white placeholder:text-on-surface-variant/40 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-body-md text-sm resize-none" placeholder="Describe los ingredientes..."></textarea>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 pt-2 border-t border-outline-variant/30">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input id="item-picante" type="checkbox" class="rounded bg-[#242424] border-outline-variant text-primary focus:ring-primary h-4 w-4"/>
+                  <span class="font-label-bold text-xs text-on-surface">Picante</span>
+                  <span class="material-symbols-outlined text-error text-[16px]">local_fire_department</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input id="item-recomendado" type="checkbox" class="rounded bg-[#242424] border-outline-variant text-primary focus:ring-primary h-4 w-4"/>
+                  <span class="font-label-bold text-xs text-on-surface">Recomendado</span>
+                  <span class="material-symbols-outlined text-primary text-[16px]">soup_kitchen</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input id="item-pausado" type="checkbox" class="rounded bg-[#242424] border-outline-variant text-error focus:ring-error h-4 w-4"/>
+                  <span class="font-label-bold text-xs text-on-surface">Pausar Plato</span>
+                  <span class="material-symbols-outlined text-error text-[16px]">pause_circle</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Columna Derecha -->
+            <div class="flex flex-col bg-[#121212] p-4 rounded-lg border border-outline-variant/30">
+              <label class="block mb-1 text-primary-fixed font-label-bold text-sm">Enlace de Google Drive</label>
+              <input id="item-link-drive" type="text" oninput="processDriveLink()" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white font-body-md text-sm placeholder:text-on-surface-variant/40 focus:outline-none focus:border-primary focus:ring-1" placeholder="Pega el enlace público..."/>
+              <input type="hidden" id="item-imagen-url" />
+
+              <div class="mt-4">
+                <span class="block mb-2 text-xs text-on-surface-variant font-label-bold uppercase tracking-wider">Vista previa final:</span>
+                
+                <!-- Tarjeta a 2 Columnas (Vista Previa más pequeña) -->
+                <div class="menu-card bg-[#121212] rounded-lg border border-primary-container/20 overflow-hidden flex flex-col sm:flex-row w-full shadow-lg">
+                  <!-- Imagen Izquierda: min-h reducido a 140px -->
+                  <div class="menu-card-img-wrapper w-full sm:w-2/5 min-h-[140px] relative bg-surface-container-highest flex items-center justify-center shrink-0">
+                    <img id="image-preview" src="" alt="Vista previa" class="absolute inset-0 w-full h-full object-cover hidden" />
+                    <span id="preview-placeholder" class="font-label-bold text-on-surface-variant text-xs">Pegar enlace</span>
+                    
+                    <div id="preview-badges" class="absolute top-2 left-2 flex flex-col gap-1 pointer-events-none z-10 hidden">
+                      <div class="bg-surface-container-high/90 px-2 py-0.5 rounded-full border border-outline-variant/50 w-fit max-w-full">
+                        <span id="preview-cat-text" class="font-label-bold text-[10px] text-tertiary truncate block">Entradas</span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Información Derecha -->
+                  <div class="p-3 w-full sm:w-3/5 flex flex-col flex-grow">
+                    <div class="flex items-start justify-between gap-1 mb-1">
+                      <h3 id="preview-name-text" class="font-headline-lg-mobile text-sm text-primary-fixed leading-tight">Nombre Plato</h3>
+                      <div class="bg-black px-2 py-0.5 rounded-full font-price-display text-xs text-sushi-white border border-outline-variant/50 shadow-md shrink-0">
+                        <span id="preview-price-text">$0</span>
+                      </div>
+                    </div>
+                    <p id="preview-desc-text" class="font-body-md text-on-surface-variant text-[11px] leading-tight flex-grow line-clamp-3">Descripción...</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer de Botones: Ajustado a los nuevos márgenes -->
+          <div class="px-5 py-3 border-t border-outline-variant/30 bg-[#121212] flex justify-end gap-3 -mx-4 -mb-4 mt-2">
+            <button type="button" class="px-5 py-2 rounded-lg font-label-bold text-sm border border-outline-variant text-on-surface hover:bg-surface-variant transition-colors" onclick="closeModal()">
+              Cancelar
+            </button>
+            <button id="submit-btn" type="submit" class="px-5 py-2 rounded-lg font-label-bold text-sm bg-primary-container text-sushi-white hover:bg-primary transition-colors">
+              Guardar Plato
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    let adminItems = [];
+    let selectedCategory = "Todos";
+    let searchQuery = "";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadAdminData();
+      enableDragScroll("admin-category-bar");
+    });
+
+    function enableDragScroll(id) {
+      const slider = document.getElementById(id);
+      if (!slider) return;
+      let isDown = false;
+      let startX;
+      let scrollLeft;
+      slider.addEventListener('mousedown', (e) => { isDown = true; startX = e.pageX - slider.offsetLeft; scrollLeft = slider.scrollLeft; });
+      slider.addEventListener('mouseleave', () => isDown = false);
+      slider.addEventListener('mouseup', () => isDown = false);
+      slider.addEventListener('mousemove', (e) => {
+        if (!isDown) return; e.preventDefault(); const x = e.pageX - slider.offsetLeft; const walk = (x - startX) * 2; slider.scrollLeft = scrollLeft - walk;
+      });
+      slider.addEventListener('wheel', (e) => { if (e.deltaY !== 0) { e.preventDefault(); slider.scrollLeft += e.deltaY; } }, { passive: false });
+    }
+
+    async function loadAdminData() {
+      document.getElementById("admin-loading").classList.remove("hidden");
+      document.getElementById("admin-grid").classList.add("hidden");
+      adminItems = await MenuAPI.fetchItems();
+      document.getElementById("admin-loading").classList.add("hidden");
+      document.getElementById("admin-grid").classList.remove("hidden");
+      setupAdminCategories();
+      renderAdminGrid();
+    }
+
+    function setupAdminCategories() {
+      const categories = ["Todos", ...new Set(adminItems.map(i => i.categoria).filter(Boolean))];
+      const categoryBar = document.getElementById("admin-category-bar");
+      categoryBar.innerHTML = categories.map(cat => `
+        <button onclick="filterAdminCategory('${cat}')" 
+          class="px-6 py-2 rounded-full font-label-bold text-label-bold whitespace-nowrap shrink-0 transition-all ${
+            selectedCategory === cat ? 'bg-primary text-on-primary font-bold shadow-md' : 'bg-surface-variant text-tertiary hover:bg-surface-bright border border-outline-variant/20'
+          }">${cat}</button>
+      `).join("");
+    }
+
+    function filterAdminCategory(cat) { selectedCategory = cat; setupAdminCategories(); renderAdminGrid(); }
+    function handleSearch(query) { searchQuery = query.toLowerCase().trim(); renderAdminGrid(); }
+
+    function renderAdminGrid() {
+      const grid = document.getElementById("admin-grid");
+      const filtered = adminItems.filter(item => {
+        const matchesCategory = selectedCategory === "Todos" || item.categoria === selectedCategory;
+        const matchesSearch = !searchQuery || item.nombre.toLowerCase().includes(searchQuery);
+        return matchesCategory && matchesSearch;
+      });
+
+      const itemsHTML = filtered.map(item => {
+        const isPausado = item.es_pausado === true || item.es_pausado === "true";
+        const isRecomendado = item.es_recomendado === true || item.es_recomendado === "true";
+
+        return `
+        <div class="menu-card bg-[#121212] rounded-lg border border-primary-container/20 overflow-hidden flex flex-col sm:flex-row glow-hover transition-all duration-300 relative group ${isPausado ? 'opacity-60 grayscale-[40%] border-error/40' : ''}">
+          
+          <!-- Columna Imagen -->
+          <div class="menu-card-img-wrapper w-full sm:w-2/5 min-h-[240px] relative bg-surface-container-highest flex items-center justify-center shrink-0">
+            ${item.imagen_url 
+              ? `<img src="${item.imagen_url}" alt="${item.nombre}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />` 
+              : `<span class="font-label-bold text-on-surface-variant">Sin imagen</span>`}
+            
+            <div class="absolute top-3 left-3 flex flex-col gap-2 pointer-events-none z-10">
+              <div class="bg-surface-container-high/90 px-3 py-1 rounded-full border border-outline-variant/50 w-fit max-w-full">
+                <span class="font-label-bold text-xs text-tertiary truncate block">${item.categoria || 'Entradas'}</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Columna Información -->
+          <div class="p-5 w-full sm:w-3/5 flex flex-col flex-grow">
+            <div class="flex items-start justify-between gap-2 mb-2">
+              <div class="flex flex-col gap-1">
+                <h3 class="font-headline-lg-mobile text-xl text-primary-fixed leading-tight">${item.nombre}</h3>
+                <div class="flex items-center gap-1">
+                  ${item.es_picante ? `<span class="material-symbols-outlined text-error text-sm">local_fire_department</span>` : ''}
+                  ${isRecomendado ? `<span class="material-symbols-outlined text-primary text-sm">soup_kitchen</span>` : ''}
+                </div>
+              </div>
+              <div class="bg-black px-3 py-1 rounded-full font-price-display text-base text-sushi-white border border-outline-variant/50 shadow-md shrink-0">
+                ${formatPrice(item.precio)}
+              </div>
+            </div>
+            
+            <p class="font-body-md text-on-surface-variant text-sm mb-4 flex-grow line-clamp-3">${item.descripcion || ''}</p>
+            
+            <div class="flex justify-end gap-2 pt-4 border-t border-outline-variant/20 mt-auto">
+              <div class="relative group/tooltip">
+                <button onclick="toggleRecomendado('${item.id}')" class="w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isRecomendado ? 'bg-primary-container text-sushi-white' : 'bg-surface-variant text-on-surface hover:bg-primary/20 hover:text-primary'}"><span class="material-symbols-outlined text-[20px]">soup_kitchen</span></button>
+              </div>
+              <div class="relative group/tooltip">
+                <button onclick="togglePausado('${item.id}')" class="w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isPausado ? 'bg-error-container text-error' : 'bg-surface-variant text-on-surface hover:bg-surface-bright'}"><span class="material-symbols-outlined text-[20px]">pause_circle</span></button>
+              </div>
+              <div class="relative group/tooltip">
+                <button onclick="editItem('${item.id}')" class="w-10 h-10 rounded-full bg-surface-variant text-on-surface flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+              </div>
+              <div class="relative group/tooltip">
+                <button onclick="deleteItem('${item.id}')" class="w-10 h-10 rounded-full bg-surface-variant text-on-surface flex items-center justify-center hover:bg-error/20 hover:text-error transition-colors"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      }).join("");
+
+      const addCardHTML = `
+        <div onclick="openModal()" class="rounded-xl overflow-hidden border-2 border-dashed border-outline-variant/40 hover:border-primary/60 hover:bg-primary/5 transition-colors duration-300 flex flex-col items-center justify-center min-h-[240px] cursor-pointer group">
+          <div class="w-16 h-16 rounded-full bg-surface-variant flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-on-primary transition-colors">
+            <span class="material-symbols-outlined text-3xl">add</span>
+          </div>
+          <span class="font-label-bold text-label-bold text-tertiary group-hover:text-primary transition-colors">Añadir Nuevo</span>
+        </div>
+      `;
+
+      grid.innerHTML = itemsHTML + addCardHTML;
+    }
+
+    function updateModalPreview() {
+      const nameVal = document.getElementById("item-nombre").value || "Nombre Plato";
+      const catVal = document.getElementById("item-categoria").value || "Entradas";
+      const priceVal = document.getElementById("item-precio").value || 0;
+      const descVal = document.getElementById("item-descripcion").value || "Descripción...";
+      
+      document.getElementById("preview-name-text").innerText = nameVal;
+      document.getElementById("preview-cat-text").innerText = catVal;
+      document.getElementById("preview-desc-text").innerText = descVal;
+      document.getElementById("preview-price-text").innerText = formatPrice ? formatPrice(priceVal) : `$${priceVal}`;
+    }
+
+    // Convertidor inteligente de URL de Drive
+    function processDriveLink() {
+      const input = document.getElementById("item-link-drive").value.trim();
+      const urlField = document.getElementById("item-imagen-url");
+      const previewImg = document.getElementById("image-preview");
+      const placeholder = document.getElementById("preview-placeholder");
+      const badges = document.getElementById("preview-badges");
+
+      let finalUrl = "";
+
+      // Extraer ID de Drive
+      const regex = /(?:file\/d\/|id=)([\w-]+)/;
+      const match = input.match(regex);
+
+      if (match && match[1]) {
+        finalUrl = `https://drive.google.com/thumbnail?id=${match[1]}&sz=w800`;
+      } else if (input.startsWith('http')) {
+        finalUrl = input; // Soporte para enlaces directos de otras fuentes
+      }
+
+      urlField.value = finalUrl;
+
+      if (finalUrl) {
+        previewImg.src = finalUrl;
+        previewImg.classList.remove("hidden");
+        placeholder.classList.add("hidden");
+        badges.classList.remove("hidden");
+      } else {
+        previewImg.src = "";
+        previewImg.classList.add("hidden");
+        placeholder.classList.remove("hidden");
+        badges.classList.add("hidden");
+      }
+    }
+
+    async function toggleRecomendado(id) {
+      const item = adminItems.find(i => i.id == id);
+      if (!item) return;
+      item.es_recomendado = !(item.es_recomendado === true || item.es_recomendado === "true");
+      await MenuAPI.updateItem(item);
+      renderAdminGrid();
+    }
+
+    async function togglePausado(id) {
+      const item = adminItems.find(i => i.id == id);
+      if (!item) return;
+      item.es_pausado = !(item.es_pausado === true || item.es_pausado === "true");
+      await MenuAPI.updateItem(item);
+      renderAdminGrid();
+    }
+
+    function openModal(item = null) {
+      document.getElementById("itemForm").reset();
+      document.getElementById("item-id").value = item ? item.id : "";
+      document.getElementById("modal-title").innerText = item ? "Editar Plato" : "Añadir Nuevo Plato";
+      document.getElementById("item-link-drive").value = "";
+      
+      const previewImg = document.getElementById("image-preview");
+      const placeholder = document.getElementById("preview-placeholder");
+      const badges = document.getElementById("preview-badges");
+
+      if (item) {
+        document.getElementById("item-nombre").value = item.nombre;
+        document.getElementById("item-precio").value = item.precio;
+        document.getElementById("item-categoria").value = item.categoria;
+        document.getElementById("item-imagen-url").value = item.imagen_url || "";
+        document.getElementById("item-link-drive").value = item.imagen_url || "";
+        document.getElementById("item-descripcion").value = item.descripcion || "";
+        document.getElementById("item-picante").checked = !!(item.es_picante === true || item.es_picante === "true");
+        document.getElementById("item-recomendado").checked = !!(item.es_recomendado === true || item.es_recomendado === "true");
+        document.getElementById("item-pausado").checked = !!(item.es_pausado === true || item.es_pausado === "true");
+
+        if (item.imagen_url) {
+          previewImg.src = item.imagen_url;
+          previewImg.classList.remove("hidden");
+          placeholder.classList.add("hidden");
+          badges.classList.remove("hidden");
+        } else {
+          previewImg.classList.add("hidden");
+          placeholder.classList.remove("hidden");
+          badges.classList.add("hidden");
+        }
+      } else {
+        document.getElementById("item-imagen-url").value = "";
+        previewImg.classList.add("hidden");
+        placeholder.classList.remove("hidden");
+        badges.classList.add("hidden");
+      }
+      
+      updateModalPreview();
+      document.getElementById("itemModal").classList.remove("hidden");
+    }
+
+    function closeModal() {
+      document.getElementById("itemModal").classList.add("hidden");
+    }
+
+    function editItem(id) {
+      const item = adminItems.find(i => i.id == id);
+      if (item) openModal(item);
+    }
+
+    async function deleteItem(id) {
+      if (confirm("¿Estás seguro de eliminar este plato del menú?")) {
+        await MenuAPI.deleteItem(id);
+        await loadAdminData();
+      }
+    }
+
+    async function handleFormSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById("submit-btn");
+      btn.disabled = true;
+      btn.innerText = "Guardando...";
+
+      const id = document.getElementById("item-id").value;
+      const payload = {
+        id: id,
+        nombre: document.getElementById("item-nombre").value,
+        precio: document.getElementById("item-precio").value,
+        categoria: document.getElementById("item-categoria").value,
+        imagen_url: document.getElementById("item-imagen-url").value,
+        descripcion: document.getElementById("item-descripcion").value,
+        es_picante: document.getElementById("item-picante").checked,
+        es_recomendado: document.getElementById("item-recomendado").checked,
+        es_pausado: document.getElementById("item-pausado").checked
+      };
+
+      if (id) {
+        await MenuAPI.updateItem(payload);
+      } else {
+        await MenuAPI.createItem(payload);
+      }
+
+      btn.disabled = false;
+      btn.innerText = "Guardar Plato";
+      closeModal();
+      await loadAdminData();
+    }
+  </script>
+</body>
+</html>
