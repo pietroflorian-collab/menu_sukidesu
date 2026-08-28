@@ -75,7 +75,7 @@
             "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
             "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
             "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
-            "headline-xl": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "800" }]
+            "headline-xl": ["46px", { "lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "800" }]
           }
         }
       }
@@ -92,9 +92,6 @@
     ::-webkit-scrollbar-track { background: theme('colors.surface-container'); }
     ::-webkit-scrollbar-thumb { background: theme('colors.surface-variant'); border-radius: theme('borderRadius.full'); }
     ::-webkit-scrollbar-thumb:hover { background: theme('colors.primary'); }
-
-    .scroll-container { cursor: grab; user-select: none; }
-    .scroll-container:active { cursor: grabbing; }
   </style>
 </head>
 <body class="font-body-md antialiased min-h-screen flex flex-col">
@@ -109,27 +106,33 @@
     </div>
   </nav>
 
-  <main class="flex-grow w-full max-w-container-max-width mx-auto px-margin-mobile md:px-margin-desktop py-8">
-    <section class="relative rounded-xl overflow-hidden mb-16 bg-surface-container border border-outline-variant/20">
-      <div class="flex flex-col md:flex-row items-center p-8 md:p-12 gap-8 relative z-10">
-        <div class="flex-1 space-y-4">
-          <h1 class="font-headline-xl text-headline-xl text-primary">¡QUÉ CHIMBA DE SUSHI!</h1>
-          <p class="font-body-lg text-body-lg text-on-surface max-w-lg">
+  <main class="flex-grow w-full max-w-container-max-width mx-auto px-margin-mobile md:px-margin-desktop py-6">
+    <!-- Contenedor del encabezado compactado -->
+    <section class="relative rounded-xl overflow-hidden mb-6 bg-surface-container border border-outline-variant/20">
+      <div class="flex flex-col md:flex-row items-center p-4 md:p-6 gap-4 relative z-10">
+        <div class="flex-1 space-y-2">
+          <!-- Texto reducido 2 puntos (46px) -->
+          <h1 class="font-headline-xl text-3xl md:text-[46px] text-primary leading-tight">¡QUÉ CHIMBA DE SUSHI!</h1>
+          <p class="font-body-md text-sm md:text-base text-on-surface max-w-lg">
             Experimenta los sabores más audaces de la ciudad. Enrollados a mano a la perfección, servidos con una sonrisa.
           </p>
         </div>
-        <div class="flex-1 flex justify-center">
-          <img alt="SUKIDESU Mascot" class="w-64 h-64 md:w-80 md:h-80 object-contain animate-bounce" src="https://lh3.googleusercontent.com/aida/AEtjO1WmhdYrchSQhf5OCE1ee54fVkfb0oyBaitEWcnLNpkPM8G2O-8SGzybI5c9kex4Vsi04kwCqyCKd_m4xcsmmmRFBRRWQI4EI9Byh-1PILvUzMrlGauhA1GGCq3VjxQdrlwray_AFFRlLWeraz3xly10cH5gnfb6Andd04t7matOGU3dkg1EVSRGi4VPCd_nDj7LfYjvJqG6DnvXOhnstEh3e-Ew8j-sLsCJIdBEAfoHMgb2Q_45d-wcGFs" style="animation-duration: 3s;"/>
+        <!-- Logo reducido para recortar espacio vertical a la mitad -->
+        <div class="flex-1 flex justify-center items-center">
+          <img alt="SUKIDESU Mascot" class="w-36 h-36 md:w-44 md:h-44 object-contain animate-bounce" src="https://lh3.googleusercontent.com/aida/AEtjO1WmhdYrchSQhf5OCE1ee54fVkfb0oyBaitEWcnLNpkPM8G2O-8SGzybI5c9kex4Vsi04kwCqyCKd_m4xcsmmmRFBRRWQI4EI9Byh-1PILvUzMrlGauhA1GGCq3VjxQdrlwray_AFFRlLWeraz3xly10cH5gnfb6Andd04t7matOGU3dkg1EVSRGi4VPCd_nDj7LfYjvJqG6DnvXOhnstEh3e-Ew8j-sLsCJIdBEAfoHMgb2Q_45d-wcGFs" style="animation-duration: 3s;"/>
         </div>
       </div>
       <div class="absolute right-0 top-0 w-1/2 h-full opacity-10 pointer-events-none" style="background-image: repeating-linear-gradient(45deg, #AD2020 0, #AD2020 2px, transparent 2px, transparent 8px);"></div>
     </section>
 
-    <div id="category-bar" class="scroll-container flex space-x-4 overflow-x-auto mb-12 pb-3 border-b border-outline-variant/20 flex-nowrap"></div>
+    <!-- Contenedor fijo wrapping para botones de categorías (Sin scroll horizontal) -->
+    <section class="bg-surface-container/60 border border-outline-variant/20 rounded-xl p-4 mb-8">
+      <div id="category-bar" class="flex flex-wrap gap-2 md:gap-3 justify-center md:justify-start"></div>
+    </section>
 
     <section class="mb-16">
-      <h2 id="current-category-title" class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-secondary mb-8 flex items-center">
-        <span class="material-symbols-outlined mr-2 text-primary">restaurant_menu</span> Todos los Platos
+      <h2 id="current-category-title" class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-secondary mb-6 flex items-center">
+        <span class="material-symbols-outlined mr-2 text-primary">restaurant_menu</span> Categoria
       </h2>
       
       <div id="loading-spinner" class="text-center py-12">
@@ -156,10 +159,9 @@
   <script src="js/api.js"></script>
   <script>
     let allItems = [];
-    let selectedCategory = "Todos";
+    let selectedCategory = "";
 
     document.addEventListener("DOMContentLoaded", async () => {
-      enableDragScroll("category-bar");
       const data = await MenuAPI.fetchItems();
       allItems = data.filter(i => !(i.es_pausado === true || i.es_pausado === "true"));
       
@@ -170,46 +172,44 @@
       renderMenu();
     });
 
-    function enableDragScroll(id) {
-      const slider = document.getElementById(id);
-      if (!slider) return;
-      let isDown = false; let startX; let scrollLeft;
-      slider.addEventListener('mousedown', (e) => { isDown = true; startX = e.pageX - slider.offsetLeft; scrollLeft = slider.scrollLeft; });
-      slider.addEventListener('mouseleave', () => isDown = false);
-      slider.addEventListener('mouseup', () => isDown = false);
-      slider.addEventListener('mousemove', (e) => {
-        if (!isDown) return; e.preventDefault(); const x = e.pageX - slider.offsetLeft; const walk = (x - startX) * 2; slider.scrollLeft = scrollLeft - walk;
-      });
-      slider.addEventListener('wheel', (e) => { if (e.deltaY !== 0) { e.preventDefault(); slider.scrollLeft += e.deltaY; } }, { passive: false });
-    }
-
     function setupCategoryFilter() {
-      const rawCategories = [...new Set(allItems.map(i => i.categoria).filter(c => c && c !== "Rolls Populares"))];
-      const categories = ["Todos", "Rolls Populares", ...rawCategories];
-      
-      const categoryBar = document.getElementById("category-bar");
-      categoryBar.innerHTML = categories.map(cat => `
-        <button onclick="filterCategory('${cat}')" 
-          class="whitespace-nowrap px-6 py-2 rounded-full font-label-bold text-label-bold transition-all shrink-0 ${
-            selectedCategory === cat ? 'bg-primary-container text-sushi-white font-bold shadow-md' : 'bg-surface-variant text-tertiary hover:bg-surface-bright border border-outline-variant/20'
-          }">${cat}</button>
-      `).join("");
-    }
+  // Lista de respaldo para visualización si no hay conexión a la base de datos
+  const defaultCategories = ["Entradas", "Rollos Clásicos", "Rollos de Autor", "Sushi Perros", "Especiales", "Ramen", "Combos y Promos", "Barra y Bebidas"];
+  
+  // Extraer categorías dinámicas si existen platos
+  const rawCategories = [...new Set(allItems.map(i => i.categoria).filter(Boolean))];
+  
+  // Usar las categorías de la BD si existen; de lo contrario, mostrar las de respaldo
+  const categories = rawCategories.length > 0 ? rawCategories : defaultCategories;
+  
+  if (!selectedCategory || !categories.includes(selectedCategory)) {
+    selectedCategory = categories[0];
+  }
+  
+  const categoryBar = document.getElementById("category-bar");
+  categoryBar.innerHTML = categories.map(cat => `
+    <button onclick="filterCategory('${cat}')" 
+      class="px-5 py-2 rounded-full font-label-bold text-sm transition-all ${
+        selectedCategory === cat 
+          ? 'bg-primary-container text-sushi-white font-bold shadow-md' 
+          : 'bg-surface-variant text-tertiary hover:bg-surface-bright border border-outline-variant/20'
+      }">${cat}</button>
+  `).join("");
+
+  if (selectedCategory) {
+    document.getElementById("current-category-title").innerHTML = `<span class="material-symbols-outlined mr-2 text-primary">restaurant_menu</span> ${selectedCategory}`;
+  }
+}
 
     function filterCategory(cat) {
       selectedCategory = cat;
       setupCategoryFilter();
-      document.getElementById("current-category-title").innerHTML = `<span class="material-symbols-outlined mr-2 text-primary">restaurant_menu</span> ${cat === 'Todos' ? 'Todos los Platos' : cat}`;
       renderMenu();
     }
 
     function renderMenu() {
       const grid = document.getElementById("menu-grid");
-      
-      let filtered = [];
-      if (selectedCategory === "Todos") filtered = allItems;
-      else if (selectedCategory === "Rolls Populares") filtered = allItems.filter(i => i.es_recomendado === true || i.es_recomendado === "true");
-      else filtered = allItems.filter(i => i.categoria === selectedCategory);
+      const filtered = allItems.filter(i => i.categoria === selectedCategory);
 
       if (filtered.length === 0) {
         grid.innerHTML = `<p class="col-span-full text-center text-secondary py-8 font-body-md">No hay platos disponibles en esta categoría.</p>`;

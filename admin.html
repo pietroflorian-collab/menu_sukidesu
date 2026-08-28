@@ -275,7 +275,7 @@
   <script src="js/api.js"></script>
   <script>
     let adminItems = [];
-    let selectedCategory = "Todos";
+    let selectedCategory = "Entradas";
     let searchQuery = "";
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -309,7 +309,7 @@
     }
 
     function setupAdminCategories() {
-      const categories = ["Todos", ...new Set(adminItems.map(i => i.categoria).filter(Boolean))];
+      const categories = ["Entradas", ...new Set(adminItems.map(i => i.categoria).filter(Boolean))];
       const categoryBar = document.getElementById("admin-category-bar");
       categoryBar.innerHTML = categories.map(cat => `
         <button onclick="filterAdminCategory('${cat}')" 
@@ -325,7 +325,7 @@
     function renderAdminGrid() {
       const grid = document.getElementById("admin-grid");
       const filtered = adminItems.filter(item => {
-        const matchesCategory = selectedCategory === "Todos" || item.categoria === selectedCategory;
+        const matchesCategory = selectedCategory === "Entradas" || item.categoria === selectedCategory;
         const matchesSearch = !searchQuery || item.nombre.toLowerCase().includes(searchQuery);
         return matchesCategory && matchesSearch;
       });
