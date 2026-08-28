@@ -4,11 +4,13 @@
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title>SUKIDESU SUSHI - Menú</title>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  
   <link href="https://fonts.googleapis.com/css2?family=Anybody:wght@700;800&family=Plus+Jakarta+Sans:wght@400&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+  <!-- Configuración de Tailwind SIEMPRE ANTES de cargar el CDN -->
   <script id="tailwind-config">
-    tailwind.config = {
+    tailwind = {
       darkMode: "class",
       theme: {
         extend: {
@@ -60,42 +62,36 @@
             "container-max-width": "1200px"
           },
           "fontFamily": {
-            "label-bold": ["Space Grotesk"],
-            "price-display": ["Space Grotesk"],
-            "headline-lg-mobile": ["Anybody"],
-            "body-lg": ["Plus Jakarta Sans"],
-            "body-md": ["Plus Jakarta Sans"],
-            "headline-lg": ["Anybody"],
-            "headline-xl": ["Anybody"]
-          },
-          "fontSize": {
-            "label-bold": ["14px", { "lineHeight": "20px", "fontWeight": "700" }],
-            "price-display": ["24px", { "lineHeight": "24px", "letterSpacing": "0.05em", "fontWeight": "700" }],
-            "headline-lg-mobile": ["28px", { "lineHeight": "34px", "fontWeight": "700" }],
-            "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
-            "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
-            "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }],
-            "headline-xl": ["46px", { "lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "800" }]
+            "label-bold": ["Space Grotesk", "sans-serif"],
+            "price-display": ["Space Grotesk", "sans-serif"],
+            "headline-lg-mobile": ["Anybody", "sans-serif"],
+            "body-lg": ["Plus Jakarta Sans", "sans-serif"],
+            "body-md": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-lg": ["Anybody", "sans-serif"],
+            "headline-xl": ["Anybody", "sans-serif"]
           }
         }
       }
     };
   </script>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
   <style>
     body { background-color: #000000; color: #e2e2e2; }
+    button { border: none; outline: none; }
     .menu-card-img-wrapper { overflow: hidden; }
     .menu-card-img-wrapper img { transition: transform 0.3s ease; }
     .menu-card:hover .menu-card-img-wrapper img { transform: scale(1.05); }
     .glow-hover:hover { box-shadow: 0 0 15px rgba(173, 32, 32, 0.4); }
     
     ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: theme('colors.surface-container'); }
-    ::-webkit-scrollbar-thumb { background: theme('colors.surface-variant'); border-radius: theme('borderRadius.full'); }
-    ::-webkit-scrollbar-thumb:hover { background: theme('colors.primary'); }
+    ::-webkit-scrollbar-track { background: #141414; }
+    ::-webkit-scrollbar-thumb { background: #1f1f1f; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #D56D6D; }
   </style>
 </head>
-<body class="font-body-md antialiased min-h-screen flex flex-col">
-  <nav class="bg-background dark:bg-surface-container-lowest font-label-bold text-label-bold docked full-width top-0 border-b border-outline-variant/20 shadow-sm z-50 sticky">
+<body class="font-body-md antialiased min-h-screen flex flex-col bg-black text-on-surface">
+  <nav class="bg-black font-label-bold text-label-bold top-0 border-b border-outline-variant/20 shadow-sm z-50 sticky">
     <div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 w-full max-w-container-max-width mx-auto">
       <div class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary uppercase tracking-tighter">
         SUKIDESU SUSHI
@@ -107,7 +103,6 @@
   </nav>
 
   <main class="flex-grow w-full max-w-container-max-width mx-auto px-margin-mobile md:px-margin-desktop py-6">
-    <!-- Contenedor del encabezado compactado -->
     <section class="relative rounded-xl overflow-hidden mb-6 bg-surface-container border border-outline-variant/20">
       <div class="flex flex-col md:flex-row items-center p-4 md:p-6 gap-4 relative z-10">
         <div class="flex-1 space-y-2">
@@ -123,7 +118,6 @@
       <div class="absolute right-0 top-0 w-1/2 h-full opacity-10 pointer-events-none" style="background-image: repeating-linear-gradient(45deg, #AD2020 0, #AD2020 2px, transparent 2px, transparent 8px);"></div>
     </section>
 
-    <!-- Contenedor fijo wrapping para botones de categorías ajustados homogéneamente -->
     <section class="bg-surface-container/60 border border-outline-variant/20 rounded-xl p-4 mb-8">
       <div id="category-bar" class="flex flex-wrap gap-2 md:gap-3 justify-center md:justify-start"></div>
     </section>
@@ -142,7 +136,7 @@
     </section>
   </main>
 
-  <footer class="bg-surface-container-lowest dark:bg-black text-tertiary font-body-md text-body-md full-width bottom-0 border-t border-outline-variant/20 mt-auto">
+  <footer class="bg-black text-tertiary font-body-md text-body-md full-width bottom-0 border-t border-outline-variant/20 mt-auto">
     <div class="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop py-base w-full max-w-container-max-width mx-auto min-h-[80px]">
       <div class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-4 md:mb-0">SUKIDESU SUSHI</div>
       <div class="flex flex-wrap justify-center gap-4 md:gap-6 mb-4 md:mb-0 text-sm">
@@ -159,9 +153,18 @@
     let allItems = [];
     let selectedCategory = "";
 
+    function formatPrice(price) {
+      if (!price) return '$0';
+      return '$' + Number(price).toLocaleString('es-CO');
+    }
+
     document.addEventListener("DOMContentLoaded", async () => {
-      const data = await MenuAPI.fetchItems();
-      allItems = data.filter(i => !(i.es_pausado === true || i.es_pausado === "true"));
+      try {
+        const data = await MenuAPI.fetchItems();
+        allItems = (data || []).filter(i => !(i.es_pausado === true || i.es_pausado === "true"));
+      } catch (e) {
+        allItems = [];
+      }
       
       document.getElementById("loading-spinner").classList.add("hidden");
       document.getElementById("menu-grid").classList.remove("hidden");
