@@ -12,29 +12,56 @@
   <style>
     body { background-color: #000000; color: #e2e2e2; }
     button { border: none; outline: none; }
-    .menu-card-img-wrapper { overflow: hidden; }
+    
+    /* Garantiza la visibilidad de las fotos en tarjetas */
+    .menu-card-img-wrapper { 
+      position: relative; 
+      overflow: hidden; 
+      min-height: 220px; 
+      width: 100%;
+    }
+    @media (min-width: 640px) {
+      .menu-card-img-wrapper {
+        width: 40%;
+        min-height: 240px;
+      }
+    }
     .menu-card-img-wrapper img { transition: transform 0.3s ease; }
     .menu-card:hover .menu-card-img-wrapper img { transform: scale(1.05); }
     .glow-hover:hover { box-shadow: 0 0 15px rgba(173, 32, 32, 0.4); }
-    
-    ::-webkit-scrollbar { width: 8px; height: 8px; }
-    ::-webkit-scrollbar-track { background: #141414; }
-    ::-webkit-scrollbar-thumb { background: #1f1f1f; border-radius: 9999px; }
-    ::-webkit-scrollbar-thumb:hover { background: #AD2020; }
 
+    /* Tamaño de la mascota optimizado para móvil y PC */
+    .mascota-img {
+      width: 105px;
+      height: 105px;
+      object-fit: contain;
+    }
+    @media (min-width: 768px) {
+      .mascota-img {
+        width: 210px;
+        height: 210px;
+      }
+    }
+
+    /* Rebote responsivo */
     @keyframes miRebote {
-      0%, 100% { transform: translateY(-8px); }
+      0%, 100% { transform: translateY(-6px); }
       50% { transform: translateY(6px); }
     }
     @media (min-width: 768px) {
       @keyframes miRebote {
-        0%, 100% { transform: translateY(-18px); }
-        50% { transform: translateY(12px); }
+        0%, 100% { transform: translateY(-16px); }
+        50% { transform: translateY(10px); }
       }
     }
     .rebote-amplio {
       animation: miRebote 3s ease-in-out infinite;
     }
+    
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #141414; }
+    ::-webkit-scrollbar-thumb { background: #1f1f1f; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #AD2020; }
   </style>
 </head>
 <body class="font-body-md antialiased min-h-screen flex flex-col bg-black text-on-surface relative">
@@ -58,8 +85,8 @@
             Experimenta los sabores más audaces de la ciudad. Enrollados a mano a la perfección, servidos con una sonrisa.
           </p>
         </div>
-        <div class="flex-1 flex justify-center items-center py-2">
-          <img alt="SUKIDESU Mascot" class="w-28 h-28 md:w-56 md:h-56 object-contain rebote-amplio" src="images/screen.png"/>
+        <div class="flex-1 flex justify-center items-center py-2 shrink-0">
+          <img alt="SUKIDESU Mascot" class="mascota-img rebote-amplio" src="images/screen.png"/>
         </div>
       </div>
       <div class="absolute right-0 top-0 w-1/2 h-full opacity-10 pointer-events-none" style="background-image: repeating-linear-gradient(45deg, #AD2020 0, #AD2020 2px, transparent 2px, transparent 8px);"></div>
@@ -288,7 +315,7 @@
         return `
           <div class="menu-card bg-[#121212] rounded-lg border border-primary-container/20 overflow-hidden flex flex-col sm:flex-row glow-hover transition-all duration-300 relative group">
             
-            <div class="menu-card-img-wrapper w-full sm:w-2/5 min-h-[200px] sm:min-h-[240px] relative bg-surface-container-highest flex items-center justify-center shrink-0">
+            <div class="menu-card-img-wrapper bg-surface-container-highest flex items-center justify-center shrink-0">
               ${item.imagen_url 
                 ? `<img src="${item.imagen_url}" alt="${item.nombre}" loading="lazy" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />` 
                 : `<span class="font-label-bold text-secondary">Sin imagen</span>`}
