@@ -13,7 +13,7 @@
     body { background-color: #000000; color: #e2e2e2; }
     button { border: none; outline: none; }
     
-    /* Mantiene el formato vertical de las fotos */
+    /* Mantiene el formato vertical de las fotos de los platos */
     .menu-card-img-wrapper { 
       position: relative; 
       overflow: hidden; 
@@ -27,8 +27,12 @@
         min-height: 260px;
       }
     }
+    
+    .menu-card-img-wrapper img { transition: transform 0.3s ease; }
+    .menu-card:hover .menu-card-img-wrapper img { transform: scale(1.05); }
+    .glow-hover:hover { box-shadow: 0 0 15px rgba(173, 32, 32, 0.4); }
 
-    /* Rebote responsivo */
+    /* Rebote responsivo de la mascota */
     @keyframes miRebote {
       0%, 100% { transform: translateY(-6px); }
       50% { transform: translateY(6px); }
@@ -51,7 +55,7 @@
 </head>
 <body class="font-body-md antialiased min-h-screen flex flex-col bg-black text-on-surface relative">
   <nav class="bg-black font-label-bold text-label-bold top-0 border-b border-outline-variant/20 shadow-sm z-40 sticky">
-    <div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 w-full max-w-container-max-width mx-auto">
+    <div class="flex justify-between items-center px-5 md:px-12 py-4 w-full max-w-7xl mx-auto">
       <div class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary uppercase tracking-tighter">
         SUKIDESU SUSHI MENÚ
       </div>
@@ -61,7 +65,7 @@
     </div>
   </nav>
 
-  <main class="flex-grow w-full max-w-container-max-width mx-auto px-margin-mobile md:px-margin-desktop py-6">
+  <main class="flex-grow w-full max-w-7xl mx-auto px-5 md:px-12 py-6">
     <section class="relative rounded-xl overflow-hidden mb-6 bg-surface-container border border-outline-variant/20">
       <div class="flex flex-col md:flex-row items-center p-4 md:p-6 gap-4 relative z-10">
         <div class="flex-1 space-y-2">
@@ -71,7 +75,7 @@
           </p>
         </div>
         <div class="flex-1 flex justify-center items-center py-2 shrink-0">
-          <img alt="SUKIDESU Mascot" class="mascota-img rebote-amplio" src="images/screen.png"/>
+          <img alt="SUKIDESU Mascot" class="w-28 h-28 md:w-52 md:h-52 object-contain rebote-amplio" src="images/screen.png"/>
         </div>
       </div>
       <div class="absolute right-0 top-0 w-1/2 h-full opacity-10 pointer-events-none" style="background-image: repeating-linear-gradient(45deg, #AD2020 0, #AD2020 2px, transparent 2px, transparent 8px);"></div>
@@ -91,7 +95,7 @@
         <p class="mt-2 text-secondary font-body-md">Cargando menú...</p>
       </div>
 
-      <div id="menu-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-gutter md:gap-6 hidden"></div>
+      <div id="menu-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 hidden"></div>
     </section>
   </main>
 
@@ -128,7 +132,7 @@
   </div>
 
   <footer class="bg-black text-tertiary font-body-md text-body-md full-width bottom-0 border-t border-outline-variant/20 mt-auto">
-    <div class="flex flex-col md:flex-row justify-between items-center px-margin-mobile md:px-margin-desktop py-base w-full max-w-container-max-width mx-auto min-h-[80px]">
+    <div class="flex flex-col md:flex-row justify-between items-center px-5 md:px-12 py-4 w-full max-w-7xl mx-auto min-h-[80px]">
       <div class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary mb-4 md:mb-0">SUKIDESU SUSHI</div>
       <div class="flex flex-wrap justify-center gap-4 md:gap-6 mb-4 md:mb-0 text-sm">
         <a class="text-secondary hover:text-primary transition-colors opacity-80 hover:opacity-100" href="#">Política de Privacidad</a>
