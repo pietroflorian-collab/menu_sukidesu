@@ -13,33 +13,18 @@
     body { background-color: #000000; color: #e2e2e2; }
     button { border: none; outline: none; }
     
-    /* Garantiza la visibilidad de las fotos en tarjetas */
+    /* Mantiene el formato vertical de las fotos */
     .menu-card-img-wrapper { 
       position: relative; 
       overflow: hidden; 
-      min-height: 220px; 
       width: 100%;
+      aspect-ratio: 4 / 5; /* Fuerza un rectángulo vertical en móviles */
     }
     @media (min-width: 640px) {
       .menu-card-img-wrapper {
         width: 40%;
-        min-height: 240px;
-      }
-    }
-    .menu-card-img-wrapper img { transition: transform 0.3s ease; }
-    .menu-card:hover .menu-card-img-wrapper img { transform: scale(1.05); }
-    .glow-hover:hover { box-shadow: 0 0 15px rgba(173, 32, 32, 0.4); }
-
-    /* Tamaño de la mascota optimizado para móvil y PC */
-    .mascota-img {
-      width: 105px;
-      height: 105px;
-      object-fit: contain;
-    }
-    @media (min-width: 768px) {
-      .mascota-img {
-        width: 210px;
-        height: 210px;
+        aspect-ratio: auto; /* En PC se adapta a la altura del texto */
+        min-height: 260px;
       }
     }
 
