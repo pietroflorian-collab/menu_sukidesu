@@ -244,7 +244,7 @@
     document.addEventListener("DOMContentLoaded", async () => {
       try {
         const data = await MenuAPI.fetchItems();
-        allItems = (data || []).filter(i => !(i.es_pausado === true || i.es_pausado === "true"));
+        allItems = (data || []).filter(i => String(i.es_pausado).toLowerCase() !== "true");
       } catch (e) {
         allItems = [];
       }
@@ -321,8 +321,8 @@
                 <div class="flex flex-col gap-1">
                   <h3 class="font-headline-lg-mobile text-xl text-primary-fixed leading-tight">${item.nombre}</h3>
                   <div class="flex items-center gap-1">
-                    ${item.es_picante ? `<span class="material-symbols-outlined text-primary text-sm" title="Picante">local_fire_department</span>` : ''}
-                    ${(item.es_recomendado === true || item.es_recomendado === "true") ? `<span class="material-symbols-outlined text-wasabi-green text-sm" title="Recomendación del Día">soup_kitchen</span>` : ''}
+                    ${String(item.es_picante).toLowerCase() === "true" ? `<span class="material-symbols-outlined text-primary text-sm" title="Picante">local_fire_department</span>` : ''}
+                    ${String(item.es_recomendado).toLowerCase() === "true" ? `<span class="material-symbols-outlined text-wasabi-green text-sm" title="Recomendación del Día">soup_kitchen</span>` : ''}
                   </div>
                 </div>
                 <div class="bg-black px-3 py-1 rounded-full font-price-display text-base text-sushi-white border border-outline-variant/50 shadow-md shrink-0">

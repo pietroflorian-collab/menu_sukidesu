@@ -233,7 +233,6 @@
     }
 
     function setupAdminCategories() {
-      // Categorías fijas constantes en el panel de administración
       const categories = [
         "Entradas", 
         "Rollos Clásicos", 
@@ -270,7 +269,7 @@
       });
 
       const itemsHTML = filtered.map(item => {
-        const isPausado = item.es_pausado === true || item.es_pausado === "true";
+        const isPausado = String(item.es_pausado).toLowerCase() === "true";
 
         return `
         <div class="menu-card bg-[#121212] rounded-lg border border-primary-container/20 overflow-hidden flex flex-col sm:flex-row glow-hover transition-all duration-300 relative group ${isPausado ? 'opacity-60 grayscale-[40%] border-primary-container/40' : ''}">
@@ -292,7 +291,7 @@
               <div class="flex flex-col gap-1">
                 <h3 class="font-headline-lg-mobile text-xl text-primary-fixed leading-tight">${item.nombre}</h3>
                 <div class="flex items-center gap-1">
-                  ${item.es_picante ? `<span class="material-symbols-outlined text-primary text-sm">local_fire_department</span>` : ''}
+                  ${String(item.es_picante).toLowerCase() === "true" ? `<span class="material-symbols-outlined text-primary text-sm">local_fire_department</span>` : ''}
                 </div>
               </div>
               <div class="bg-black px-3 py-1 rounded-full font-price-display text-base text-sushi-white border border-outline-variant/50 shadow-md shrink-0">
@@ -392,7 +391,7 @@
     async function togglePausado(id) {
       const item = adminItems.find(i => i.id == id);
       if (!item) return;
-      item.es_pausado = !(item.es_pausado === true || item.es_pausado === "true");
+      item.es_pausado = !(String(item.es_pausado).toLowerCase() === "true");
       await MenuAPI.updateItem(item);
       renderAdminGrid();
     }
@@ -414,8 +413,8 @@
         document.getElementById("item-imagen-url").value = item.imagen_url || "";
         document.getElementById("item-link-drive").value = item.imagen_url || "";
         document.getElementById("item-descripcion").value = item.descripcion || "";
-        document.getElementById("item-picante").checked = !!(item.es_picante === true || item.es_picante === "true");
-        document.getElementById("item-pausado").checked = !!(item.es_pausado === true || item.es_pausado === "true");
+        document.getElementById("item-picante").checked = String(item.es_picante).toLowerCase() === "true";
+        document.getElementById("item-pausado").checked = String(item.es_pausado).toLowerCase() === "true";
 
         if (item.imagen_url) {
           previewImg.src = item.imagen_url;
