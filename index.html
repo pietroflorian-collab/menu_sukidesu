@@ -8,9 +8,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Anybody:wght@700;800&family=Plus+Jakarta+Sans:wght@400&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <link href="css/output.css" rel="stylesheet"/>
-  <!-- Configuración de Tailwind SIEMPRE ANTES de cargar el CDN -->
-  <link href="css/output.css" rel="stylesheet"/>
-  </script>
   
   <style>
     body { background-color: #000000; color: #e2e2e2; }
@@ -23,14 +20,14 @@
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: #141414; }
     ::-webkit-scrollbar-thumb { background: #1f1f1f; border-radius: 9999px; }
-    ::-webkit-scrollbar-thumb:hover { background: #D56D6D; }
+    ::-webkit-scrollbar-thumb:hover { background: #AD2020; }
   </style>
 </head>
 <body class="font-body-md antialiased min-h-screen flex flex-col bg-black text-on-surface">
   <nav class="bg-black font-label-bold text-label-bold top-0 border-b border-outline-variant/20 shadow-sm z-50 sticky">
     <div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-4 w-full max-w-container-max-width mx-auto">
       <div class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary uppercase tracking-tighter">
-        SUKIDESU SUSHI
+        SUKIDESU SUSHI MENÚ
       </div>
       <div class="flex items-center space-x-6">
         <a class="text-primary border-b-2 border-primary pb-1" href="#">Inicio</a>
@@ -47,8 +44,8 @@
             Experimenta los sabores más audaces de la ciudad. Enrollados a mano a la perfección, servidos con una sonrisa.
           </p>
         </div>
-        <div class="flex-1 flex justify-center items-center">
-          <img alt="SUKIDESU Mascot" class="w-40 h-40 md:w-60 md:h-50 object-contain animate-bounce" src="https://lh3.googleusercontent.com/aida/AEtjO1WmhdYrchSQhf5OCE1ee54fVkfb0oyBaitEWcnLNpkPM8G2O-8SGzybI5c9kex4Vsi04kwCqyCKd_m4xcsmmmRFBRRWQI4EI9Byh-1PILvUzMrlGauhA1GGCq3VjxQdrlwray_AFFRlLWeraz3xly10cH5gnfb6Andd04t7matOGU3dkg1EVSRGi4VPCd_nDj7LfYjvJqG6DnvXOhnstEh3e-Ew8j-sLsCJIdBEAfoHMgb2Q_45d-wcGFs" style="animation-duration: 3s;"/>
+        <div class="flex-1 flex justify-center items-center py-2">
+          <img alt="SUKIDESU Mascot" class="w-44 h-44 md:w-56 md:h-56 object-contain rebote-amplio" src="images/screen.png"/>
         </div>
       </div>
       <div class="absolute right-0 top-0 w-1/2 h-full opacity-10 pointer-events-none" style="background-image: repeating-linear-gradient(45deg, #AD2020 0, #AD2020 2px, transparent 2px, transparent 8px);"></div>
@@ -160,6 +157,10 @@
               <div class="bg-surface-container-high/90 px-3 py-1 rounded-full border border-outline-variant/50 w-fit max-w-full">
                 <span class="font-label-bold text-xs text-tertiary truncate block">${item.categoria || 'Entradas'}</span>
               </div>
+            </div>
+
+            <div class="absolute bottom-2 left-3 pointer-events-none z-10">
+              <span class="text-[10px] text-sushi-white/70 bg-black/60 px-2 py-0.5 rounded backdrop-blur-sm">Foto referencial</span>
             </div>
           </div>
           

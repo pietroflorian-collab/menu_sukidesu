@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #D56D6D;
+  --color-primary: #AD2020;
   --color-primary-container: #AD2020;
-  --color-primary-fixed: #D56D6D;
-  --color-primary-fixed-dim: #D56D6D;
+  --color-primary-fixed: #AD2020;
+  --color-primary-fixed-dim: #AD2020;
   --color-on-primary: #FFFFFF;
   --color-on-primary-container: #FFFFFF;
 
@@ -16,7 +16,7 @@
   --color-tertiary: #BCB56F;
   --color-tertiary-container: #4a4524;
   --color-wasabi-green: #09DF52;
-  --color-salmon-light: #D56D6D;
+  --color-salmon-light: #AD2020;
 
   --color-background: #000000;
   --color-surface: #000000;
@@ -35,7 +35,20 @@
   --color-outline: #AD2020;
   --color-outline-variant: #5b2020;
 
-  --color-error: #D56D6D;
+  --color-error: #AD2020;
   --color-error-container: #AD2020;
   --color-sushi-white: #FFFFFF;
+}
+/* Animación directa en CSS puro */
+@keyframes miRebote {
+  0%, 100% {
+    transform: translateY(-20px);
+  }
+  50% {
+    transform: translateY(15px);
+  }
+}
+
+.rebote-amplio {
+  animation: miRebote 3s ease-in-out infinite;
 }
