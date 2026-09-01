@@ -28,8 +28,8 @@
     .scroll-container:active { cursor: grabbing; }
   </style>
 </head>
-<body class="flex h-screen overflow-hidden font-body-md text-body-md">
-  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none" style="z-index: 10000;"></div>
+<body class="flex h-screen overflow-hidden font-body-md text-body-md relative">
+  <div id="toast-container" class="fixed bottom-5 right-5 flex flex-col gap-2 pointer-events-none" style="z-index: 100000;"></div>
 
   <!-- Panel Lateral PC -->
   <nav class="hidden md:flex h-screen w-64 fixed left-0 top-0 bg-surface-container dark:bg-surface-container-high border-r border-outline-variant/20 shadow-md flex-col h-full p-4 z-40">
@@ -112,10 +112,11 @@
     </div>
   </main>
 
+  <!-- MODALES REUBICADOS Y AISLADOS AL FINAL -->
+
   <!-- Modal Selector Móvil -->
-  <div class="fixed inset-0 hidden" id="actionModal" style="z-index: 9999;">
-    <div class="absolute inset-0 bg-black/80 backdrop-blur-md" onclick="SukidesuAdmin.closeActionModal()"></div>
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-xs bg-[#181818] rounded-xl p-5 border border-outline-variant/40 shadow-2xl flex flex-col gap-3">
+  <div id="actionModal" class="fixed inset-0 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md" style="z-index: 99999;">
+    <div class="w-full max-w-xs bg-[#181818] rounded-xl p-5 border border-outline-variant/40 shadow-2xl flex flex-col gap-3">
       <h3 class="text-center font-headline-lg-mobile text-lg text-primary mb-2 uppercase">¿Qué deseas crear?</h3>
       <button onclick="SukidesuAdmin.closeActionModal(); SukidesuAdmin.openModal();" class="w-full py-3 bg-primary-container text-sushi-white font-label-bold rounded-lg hover:bg-primary transition-colors flex items-center justify-center gap-2">
         <span class="material-symbols-outlined">add</span> Nuevo Plato
@@ -128,9 +129,8 @@
   </div>
 
   <!-- Modal Banner Promo Global -->
-  <div class="fixed inset-0 hidden" id="promoConfigModal" style="z-index: 9999;">
-    <div class="absolute inset-0 bg-black/80 backdrop-blur-md transition-opacity" onclick="SukidesuAdmin.closePromoModal()"></div>
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-[#181818] rounded-xl shadow-2xl border border-primary/40 flex flex-col max-h-[90vh] overflow-hidden">
+  <div id="promoConfigModal" class="fixed inset-0 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md" style="z-index: 99999;">
+    <div class="w-full max-w-lg bg-[#181818] rounded-xl shadow-2xl border border-primary/40 flex flex-col max-h-[90vh] overflow-hidden">
       <div class="px-5 py-4 border-b border-outline-variant/30 flex justify-between items-center bg-[#121212]">
         <h3 class="font-headline-lg-mobile text-xl text-primary flex items-center gap-2"><span class="material-symbols-outlined">campaign</span> Anuncio Principal</h3>
         <button class="text-secondary hover:text-primary transition-colors p-1" onclick="SukidesuAdmin.closePromoModal()"><span class="material-symbols-outlined">close</span></button>
@@ -155,9 +155,8 @@
   </div>
 
   <!-- Modal Generador de QR Mesa -->
-  <div class="fixed inset-0 hidden" id="qrModal" style="z-index: 9999;">
-    <div class="absolute inset-0 bg-black/80 backdrop-blur-md transition-opacity" onclick="SukidesuAdmin.closeQRModal()"></div>
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md bg-[#181818] rounded-xl shadow-2xl border border-primary/40 flex flex-col max-h-[90vh] overflow-hidden">
+  <div id="qrModal" class="fixed inset-0 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md" style="z-index: 99999;">
+    <div class="w-full max-w-md bg-[#181818] rounded-xl shadow-2xl border border-primary/40 flex flex-col max-h-[90vh] overflow-hidden">
       <div class="px-5 py-4 border-b border-outline-variant/30 flex justify-between items-center bg-[#121212]">
         <h3 class="font-headline-lg-mobile text-xl text-primary flex items-center gap-2"><span class="material-symbols-outlined">qr_code_2</span> Código QR de Mesa</h3>
         <button class="text-secondary hover:text-primary transition-colors p-1" onclick="SukidesuAdmin.closeQRModal()"><span class="material-symbols-outlined">close</span></button>
@@ -175,9 +174,8 @@
   </div>
 
   <!-- Modal Categorías -->
-  <div class="fixed inset-0 hidden" id="categoryModal" style="z-index: 9999;">
-    <div class="absolute inset-0 bg-black/80 backdrop-blur-md transition-opacity" onclick="SukidesuAdmin.closeCategoryModal()"></div>
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg bg-[#181818] rounded-xl shadow-2xl border border-primary-container/40 flex flex-col max-h-[85vh] overflow-hidden">
+  <div id="categoryModal" class="fixed inset-0 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md" style="z-index: 99999;">
+    <div class="w-full max-w-lg bg-[#181818] rounded-xl shadow-2xl border border-primary-container/40 flex flex-col max-h-[85vh] overflow-hidden">
       <div class="px-5 py-3 border-b border-outline-variant/30 flex justify-between items-center bg-[#121212]">
         <h3 class="font-headline-lg-mobile text-xl text-primary-fixed">Gestionar Categorías</h3>
         <button class="text-secondary hover:text-primary transition-colors p-1" onclick="SukidesuAdmin.closeCategoryModal()">
@@ -200,9 +198,8 @@
   </div>
 
   <!-- Modal Formulario Plato -->
-  <div class="fixed inset-0 hidden" id="itemModal" style="z-index: 9999;">
-    <div class="absolute inset-0 bg-black/80 backdrop-blur-md transition-opacity" onclick="SukidesuAdmin.closeModal()"></div>
-    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl bg-[#181818] rounded-xl shadow-2xl border border-primary-container/40 flex flex-col max-h-[90vh] overflow-hidden">
+  <div id="itemModal" class="fixed inset-0 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md" style="z-index: 99999;">
+    <div class="w-full max-w-4xl bg-[#181818] rounded-xl shadow-2xl border border-primary-container/40 flex flex-col max-h-[90vh] overflow-hidden">
       <div class="px-5 py-3 border-b border-outline-variant/30 flex justify-between items-center bg-[#121212]">
         <h3 id="modal-title" class="font-headline-lg-mobile text-xl text-primary-fixed">Añadir Nuevo Plato</h3>
         <button class="text-secondary hover:text-primary transition-colors p-1" onclick="SukidesuAdmin.closeModal()">
@@ -379,15 +376,29 @@
         this.renderAdminGrid();
       },
 
+      openModalHelper(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.remove("hidden");
+        el.classList.add("flex");
+      },
+
+      closeModalHelper(id) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.classList.add("hidden");
+        el.classList.remove("flex");
+      },
+
       // Lógica de Banner Promo Global
       openPromoModal() {
         document.getElementById("config-promo-activa").checked = String(this.adminConfig.promo_activa).toLowerCase() === "true";
         document.getElementById("config-promo-texto").value = this.adminConfig.promo_texto || "Hoy Día de Promo Revisa Nuestra sección de Promociones no te lo pierdas";
         document.getElementById("config-promo-img").value = this.adminConfig.promo_imagen || "images/niguiripromo.png";
-        document.getElementById("promoConfigModal").classList.remove("hidden");
+        this.openModalHelper("promoConfigModal");
       },
       closePromoModal() {
-        document.getElementById("promoConfigModal").classList.add("hidden");
+        this.closeModalHelper("promoConfigModal");
       },
       async savePromoConfig() {
         const btn = document.getElementById("promo-save-btn");
@@ -416,11 +427,11 @@
 
       // Lógica de Generador de Código QR
       openQRModal() {
-        document.getElementById("qrModal").classList.remove("hidden");
+        this.openModalHelper("qrModal");
         this.renderAdminQR();
       },
       closeQRModal() {
-        document.getElementById("qrModal").classList.add("hidden");
+        this.closeModalHelper("qrModal");
       },
       renderAdminQR() {
         const canvas = document.getElementById('admin-qr-canvas');
@@ -592,14 +603,14 @@
         }
       },
 
-      openActionModal() { document.getElementById("actionModal").classList.remove("hidden"); },
-      closeActionModal() { document.getElementById("actionModal").classList.add("hidden"); },
+      openActionModal() { this.openModalHelper("actionModal"); },
+      closeActionModal() { this.closeModalHelper("actionModal"); },
 
       openCategoryModal() {
         this.renderCategoryManageList();
-        document.getElementById("categoryModal").classList.remove("hidden");
+        this.openModalHelper("categoryModal");
       },
-      closeCategoryModal() { document.getElementById("categoryModal").classList.add("hidden"); },
+      closeCategoryModal() { this.closeModalHelper("categoryModal"); },
 
       renderCategoryManageList() {
         const list = document.getElementById("category-manage-list");
@@ -784,10 +795,10 @@
         }
         
         this.updateModalPreview();
-        document.getElementById("itemModal").classList.remove("hidden");
+        this.openModalHelper("itemModal");
       },
 
-      closeModal() { document.getElementById("itemModal").classList.add("hidden"); },
+      closeModal() { this.closeModalHelper("itemModal"); },
 
       editItem(id) {
         const item = this.adminItems.find(i => i.id == id);
