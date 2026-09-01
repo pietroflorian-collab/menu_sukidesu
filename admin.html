@@ -29,6 +29,9 @@
   </style>
 </head>
 <body class="flex h-screen overflow-hidden font-body-md text-body-md">
+  <!-- Contenedor para notificaciones flotantes -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
   <!-- Panel Lateral PC -->
   <nav class="hidden md:flex h-screen w-64 fixed left-0 top-0 bg-surface-container dark:bg-surface-container-high border-r border-outline-variant/20 shadow-md flex-col h-full p-4 z-40">
     <div class="mb-6 px-4 py-4 text-center border-b border-outline-variant/20">
@@ -45,7 +48,6 @@
         <span class="font-label-bold text-body-md">Ver Carta (Cliente)</span>
       </a>
     </div>
-    <!-- Botones Fijos de Acción en PC -->
     <div class="px-2 py-4 mt-auto border-t border-outline-variant/20 space-y-3">
       <button class="w-full bg-primary-container text-on-primary-container font-label-bold text-sm py-3 rounded-lg hover:bg-primary transition-colors flex items-center justify-center" onclick="openModal()">
         <span class="material-symbols-outlined mr-2 text-base">add</span> Nuevo Plato
@@ -77,7 +79,6 @@
           <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary">search</span>
           <input id="admin-search-input" oninput="handleSearch(this.value)" class="w-full bg-[#1e1e1e] border border-outline-variant/60 rounded-lg pl-10 pr-4 py-2 text-white placeholder-secondary/50 focus:outline-none focus:border-primary text-sm font-body-md" placeholder="Buscar por nombre..." type="text"/>
         </div>
-        <!-- Botón Nuevo en Móvil -->
         <button class="md:hidden w-full sm:w-auto bg-primary-container text-on-primary-container font-label-bold text-label-bold px-6 py-2 rounded-lg hover:bg-primary transition-colors whitespace-nowrap" onclick="openActionModal()">
           Nuevo
         </button>
@@ -416,27 +417,34 @@
 
       if (res.status === "success") {
         input.value = "";
+        showToast("Categoría creada con éxito", "success");
         await loadAdminData();
         renderCategoryManageList();
       } else {
-        alert(res.message || "Error al crear categoría");
+        showToast(res.message || "Error al crear categoría", "error");
       }
     }
 
     async function toggleCategoryPause(id, esPausada) {
-      await MenuAPI.updateCategory({ id: id, es_pausada: esPausada });
-      await loadAdminData();
-      renderCategoryManageList();
+      const res = await MenuAPI.updateCategory({ id: id, es_pausada: esPausada });
+      if (res.status === "success") {
+        showToast(esPausada ? "Categoría pausada" : "Categoría reactivada", "info");
+        await loadAdminData();
+        renderCategoryManageList();
+      } else {
+        showToast("Error al cambiar estado de la categoría", "error");
+      }
     }
 
     async function deleteCategory(id) {
       if (confirm("¿Estás seguro de intentar eliminar esta categoría?")) {
         const res = await MenuAPI.deleteCategory(id);
         if (res.status === "success") {
+          showToast("Categoría eliminada con éxito", "success");
           await loadAdminData();
           renderCategoryManageList();
         } else {
-          alert(res.message);
+          showToast(res.message, "error");
         }
       }
     }
@@ -503,8 +511,13 @@
       };
       
       item.es_pausado = nuevoEstado;
-      await MenuAPI.updateItem(payload);
-      renderAdminGrid();
+      const res = await MenuAPI.updateItem(payload);
+      if (res.status === "success") {
+        showToast(nuevoEstado ? "Plato pausado del menú" : "Plato reactivado en el menú", "info");
+        renderAdminGrid();
+      } else {
+        showToast("Error al actualizar el estado del plato", "error");
+      }
     }
 
     function openModal(item = null) {
@@ -557,8 +570,13 @@
 
     async function deleteItem(id) {
       if (confirm("¿Estás seguro de eliminar este plato del menú?")) {
-        await MenuAPI.deleteItem(id);
-        await loadAdminData();
+        const res = await MenuAPI.deleteItem(id);
+        if (res.status === "success") {
+          showToast("Plato eliminado con éxito", "success");
+          await loadAdminData();
+        } else {
+          showToast(res.message || "Error al eliminar plato", "error");
+        }
       }
     }
 
@@ -580,16 +598,23 @@
         es_pausado: document.getElementById("item-pausado").checked
       };
 
+      let res;
       if (id) {
-        await MenuAPI.updateItem(payload);
+        res = await MenuAPI.updateItem(payload);
       } else {
-        await MenuAPI.createItem(payload);
+        res = await MenuAPI.createItem(payload);
       }
 
       btn.disabled = false;
       btn.innerText = "Guardar Plato";
-      closeModal();
-      await loadAdminData();
+      
+      if (res.status === "success") {
+        showToast(id ? "Plato actualizado con éxito" : "Plato creado con éxito", "success");
+        closeModal();
+        await loadAdminData();
+      } else {
+        showToast(res.message || "Error al guardar plato", "error");
+      }
     }
   </script>
   <script>

@@ -36,8 +36,8 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Ignora peticiones POST y llamadas directas a la API de Google Sheets
-  if (event.request.method !== 'GET' || event.request.url.includes('script.google.com')) {
+  // Ignora peticiones que no sean GET y cualquier llamada a dominios o servicios de Google
+  if (event.request.method !== 'GET' || event.request.url.includes('google')) {
     return;
   }
 

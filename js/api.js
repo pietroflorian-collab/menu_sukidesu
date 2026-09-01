@@ -10,6 +10,54 @@ function escapeHTML(str) {
     .replace(/'/g, '&#039;');
 }
 
+function showToast(message, type = 'success') {
+  let container = document.getElementById('toast-container');
+  
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toast-container';
+    container.className = 'fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none';
+    document.body.appendChild(container);
+  }
+
+  const toast = document.createElement('div');
+  
+  let bgColor = 'bg-[#181818] border-outline-variant/40 text-sushi-white';
+  let icon = 'info';
+  let iconColor = 'text-primary';
+
+  if (type === 'success') {
+    bgColor = 'bg-[#122419] border-wasabi-green/40 text-sushi-white';
+    icon = 'check_circle';
+    iconColor = 'text-wasabi-green';
+  } else if (type === 'error') {
+    bgColor = 'bg-[#2a1215] border-error/40 text-sushi-white';
+    icon = 'error';
+    iconColor = 'text-error';
+  } else if (type === 'warning') {
+    bgColor = 'bg-[#2a2212] border-yellow-500/40 text-sushi-white';
+    icon = 'warning';
+    iconColor = 'text-yellow-500';
+  }
+
+  toast.className = `flex items-center gap-3 px-4 py-3 rounded-lg border shadow-2xl backdrop-blur-md transition-all duration-300 transform translate-y-2 opacity-0 pointer-events-auto max-w-sm ${bgColor}`;
+  toast.innerHTML = `
+    <span class="material-symbols-outlined ${iconColor} text-xl shrink-0">${icon}</span>
+    <span class="font-body-md text-xs sm:text-sm flex-grow">${escapeHTML(message)}</span>
+  `;
+
+  container.appendChild(toast);
+
+  requestAnimationFrame(() => {
+    toast.classList.remove('translate-y-2', 'opacity-0');
+  });
+
+  setTimeout(() => {
+    toast.classList.add('translate-y-2', 'opacity-0');
+    setTimeout(() => { toast.remove(); }, 300);
+  }, 3500);
+}
+
 const MenuAPI = {
   async fetchItems(isAdmin = false) {
     try {
@@ -25,6 +73,7 @@ const MenuAPI = {
       return { items: [], categories: [] };
     } catch (error) {
       console.error("Error al obtener los datos:", error);
+      showToast("Error de conexión al cargar datos", "error");
       return { items: [], categories: [] };
     }
   },
