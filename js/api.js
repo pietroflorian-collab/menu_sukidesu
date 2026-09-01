@@ -1,4 +1,4 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyJffKPdCbyWQGftl_Ay7VK28yQM5iJE1FMN4b97_yxCUvteTWzl5e1L4xmYtDxUz8/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxeY51PE3g2okiQzmSU5ZyQ24XXRLRkX_5noevGtOBmZZIjxI0KydkoJh8aibeKVPQ/exec";
 
 function escapeHTML(str) {
   if (str === null || str === undefined) return '';
