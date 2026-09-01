@@ -24,6 +24,20 @@ function doPost(e) {
   }
 }
 
+function getMainSheet() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName("Hoja 1") || ss.getSheetByName("Platos");
+  if (sheet) return sheet;
+  
+  var sheets = ss.getSheets();
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].getName() !== "Categorias") {
+      return sheets[i];
+    }
+  }
+  return sheets[0];
+}
+
 function getCategorySheet() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName("Categorias");
@@ -49,12 +63,11 @@ function getCategorySheet() {
 
 function handleRead(e) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var mainSheet = ss.getSheets()[0];
+  var mainSheet = getMainSheet();
   var catSheet = getCategorySheet();
   
   var isAdmin = e && e.parameter && e.parameter.admin === "true";
   
-  // Leer Categorías
   var catData = catSheet.getDataRange().getValues();
   var categories = [];
   for (var i = 1; i < catData.length; i++) {
@@ -62,7 +75,6 @@ function handleRead(e) {
     if (!row[0]) continue;
     var isPausada = String(row[2]).toLowerCase() === "true";
     
-    // En la vista pública, las categorías pausadas desaparecen por completo
     if (!isAdmin && isPausada) continue;
     
     categories.push({
@@ -74,7 +86,6 @@ function handleRead(e) {
   
   var activeCatNames = categories.map(function(c) { return c.nombre; });
   
-  // Leer Platos
   var mainData = mainSheet.getDataRange().getValues();
   var items = [];
   if (mainData.length > 1) {
@@ -104,7 +115,7 @@ function handleRead(e) {
 
 function handleCreate(payload) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheets()[0];
+  var sheet = getMainSheet();
   var newId = "item_" + new Date().getTime();
   
   var imageUrl = payload.imagen_url || "";
@@ -129,7 +140,7 @@ function handleCreate(payload) {
 
 function handleUpdate(payload) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheets()[0];
+  var sheet = getMainSheet();
   var data = sheet.getDataRange().getValues();
   var id = payload.id;
   
@@ -163,7 +174,7 @@ function handleUpdate(payload) {
 
 function handleDelete(payload) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheets()[0];
+  var sheet = getMainSheet();
   var data = sheet.getDataRange().getValues();
   var id = payload.id;
   
@@ -209,7 +220,7 @@ function handleUpdateCategory(payload) {
 function handleDeleteCategory(payload) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var catSheet = getCategorySheet();
-  var mainSheet = ss.getSheets()[0];
+  var mainSheet = getMainSheet();
   
   var catData = catSheet.getDataRange().getValues();
   var id = payload.id;
@@ -228,7 +239,6 @@ function handleDeleteCategory(payload) {
     return responseJSON({ status: "error", message: "Categoría no encontrada" });
   }
   
-  // Validar si existen platos asociados a esta categoría
   var mainData = mainSheet.getDataRange().getValues();
   var dishCount = 0;
   for (var j = 1; j < mainData.length; j++) {
@@ -265,7 +275,7 @@ function saveImageToDrive(base64Data, filename) {
     var file = folder.createFile(blob);
     file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
     
-    return "https://drive.google.com/thumbnail?id=" + file.getId() + "&sz=w800";
+    return "https://drive.google.com/thumbnail?id=" + file.getId() + "&sz=w400";
   } catch (err) {
     Logger.log("Error en saveImageToDrive: " + err.toString());
     return "";
