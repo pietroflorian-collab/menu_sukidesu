@@ -366,7 +366,11 @@ function saveImageToDrive(base64Data, filename) {
   }
 }
 
-function responseJSON(data) {
-  return ContentService.createTextOutput(JSON.stringify(data))
-    .setMimeType(ContentService.MimeType.JSON);
+  return responseJSON({ 
+    status: "success", 
+    data: items,         // Para que tu api.js lo reconozca como antes
+    items: items,        // Para que el HTML nuevo lo lea directamente
+    categories: categories, 
+    config: config 
+  });
 }
