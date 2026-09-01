@@ -23,7 +23,6 @@
     .menu-card-img-wrapper img { transition: transform 0.3s ease; }
     .menu-card:hover .menu-card-img-wrapper img { transform: scale(1.05); }
     .glow-hover:hover { box-shadow: 0 0 15px rgba(173, 32, 32, 0.4); }
-
     .scroll-container { cursor: grab; user-select: none; }
     .scroll-container:active { cursor: grabbing; }
   </style>
@@ -119,7 +118,6 @@
           <span class="material-symbols-outlined">close</span>
         </button>
       </div>
-
       <div class="p-5 overflow-y-auto space-y-5 bg-[#181818]">
         <form onsubmit="SukidesuAdmin.handleCreateCategorySubmit(event)" class="flex gap-2">
           <input id="new-cat-name" type="text" required placeholder="Nueva categoría..." class="flex-1 bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white font-body-md text-sm focus:outline-none focus:border-primary"/>
@@ -127,7 +125,6 @@
             + Crear
           </button>
         </form>
-
         <div>
           <h4 class="text-xs font-label-bold uppercase text-secondary mb-3">Categorías Existentes:</h4>
           <div id="category-manage-list" class="space-y-2"></div>
@@ -140,7 +137,6 @@
   <div class="fixed inset-0 z-50 hidden" id="itemModal">
     <div class="absolute inset-0 bg-black/80 backdrop-blur-md transition-opacity" onclick="SukidesuAdmin.closeModal()"></div>
     <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl bg-[#181818] rounded-xl shadow-2xl border border-primary-container/40 flex flex-col max-h-[90vh] overflow-hidden">
-      
       <div class="px-5 py-3 border-b border-outline-variant/30 flex justify-between items-center bg-[#121212]">
         <h3 id="modal-title" class="font-headline-lg-mobile text-xl text-primary-fixed">Añadir Nuevo Plato</h3>
         <button class="text-secondary hover:text-primary transition-colors p-1" onclick="SukidesuAdmin.closeModal()">
@@ -151,7 +147,6 @@
       <div class="p-4 overflow-y-auto custom-scrollbar bg-[#181818]">
         <form id="itemForm" onsubmit="SukidesuAdmin.handleFormSubmit(event)" class="space-y-4">
           <input type="hidden" id="item-id" />
-          
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
             <div class="space-y-3">
               <div>
@@ -187,6 +182,44 @@
                   <span class="font-label-bold text-xs text-on-surface">Pausar Plato</span>
                   <span class="material-symbols-outlined text-primary-container text-[16px]">pause_circle</span>
                 </label>
+              </div>
+
+              <!-- Sección Promoción por Día -->
+              <div class="pt-3 border-t border-outline-variant/30 space-y-2">
+                <label class="block text-primary-fixed font-label-bold text-sm">Promoción Especial</label>
+                <input id="item-texto-promo" type="text" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white font-body-md text-sm placeholder:text-secondary/40 focus:outline-none focus:border-primary mb-2" placeholder="ej., 2x1 en Cócteles / 20% OFF" />
+                
+                <label class="block text-secondary font-label-bold text-xs uppercase tracking-wider mb-1">Días activos de la promoción:</label>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                  <label class="flex items-center gap-1.5 cursor-pointer bg-[#242424] p-2 rounded border border-outline-variant/30">
+                    <input type="checkbox" name="promo-dia" value="Lunes" class="rounded bg-[#181818] border-outline-variant text-primary focus:ring-primary h-3.5 w-3.5"/>
+                    <span class="text-on-surface">Lunes</span>
+                  </label>
+                  <label class="flex items-center gap-1.5 cursor-pointer bg-[#242424] p-2 rounded border border-outline-variant/30">
+                    <input type="checkbox" name="promo-dia" value="Martes" class="rounded bg-[#181818] border-outline-variant text-primary focus:ring-primary h-3.5 w-3.5"/>
+                    <span class="text-on-surface">Martes</span>
+                  </label>
+                  <label class="flex items-center gap-1.5 cursor-pointer bg-[#242424] p-2 rounded border border-outline-variant/30">
+                    <input type="checkbox" name="promo-dia" value="Miércoles" class="rounded bg-[#181818] border-outline-variant text-primary focus:ring-primary h-3.5 w-3.5"/>
+                    <span class="text-on-surface">Miércoles</span>
+                  </label>
+                  <label class="flex items-center gap-1.5 cursor-pointer bg-[#242424] p-2 rounded border border-outline-variant/30">
+                    <input type="checkbox" name="promo-dia" value="Jueves" class="rounded bg-[#181818] border-outline-variant text-primary focus:ring-primary h-3.5 w-3.5"/>
+                    <span class="text-on-surface">Jueves</span>
+                  </label>
+                  <label class="flex items-center gap-1.5 cursor-pointer bg-[#242424] p-2 rounded border border-outline-variant/30">
+                    <input type="checkbox" name="promo-dia" value="Viernes" class="rounded bg-[#181818] border-outline-variant text-primary focus:ring-primary h-3.5 w-3.5"/>
+                    <span class="text-on-surface">Viernes</span>
+                  </label>
+                  <label class="flex items-center gap-1.5 cursor-pointer bg-[#242424] p-2 rounded border border-outline-variant/30">
+                    <input type="checkbox" name="promo-dia" value="Sábado" class="rounded bg-[#181818] border-outline-variant text-primary focus:ring-primary h-3.5 w-3.5"/>
+                    <span class="text-on-surface">Sábado</span>
+                  </label>
+                  <label class="flex items-center gap-1.5 cursor-pointer bg-[#242424] p-2 rounded border border-outline-variant/30">
+                    <input type="checkbox" name="promo-dia" value="Domingo" class="rounded bg-[#181818] border-outline-variant text-primary focus:ring-primary h-3.5 w-3.5"/>
+                    <span class="text-on-surface">Domingo</span>
+                  </label>
+                </div>
               </div>
             </div>
 
@@ -313,7 +346,6 @@
         
         const filtered = this.adminItems.filter(item => {
           const matchesSearch = !this.searchQuery || item.nombre.toLowerCase().includes(this.searchQuery);
-          // Si hay texto de búsqueda, ignora la categoría activa y busca en todo el catálogo
           const matchesCategory = this.searchQuery ? true : (item.categoria === this.selectedCategory);
           return matchesCategory && matchesSearch;
         });
@@ -343,6 +375,7 @@
                   <h3 class="font-headline-lg-mobile text-xl text-primary-fixed leading-tight">${escapeHTML(item.nombre)}</h3>
                   <div class="flex items-center gap-1">
                     ${String(item.es_picante).toLowerCase() === "true" ? `<span class="material-symbols-outlined text-primary text-sm">local_fire_department</span>` : ''}
+                    ${item.dias_promo ? `<span class="material-symbols-outlined text-wasabi-green text-sm" title="Promoción: ${escapeHTML(item.texto_promo)}">local_offer</span>` : ''}
                   </div>
                 </div>
                 <div class="bg-black px-3 py-1 rounded-full font-price-display text-base text-sushi-white border border-outline-variant/50 shadow-md shrink-0">
@@ -517,7 +550,9 @@
           imagen_url: item.imagen_url || "",
           descripcion: item.descripcion || "",
           es_picante: String(item.es_picante).toLowerCase() === "true",
-          es_pausado: nuevoEstado
+          es_pausado: nuevoEstado,
+          dias_promo: item.dias_promo || "",
+          texto_promo: item.texto_promo || ""
         };
         
         item.es_pausado = nuevoEstado;
@@ -536,6 +571,8 @@
         document.getElementById("modal-title").innerText = item ? "Editar Plato" : "Añadir Nuevo Plato";
         document.getElementById("item-link-drive").value = "";
         
+        document.querySelectorAll('input[name="promo-dia"]').forEach(cb => cb.checked = false);
+        
         const previewImg = document.getElementById("image-preview");
         const placeholder = document.getElementById("preview-placeholder");
         const badges = document.getElementById("preview-badges");
@@ -549,6 +586,14 @@
           document.getElementById("item-descripcion").value = item.descripcion || "";
           document.getElementById("item-picante").checked = String(item.es_picante).toLowerCase() === "true";
           document.getElementById("item-pausado").checked = String(item.es_pausado).toLowerCase() === "true";
+          document.getElementById("item-texto-promo").value = item.texto_promo || "";
+
+          if (item.dias_promo) {
+            const activeDays = item.dias_promo.split(',');
+            document.querySelectorAll('input[name="promo-dia"]').forEach(cb => {
+              if (activeDays.includes(cb.value)) cb.checked = true;
+            });
+          }
 
           if (item.imagen_url) {
             previewImg.src = item.imagen_url.replace('sz=w800', 'sz=w400');
@@ -596,6 +641,10 @@
         btn.disabled = true;
         btn.innerText = "Guardando...";
 
+        const selectedDays = Array.from(document.querySelectorAll('input[name="promo-dia"]:checked'))
+          .map(cb => cb.value)
+          .join(',');
+
         const id = document.getElementById("item-id").value;
         const payload = {
           id: id,
@@ -605,7 +654,9 @@
           imagen_url: document.getElementById("item-imagen-url").value,
           descripcion: document.getElementById("item-descripcion").value,
           es_picante: document.getElementById("item-picante").checked,
-          es_pausado: document.getElementById("item-pausado").checked
+          es_pausado: document.getElementById("item-pausado").checked,
+          dias_promo: selectedDays,
+          texto_promo: document.getElementById("item-texto-promo").value.trim()
         };
 
         let res;

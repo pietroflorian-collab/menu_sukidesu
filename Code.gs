@@ -132,7 +132,9 @@ function handleCreate(payload) {
     payload.descripcion || "",
     imageUrl,
     payload.es_picante ? true : false,
-    payload.es_pausado ? true : false
+    payload.es_pausado ? true : false,
+    payload.dias_promo || "",
+    payload.texto_promo || ""
   ];
   sheet.appendRow(newRow);
   return responseJSON({ status: "success", id: newId, imagen_url: imageUrl });
@@ -163,7 +165,9 @@ function handleUpdate(payload) {
         payload.descripcion || data[i][4],
         imageUrl,
         payload.es_picante ? true : false,
-        payload.es_pausado ? true : false
+        payload.es_pausado ? true : false,
+        payload.dias_promo !== undefined ? payload.dias_promo : (data[i][8] || ""),
+        payload.texto_promo !== undefined ? payload.texto_promo : (data[i][9] || "")
       ];
       sheet.getRange(i + 1, 1, 1, updatedRow.length).setValues([updatedRow]);
       return responseJSON({ status: "success", id: id, imagen_url: imageUrl });

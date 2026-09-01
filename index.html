@@ -260,12 +260,17 @@
         this.renderMenu();
       },
 
+      getTodayName() {
+        const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+        return days[new Date().getDay()];
+      },
+
       renderMenu() {
         const grid = document.getElementById("menu-grid");
         const filtered = this.allItems.filter(i => i.categoria === this.selectedCategory);
         const currentSelection = this.getSelection();
+        const today = this.getTodayName();
 
-        // Estado Vacío Elegante
         if (filtered.length === 0) {
           grid.innerHTML = `
             <div class="col-span-full text-center py-12 bg-surface-container/30 rounded-xl border border-dashed border-outline-variant/30 my-4">
@@ -282,6 +287,8 @@
           const rawUrl = item.imagen_url || '';
           const optimizedImgUrl = rawUrl.replace('sz=w800', 'sz=w400');
           
+          const isPromoActive = item.dias_promo && item.dias_promo.split(',').includes(today) && item.texto_promo;
+          
           return `
             <div class="menu-card bg-[#121212] rounded-lg border border-primary-container/20 overflow-hidden flex flex-col sm:flex-row glow-hover transition-all duration-300 relative group">
               <div class="menu-card-img-wrapper bg-surface-container-highest flex items-center justify-center shrink-0">
@@ -297,12 +304,17 @@
               </div>
               
               <div class="p-5 w-full sm:w-3/5 flex flex-col flex-grow">
+                ${isPromoActive ? `
+                  <div class="bg-wasabi-green/20 text-wasabi-green border border-wasabi-green/50 px-2.5 py-1 rounded-md text-xs font-bold inline-flex items-center gap-1 mb-2 animate-pulse w-fit">
+                    <span class="material-symbols-outlined text-sm">local_offer</span>
+                    <span>PROMO HOY: ${escapeHTML(item.texto_promo)}</span>
+                  </div>` : ''}
+
                 <div class="flex items-start justify-between gap-2 mb-2">
                   <div class="flex flex-col gap-1">
                     <h3 class="font-headline-lg-mobile text-xl text-primary-fixed leading-tight">${escapeHTML(item.nombre)}</h3>
                     <div class="flex items-center gap-1">
                       ${String(item.es_picante).toLowerCase() === "true" ? `<span class="material-symbols-outlined text-primary text-sm" title="Picante">local_fire_department</span>` : ''}
-                      ${String(item.es_recomendado).toLowerCase() === "true" ? `<span class="material-symbols-outlined text-wasabi-green text-sm" title="Recomendación del Día">soup_kitchen</span>` : ''}
                     </div>
                   </div>
                   <div class="bg-black px-3 py-1 rounded-full font-price-display text-base text-sushi-white border border-outline-variant/50 shadow-md shrink-0">
