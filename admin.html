@@ -310,9 +310,11 @@
 
       renderAdminGrid() {
         const grid = document.getElementById("admin-grid");
+        
         const filtered = this.adminItems.filter(item => {
-          const matchesCategory = item.categoria === this.selectedCategory;
           const matchesSearch = !this.searchQuery || item.nombre.toLowerCase().includes(this.searchQuery);
+          // Si hay texto de búsqueda, ignora la categoría activa y busca en todo el catálogo
+          const matchesCategory = this.searchQuery ? true : (item.categoria === this.selectedCategory);
           return matchesCategory && matchesSearch;
         });
 
@@ -379,7 +381,7 @@
           grid.innerHTML = `
             <div class="col-span-full text-center py-10 bg-[#121212] rounded-xl border border-outline-variant/20 mb-4">
               <span class="material-symbols-outlined text-secondary text-4xl mb-2">search_off</span>
-              <p class="text-secondary font-body-md text-sm">No encontramos platos que coincidan con "${escapeHTML(this.searchQuery)}"</p>
+              <p class="text-secondary font-body-md text-sm">No encontramos platos que coincidan con "${escapeHTML(this.searchQuery)}" en ninguna categoría.</p>
             </div>` + addCardHTML;
         } else {
           grid.innerHTML = itemsHTML + addCardHTML;
