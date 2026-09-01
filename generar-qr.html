@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generador de QR - Sukidesu Sushi</title>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <style>
+    body {
+      background-color: #000000;
+      color: #ffffff;
+      font-family: 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    .card-container {
+      background: #121212;
+      border: 2px solid #AD2020;
+      border-radius: 24px;
+      padding: 32px 24px 24px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 0 30px rgba(173, 32, 32, 0.3);
+    }
+    canvas {
+      border-radius: 16px;
+      background: #ffffff;
+    }
+    .btn-download {
+      margin-top: 24px;
+      background-color: #AD2020;
+      color: #ffffff;
+      border: none;
+      padding: 12px 28px;
+      font-size: 15px;
+      font-weight: bold;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-download:hover {
+      background-color: #d62828;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card-container">
+    <canvas id="qr-canvas"></canvas>
+    <button class="btn-download" onclick="downloadQR()">Descargar QR para Imprenta</button>
+  </div>
+
+  <script>
+    const MENU_URL = "https://pietroflorian-collab.github.io/menu_sukidesu/";
+
+    function generateQR() {
+      const canvas = document.getElementById('qr-canvas');
+      const ctx = canvas.getContext('2d');
+
+      const qrSize = 340;
+      const padding = 20;
+      const textSpace = 70;
+      
+      canvas.width = qrSize + (padding * 2);
+      canvas.height = qrSize + (padding * 2) + textSpace;
+
+      // Fondo oscuro
+      ctx.fillStyle = '#121212';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Crear QR temporal con alta corrección de errores (H)
+      const tempCanvas = document.createElement('canvas');
+      QRCode.toCanvas(tempCanvas, MENU_URL, {
+        width: qrSize,
+        margin: 2,
+        errorCorrectionLevel: 'H'
+      }, function (error) {
+        if (error) console.error(error);
+
+        // Dibujar QR
+        ctx.drawImage(tempCanvas, padding, padding);
+
+        // Superponer logo circular
+        const logo = new Image();
+        logo.src = 'icon-192x192.png';
+        
+        logo.onload = function() {
+          const centerX = canvas.width / 2;
+          const centerY = padding + (qrSize / 2);
+          const logoSize = 82;
+
+          // Fondo blanco protector bajo el logo para no romper los módulos del QR
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, (logoSize / 2) + 6, 0, Math.PI * 2);
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fill();
+
+          // Recorte e inserción del logo
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, logoSize / 2, 0, Math.PI * 2);
+          ctx.clip();
+          ctx.drawImage(logo, centerX - logoSize / 2, centerY - logoSize / 2, logoSize, logoSize);
+          ctx.restore();
+
+          // Texto "MENÚ"
+          ctx.fillStyle = '#FFFFFF';
+          ctx.font = 'bold 36px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('MENÚ', centerX, canvas.height - (textSpace / 2));
+        };
+      });
+    }
+
+    function downloadQR() {
+      const canvas = document.getElementById('qr-canvas');
+      const link = document.createElement('a');
+      link.download = 'QR_Mesa_Sukidesu_Menu.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    window.onload = generateQR;
+  </script>
+</body>
+</html>
