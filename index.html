@@ -38,6 +38,35 @@
   </style>
 </head>
 <body class="font-body-md antialiased min-h-screen flex flex-col bg-black text-on-surface relative">
+
+  <!-- BANNER PROMO GLOBAL AL ENTRAR -->
+  <div id="promo-popup" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm transition-opacity">
+    <div class="relative bg-[#181818] border border-primary/40 rounded-2xl w-full max-w-2xl overflow-hidden shadow-[0_0_40px_rgba(173,32,32,0.3)] flex flex-col md:flex-row animate-[pulse_2s_ease-in-out_1]">
+      <button onclick="SukidesuMenu.closePromo()" class="absolute top-3 right-3 bg-black/60 text-white rounded-full p-1 hover:bg-primary transition-colors z-10 border border-white/10 backdrop-blur-md">
+        <span class="material-symbols-outlined text-lg">close</span>
+      </button>
+      
+      <!-- Lado Imagen -->
+      <div class="w-full md:w-1/2 bg-[#121212] relative min-h-[220px] md:min-h-[300px] flex items-center justify-center overflow-hidden border-b md:border-b-0 md:border-r border-outline-variant/30">
+        <div class="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent"></div>
+        <img id="promo-popup-img" src="images/niguiripromo.png" alt="Sushi Promo" class="w-full h-full object-cover relative z-10" />
+      </div>
+      
+      <!-- Lado Texto -->
+      <div class="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-center text-center space-y-4 bg-gradient-to-b from-[#181818] to-[#121212]">
+        <div class="mx-auto bg-primary/20 text-primary px-3 py-1 rounded-full border border-primary/40 flex items-center gap-2 w-fit mb-2">
+          <span class="material-symbols-outlined text-base animate-bounce">campaign</span>
+          <span class="font-label-bold text-[10px] tracking-widest uppercase">Oferta Especial</span>
+        </div>
+        <p id="promo-popup-text" class="font-headline-lg text-xl md:text-2xl text-sushi-white leading-tight font-bold"></p>
+        
+        <button onclick="SukidesuMenu.closePromo()" class="mt-4 bg-primary-container text-sushi-white px-8 py-3 rounded-full font-label-bold text-sm hover:bg-primary hover:shadow-[0_0_20px_rgba(173,32,32,0.5)] transition-all uppercase tracking-wider w-full">
+          ¡Ver el Menú!
+        </button>
+      </div>
+    </div>
+  </div>
+
   <nav class="bg-black font-label-bold text-label-bold top-0 border-b border-outline-variant/20 shadow-sm z-40 sticky">
     <div class="flex justify-between items-center px-5 md:px-12 py-4 w-full max-w-7xl mx-auto">
       <div class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-primary uppercase tracking-tighter">
@@ -132,6 +161,7 @@
     const SukidesuMenu = {
       allItems: [],
       categoriesList: [],
+      config: {},
       selectedCategory: "",
       STORAGE_KEY: "sukidesu_order_selection",
 
@@ -214,9 +244,11 @@
           const data = await MenuAPI.fetchItems(false);
           this.allItems = data.items || [];
           this.categoriesList = data.categories || [];
+          this.config = data.config || {};
         } catch (e) {
           this.allItems = [];
           this.categoriesList = [];
+          this.config = {};
         }
         
         document.getElementById("loading-spinner").classList.add("hidden");
@@ -225,6 +257,27 @@
         this.setupCategoryFilter();
         this.renderMenu();
         this.updateUI();
+        
+        // Cargar Modal de Promoción Global
+        this.checkGlobalPromo();
+      },
+      
+      // Controla la lógica de visibilidad del Banner global
+      checkGlobalPromo() {
+        const promoActive = String(this.config.promo_activa).toLowerCase() === "true";
+        if (promoActive && !sessionStorage.getItem('promo_visto')) {
+          document.getElementById('promo-popup-text').innerText = this.config.promo_texto || "¡Promoción especial disponible hoy!";
+          if (this.config.promo_imagen) {
+            document.getElementById('promo-popup-img').src = this.config.promo_imagen;
+          }
+          document.getElementById('promo-popup').classList.remove('hidden');
+        }
+      },
+      
+      // Cierra el banner y lo marca como visto en la sesión
+      closePromo() {
+        document.getElementById('promo-popup').classList.add('hidden');
+        sessionStorage.setItem('promo_visto', 'true');
       },
 
       setupCategoryFilter() {

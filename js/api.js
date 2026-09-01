@@ -67,14 +67,15 @@ const MenuAPI = {
       if (result.status === "success") {
         return {
           items: result.data || [],
-          categories: result.categories || []
+          categories: result.categories || [],
+          config: result.config || {}
         };
       }
-      return { items: [], categories: [] };
+      return { items: [], categories: [], config: {} };
     } catch (error) {
       console.error("Error al obtener los datos:", error);
       showToast("Error de conexión al cargar datos", "error");
-      return { items: [], categories: [] };
+      return { items: [], categories: [], config: {} };
     }
   },
 
@@ -87,7 +88,6 @@ const MenuAPI = {
       });
       return await response.json();
     } catch (error) {
-      console.error("Error al crear el plato:", error);
       return { status: "error", message: error.toString() };
     }
   },
@@ -101,7 +101,6 @@ const MenuAPI = {
       });
       return await response.json();
     } catch (error) {
-      console.error("Error al actualizar el plato:", error);
       return { status: "error", message: error.toString() };
     }
   },
@@ -115,7 +114,6 @@ const MenuAPI = {
       });
       return await response.json();
     } catch (error) {
-      console.error("Error al eliminar el plato:", error);
       return { status: "error", message: error.toString() };
     }
   },
@@ -129,7 +127,6 @@ const MenuAPI = {
       });
       return await response.json();
     } catch (error) {
-      console.error("Error al crear la categoría:", error);
       return { status: "error", message: error.toString() };
     }
   },
@@ -143,7 +140,6 @@ const MenuAPI = {
       });
       return await response.json();
     } catch (error) {
-      console.error("Error al actualizar la categoría:", error);
       return { status: "error", message: error.toString() };
     }
   },
@@ -157,7 +153,19 @@ const MenuAPI = {
       });
       return await response.json();
     } catch (error) {
-      console.error("Error al eliminar la categoría:", error);
+      return { status: "error", message: error.toString() };
+    }
+  },
+
+  async updateConfig(configData) {
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "update_config", data: configData })
+      });
+      return await response.json();
+    } catch (error) {
       return { status: "error", message: error.toString() };
     }
   }
