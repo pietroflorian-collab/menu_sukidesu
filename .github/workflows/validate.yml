@@ -1,0 +1,26 @@
+name: Validar PWA y Código
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v3
+
+      - name: Validar JSON de Manifiesto
+        run: |
+          python3 -c "import json; json.load(open('manifest-admin.json'))"
+          echo "Manifiesto PWA válido."
+
+      - name: Verificar archivos esenciales de PWA
+        run: |
+          test -f sw.js || (echo "Falta sw.js" && exit 1)
+          test -f icon-192x192.png || (echo "Falta icono 192" && exit 1)
+          test -f icon-512x512.png || (echo "Falta icono 512" && exit 1)
+          echo "Archivos PWA verificados con éxito."
