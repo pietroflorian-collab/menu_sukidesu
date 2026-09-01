@@ -13,17 +13,16 @@
     body { background-color: #000000; color: #e2e2e2; }
     button { border: none; outline: none; }
     
-    /* Mantiene el formato vertical de las fotos de los platos */
     .menu-card-img-wrapper { 
       position: relative; 
       overflow: hidden; 
       width: 100%;
-      aspect-ratio: 4 / 5; /* Fuerza un rectángulo vertical en móviles */
+      aspect-ratio: 4 / 5;
     }
     @media (min-width: 640px) {
       .menu-card-img-wrapper {
         width: 40%;
-        aspect-ratio: auto; /* En PC se adapta a la altura del texto */
+        aspect-ratio: auto;
         min-height: 260px;
       }
     }
@@ -66,19 +65,13 @@
       <div class="absolute right-0 top-0 w-1/2 h-full opacity-10 pointer-events-none" style="background-image: repeating-linear-gradient(45deg, #AD2020 0, #AD2020 2px, transparent 2px, transparent 8px);"></div>
     </section>
 
-    <section class="bg-surface-container/60 border border-outline-variant/20 rounded-xl p-4 mb-8">
-      <div id="category-bar" class="flex flex-wrap gap-2 md:gap-3 justify-center md:justify-start"></div>
+    <section class="bg-surface-container/60 border border-outline-variant/20 rounded-xl p-2.5 md:p-3 mb-4">
+      <div id="category-bar" class="flex flex-wrap gap-2 md:gap-3 justify-center"></div>
     </section>
-</main>
-
-    <section class="bg-surface-container/60 border border-outline-variant/20 rounded-xl p-4 mb-8">
-      <div id="category-bar" class="flex flex-wrap gap-2 md:gap-3 justify-center md:justify-start"></div>
-    </section>
-</main>
 
     <section class="mb-16">
-      <h2 id="current-category-title" class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-secondary mb-6 flex items-center">
-        <span class="material-symbols-outlined mr-2 text-primary">restaurant_menu</span> Categoria
+      <h2 id="current-category-title" class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-secondary mb-4 flex items-center">
+        <span class="material-symbols-outlined mr-2 text-primary">restaurant_menu</span> Categoría
       </h2>
       
       <div id="loading-spinner" class="text-center py-12">
@@ -137,20 +130,12 @@
   <script src="js/api.js"></script>
   <script>
     let allItems = [];
+    let categoriesList = [];
     let selectedCategory = "";
     const STORAGE_KEY = "sukidesu_order_selection";
 
-    function formatPrice(price) {
-      if (!price) return '$0';
-      return '$' + Number(price).toLocaleString('es-CO');
-    }
-
     function getSelection() {
-      try {
-        return JSON.parse(sessionStorage.getItem(STORAGE_KEY)) || [];
-      } catch (e) {
-        return [];
-      }
+      try { return JSON.parse(sessionStorage.getItem(STORAGE_KEY)) || []; } catch (e) { return []; }
     }
 
     function saveSelection(list) {
@@ -161,13 +146,8 @@
     function toggleSelection(itemId, itemNombre) {
       let list = getSelection();
       const index = list.findIndex(i => i.id === itemId);
-      
-      if (index >= 0) {
-        list.splice(index, 1);
-      } else {
-        list.push({ id: itemId, nombre: itemNombre, cantidad: 1 });
-      }
-      
+      if (index >= 0) list.splice(index, 1);
+      else list.push({ id: itemId, nombre: itemNombre, cantidad: 1 });
       saveSelection(list);
       renderMenu();
     }
@@ -175,12 +155,9 @@
     function updateQuantity(itemId, delta) {
       let list = getSelection();
       const item = list.find(i => i.id === itemId);
-      
       if (item) {
         item.cantidad += delta;
-        if (item.cantidad <= 0) {
-          list = list.filter(i => i.id !== itemId);
-        }
+        if (item.cantidad <= 0) list = list.filter(i => i.id !== itemId);
         saveSelection(list);
         renderMenu();
       }
@@ -192,13 +169,8 @@
       renderMenu();
     }
 
-    function openModal() {
-      document.getElementById("order-modal").classList.remove("hidden");
-    }
-
-    function closeModal() {
-      document.getElementById("order-modal").classList.add("hidden");
-    }
+    function openModal() { document.getElementById("order-modal").classList.remove("hidden"); }
+    function closeModal() { document.getElementById("order-modal").classList.add("hidden"); }
 
     function updateUI() {
       const list = getSelection();
@@ -234,10 +206,12 @@
 
     document.addEventListener("DOMContentLoaded", async () => {
       try {
-        const data = await MenuAPI.fetchItems();
-        allItems = (data || []).filter(i => String(i.es_pausado).toLowerCase() !== "true");
+        const data = await MenuAPI.fetchItems(false);
+        allItems = data.items || [];
+        categoriesList = data.categories || [];
       } catch (e) {
         allItems = [];
+        categoriesList = [];
       }
       
       document.getElementById("loading-spinner").classList.add("hidden");
@@ -249,16 +223,19 @@
     });
 
     function setupCategoryFilter() {
-      const defaultCategories = ["Entradas", "Rollos Clásicos", "Rollos de Autor", "Sushi Perros", "Especiales", "Ramen", "Combos y Promos", "Barra y Bebidas"];
-      const rawCategories = [...new Set(allItems.map(i => i.categoria).filter(Boolean))];
-      const categories = rawCategories.length > 0 ? rawCategories : defaultCategories;
+      const activeCatNames = categoriesList.map(c => c.nombre);
       
-      if (!selectedCategory || !categories.includes(selectedCategory)) {
-        selectedCategory = categories[0];
+      if (activeCatNames.length === 0) {
+        document.getElementById("category-bar").innerHTML = `<p class="text-secondary text-sm">No hay categorías disponibles.</p>`;
+        return;
+      }
+
+      if (!selectedCategory || !activeCatNames.includes(selectedCategory)) {
+        selectedCategory = activeCatNames[0];
       }
       
       const categoryBar = document.getElementById("category-bar");
-      categoryBar.innerHTML = categories.map(cat => `
+      categoryBar.innerHTML = activeCatNames.map(cat => `
         <button onclick="filterCategory('${cat}')" 
           class="w-[145px] h-10 px-2 py-1 rounded-full font-label-bold text-xs sm:text-sm text-center flex items-center justify-center shrink-0 transition-all ${
             selectedCategory === cat 
@@ -294,7 +271,6 @@
         
         return `
           <div class="menu-card bg-[#121212] rounded-lg border border-primary-container/20 overflow-hidden flex flex-col sm:flex-row glow-hover transition-all duration-300 relative group">
-            
             <div class="menu-card-img-wrapper bg-surface-container-highest flex items-center justify-center shrink-0">
               ${item.imagen_url 
                 ? `<img src="${item.imagen_url}" alt="${item.nombre}" loading="lazy" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />` 

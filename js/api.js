@@ -1,15 +1,21 @@
-// Remplaza este valor con la URL pública generada por Google Apps Script
 const API_URL = "https://script.google.com/macros/s/AKfycbxMm4fExrDZM9X3A6NNoPH3dWTlUs2UQDU8aqvpMQQEBSgYQmYdcL5ZecDlUYtJtY25/exec";
 
 const MenuAPI = {
-  async fetchItems() {
+  async fetchItems(isAdmin = false) {
     try {
-      const response = await fetch(API_URL);
+      const url = isAdmin ? `${API_URL}?admin=true` : API_URL;
+      const response = await fetch(url);
       const result = await response.json();
-      return result.status === "success" ? result.data : [];
+      if (result.status === "success") {
+        return {
+          items: result.data || [],
+          categories: result.categories || []
+        };
+      }
+      return { items: [], categories: [] };
     } catch (error) {
-      console.error("Error al obtener los platos:", error);
-      return [];
+      console.error("Error al obtener los datos:", error);
+      return { items: [], categories: [] };
     }
   },
 
@@ -53,8 +59,50 @@ const MenuAPI = {
       console.error("Error al eliminar el plato:", error);
       return { status: "error", message: error.toString() };
     }
+  },
+
+  async createCategory(catData) {
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "create_category", data: catData })
+      });
+      return await response.json();
+    } catch (error) {
+      console.error("Error al crear la categoría:", error);
+      return { status: "error", message: error.toString() };
+    }
+  },
+
+  async updateCategory(catData) {
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "update_category", data: catData })
+      });
+      return await response.json();
+    } catch (error) {
+      console.error("Error al actualizar la categoría:", error);
+      return { status: "error", message: error.toString() };
+    }
+  },
+
+  async deleteCategory(id) {
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action: "delete_category", data: { id: id } })
+      });
+      return await response.json();
+    } catch (error) {
+      console.error("Error al eliminar la categoría:", error);
+      return { status: "error", message: error.toString() };
+    }
   }
-};// ... (código anterior de MenuAPI)
+};
 
 function formatPrice(price) {
   const amount = parseFloat(price) || 0;
