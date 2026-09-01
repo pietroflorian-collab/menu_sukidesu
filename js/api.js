@@ -1,4 +1,14 @@
-const API_URL = "https://script.google.com/macros/s/AKfycbyJffKPdCbyWQGftl_Ay7VK28yQM5iJE1FMN4b97_yxCUvteTWzl5e1L4xmYtDxUz8/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbxMm4fExrDZM9X3A6NNoPH3dWTlUs2UQDU8aqvpMQQEBSgYQmYdcL5ZecDlUYtJtY25/exec";
+
+function escapeHTML(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
 
 const MenuAPI = {
   async fetchItems(isAdmin = false) {
