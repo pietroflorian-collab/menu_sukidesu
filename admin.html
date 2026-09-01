@@ -112,8 +112,6 @@
     </div>
   </main>
 
-  <!-- MODALES REUBICADOS Y AISLADOS AL FINAL -->
-
   <!-- Modal Selector Móvil -->
   <div id="actionModal" class="fixed inset-0 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md" style="z-index: 99999;">
     <div class="w-full max-w-xs bg-[#181818] rounded-xl p-5 border border-outline-variant/40 shadow-2xl flex flex-col gap-3">
@@ -258,7 +256,6 @@
                 </label>
               </div>
 
-              <!-- Sección Promoción por Día -->
               <div class="pt-3 border-t border-outline-variant/30 space-y-2">
                 <label class="block text-primary-fixed font-label-bold text-sm">Etiqueta de Promo Diaria</label>
                 <input id="item-texto-promo" type="text" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white font-body-md text-sm placeholder:text-secondary/40 focus:outline-none focus:border-primary mb-2" placeholder="ej., 2x1 en Cócteles / 20% OFF" />
@@ -345,6 +342,20 @@
 
   <script src="js/api.js"></script>
   <script>
+    // INYECCIÓN DE LA FUNCIÓN GLOBAL SHOWTOAST
+    function showToast(message, type = "success") {
+      const container = document.getElementById("toast-container");
+      if (!container) return;
+      const toast = document.createElement("div");
+      toast.className = `px-4 py-2 mt-2 rounded shadow-lg text-sm font-bold ${type === "success" ? "bg-wasabi-green text-black" : "bg-error text-white"} transition-opacity duration-300`;
+      toast.innerText = message;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
     const SukidesuAdmin = {
       adminItems: [],
       adminCategories: [],
