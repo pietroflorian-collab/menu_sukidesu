@@ -258,11 +258,9 @@
         this.renderMenu();
         this.updateUI();
         
-        // Cargar Modal de Promoción Global
         this.checkGlobalPromo();
       },
       
-      // Controla la lógica de visibilidad del Banner global
       checkGlobalPromo() {
         const promoActive = String(this.config.promo_activa).toLowerCase() === "true";
         if (promoActive && !sessionStorage.getItem('promo_visto')) {
@@ -274,7 +272,6 @@
         }
       },
       
-      // Cierra el banner y lo marca como visto en la sesión
       closePromo() {
         document.getElementById('promo-popup').classList.add('hidden');
         sessionStorage.setItem('promo_visto', 'true');
@@ -340,7 +337,8 @@
           const rawUrl = item.imagen_url || '';
           const optimizedImgUrl = rawUrl.replace('sz=w800', 'sz=w400');
           
-          const isPromoActive = item.dias_promo && item.dias_promo.split(',').includes(today) && item.texto_promo;
+          const activeDays = item.dias_promo ? item.dias_promo.split(',').map(d => d.trim()) : [];
+          const isPromoActive = activeDays.includes(today) && item.texto_promo;
           
           return `
             <div class="menu-card bg-[#121212] rounded-lg border border-primary-container/20 overflow-hidden flex flex-col sm:flex-row glow-hover transition-all duration-300 relative group">

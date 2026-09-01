@@ -158,16 +158,27 @@
   <div id="qrModal" class="fixed inset-0 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md" style="z-index: 99999;">
     <div class="w-full max-w-md bg-[#181818] rounded-xl shadow-2xl border border-primary/40 flex flex-col max-h-[90vh] overflow-hidden">
       <div class="px-5 py-4 border-b border-outline-variant/30 flex justify-between items-center bg-[#121212]">
-        <h3 class="font-headline-lg-mobile text-xl text-primary flex items-center gap-2"><span class="material-symbols-outlined">qr_code_2</span> Código QR de Mesa</h3>
+        <h3 class="font-headline-lg-mobile text-xl text-primary flex items-center gap-2"><span class="material-symbols-outlined">qr_code_2</span> Generador de QR</h3>
         <button class="text-secondary hover:text-primary transition-colors p-1" onclick="SukidesuAdmin.closeQRModal()"><span class="material-symbols-outlined">close</span></button>
       </div>
-      <div class="p-6 flex flex-col items-center justify-center bg-[#181818]">
-        <div class="bg-[#121212] p-4 rounded-2xl border border-primary/30 shadow-2xl flex flex-col items-center">
+      
+      <div class="p-5 space-y-4 overflow-y-auto bg-[#181818]">
+        <div>
+          <label class="block mb-1 text-primary-fixed font-label-bold text-xs uppercase">URL del Menú</label>
+          <input id="qr-input-url" type="text" oninput="SukidesuAdmin.renderAdminQR()" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white text-xs focus:outline-none focus:border-primary" value="https://pietroflorian-collab.github.io/menu_sukidesu/"/>
+        </div>
+
+        <div>
+          <label class="block mb-1 text-primary-fixed font-label-bold text-xs uppercase">Imagen Central (Logo 192x192)</label>
+          <input id="qr-input-file" type="file" accept="image/*" onchange="SukidesuAdmin.handleQRImageUpload(event)" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-1.5 text-secondary text-xs focus:outline-none focus:border-primary file:mr-3 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:bg-primary-container file:text-white"/>
+        </div>
+
+        <div class="flex justify-center bg-[#121212] p-4 rounded-2xl border border-primary/30 shadow-2xl">
           <canvas id="admin-qr-canvas" class="rounded-xl"></canvas>
         </div>
-        <p class="text-xs text-secondary mt-4 text-center">QR generado para: <br><span class="text-primary font-bold">https://pietroflorian-collab.github.io/menu_sukidesu/</span></p>
-        <button onclick="SukidesuAdmin.downloadAdminQR()" class="w-full py-3 bg-primary-container text-sushi-white font-label-bold rounded-lg hover:bg-primary transition-colors mt-5 flex items-center justify-center gap-2">
-          <span class="material-symbols-outlined">download</span> Descargar QR Imprenta
+
+        <button onclick="SukidesuAdmin.downloadAdminQR()" class="w-full py-3 bg-primary-container text-sushi-white font-label-bold rounded-lg hover:bg-primary transition-colors flex items-center justify-center gap-2 text-sm">
+          <span class="material-symbols-outlined">download</span> Guardar Imagen en PC
         </button>
       </div>
     </div>
@@ -340,6 +351,7 @@
       adminConfig: {},
       selectedCategory: "",
       searchQuery: "",
+      customQRLogo: null,
 
       init() {
         this.loadAdminData();
@@ -430,18 +442,36 @@
         this.openModalHelper("qrModal");
         this.renderAdminQR();
       },
+      
       closeQRModal() {
         this.closeModalHelper("qrModal");
       },
+
+      handleQRImageUpload(event) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+              this.customQRLogo = img;
+              this.renderAdminQR();
+            };
+            img.src = e.target.result;
+          };
+          reader.readAsDataURL(file);
+        }
+      },
+
       renderAdminQR() {
         const canvas = document.getElementById('admin-qr-canvas');
         if (!canvas) return;
         const ctx = canvas.getContext('2d');
-        const menuUrl = "https://pietroflorian-collab.github.io/menu_sukidesu/";
+        const menuUrl = document.getElementById('qr-input-url').value.trim() || "https://pietroflorian-collab.github.io/menu_sukidesu/";
 
-        const qrSize = 280;
+        const qrSize = 260;
         const padding = 16;
-        const textSpace = 60;
+        const textSpace = 50;
 
         canvas.width = qrSize + (padding * 2);
         canvas.height = qrSize + (padding * 2) + textSpace;
@@ -454,21 +484,21 @@
           width: qrSize,
           margin: 2,
           errorCorrectionLevel: 'H'
-        }, function (error) {
-          if (error) console.error(error);
+        }, (error) => {
+          if (error) {
+            console.error(error);
+            return;
+          }
 
           ctx.drawImage(tempCanvas, padding, padding);
 
-          const logo = new Image();
-          logo.src = 'icon-192x192.png';
-          
-          logo.onload = function() {
+          const drawCenterLogo = (imgObj) => {
             const centerX = canvas.width / 2;
             const centerY = padding + (qrSize / 2);
-            const logoSize = 68;
+            const logoSize = 64;
 
             ctx.beginPath();
-            ctx.arc(centerX, centerY, (logoSize / 2) + 5, 0, Math.PI * 2);
+            ctx.arc(centerX, centerY, (logoSize / 2) + 4, 0, Math.PI * 2);
             ctx.fillStyle = '#FFFFFF';
             ctx.fill();
 
@@ -476,21 +506,37 @@
             ctx.beginPath();
             ctx.arc(centerX, centerY, logoSize / 2, 0, Math.PI * 2);
             ctx.clip();
-            ctx.drawImage(logo, centerX - logoSize / 2, centerY - logoSize / 2, logoSize, logoSize);
+            ctx.drawImage(imgObj, centerX - logoSize / 2, centerY - logoSize / 2, logoSize, logoSize);
             ctx.restore();
 
             ctx.fillStyle = '#FFFFFF';
-            ctx.font = 'bold 30px sans-serif';
+            ctx.font = 'bold 26px sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText('MENÚ', centerX, canvas.height - (textSpace / 2));
           };
+
+          if (this.customQRLogo) {
+            drawCenterLogo(this.customQRLogo);
+          } else {
+            const defaultLogo = new Image();
+            defaultLogo.src = 'icon-192x192.png';
+            defaultLogo.onload = () => drawCenterLogo(defaultLogo);
+            defaultLogo.onerror = () => {
+              ctx.fillStyle = '#FFFFFF';
+              ctx.font = 'bold 26px sans-serif';
+              ctx.textAlign = 'center';
+              ctx.textBaseline = 'middle';
+              ctx.fillText('MENÚ', canvas.width / 2, canvas.height - (textSpace / 2));
+            };
+          }
         });
       },
+
       downloadAdminQR() {
         const canvas = document.getElementById('admin-qr-canvas');
         const link = document.createElement('a');
-        link.download = 'QR_Mesa_Sukidesu_Menu.png';
+        link.download = 'QR_Mesa_Sukidesu.png';
         link.href = canvas.toDataURL('image/png');
         link.click();
       },
