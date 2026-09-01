@@ -487,60 +487,73 @@
         canvas.width = qrSize + (padding * 2);
         canvas.height = qrSize + (padding * 2) + textSpace;
 
+        // 1. Pintar el fondo oscuro primero
         ctx.fillStyle = '#121212';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        const tempCanvas = document.createElement('canvas');
-        QRCode.toCanvas(tempCanvas, menuUrl, {
+        // 2. Generar el QR como imagen (Base64) de forma segura
+        QRCode.toDataURL(menuUrl, {
           width: qrSize,
           margin: 2,
+          color: {
+            dark: '#000000',
+            light: '#ffffff'
+          },
           errorCorrectionLevel: 'H'
-        }, (error) => {
+        }, (error, url) => {
           if (error) {
-            console.error(error);
+            console.error("Error generando QR:", error);
             return;
           }
 
-          ctx.drawImage(tempCanvas, padding, padding);
+          // 3. Crear el objeto imagen con el QR generado
+          const qrImg = new Image();
+          qrImg.onload = () => {
+            // Dibujar el QR sobre nuestro canvas principal
+            ctx.drawImage(qrImg, padding, padding);
 
-          const drawCenterLogo = (imgObj) => {
-            const centerX = canvas.width / 2;
-            const centerY = padding + (qrSize / 2);
-            const logoSize = 64;
+            const drawCenterLogo = (imgObj) => {
+              const centerX = canvas.width / 2;
+              const centerY = padding + (qrSize / 2);
+              const logoSize = 64;
 
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, (logoSize / 2) + 4, 0, Math.PI * 2);
-            ctx.fillStyle = '#FFFFFF';
-            ctx.fill();
+              ctx.beginPath();
+              ctx.arc(centerX, centerY, (logoSize / 2) + 4, 0, Math.PI * 2);
+              ctx.fillStyle = '#FFFFFF';
+              ctx.fill();
 
-            ctx.save();
-            ctx.beginPath();
-            ctx.arc(centerX, centerY, logoSize / 2, 0, Math.PI * 2);
-            ctx.clip();
-            ctx.drawImage(imgObj, centerX - logoSize / 2, centerY - logoSize / 2, logoSize, logoSize);
-            ctx.restore();
+              ctx.save();
+              ctx.beginPath();
+              ctx.arc(centerX, centerY, logoSize / 2, 0, Math.PI * 2);
+              ctx.clip();
+              ctx.drawImage(imgObj, centerX - logoSize / 2, centerY - logoSize / 2, logoSize, logoSize);
+              ctx.restore();
 
-            ctx.fillStyle = '#FFFFFF';
-            ctx.font = 'bold 26px sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillText('MENÚ', centerX, canvas.height - (textSpace / 2));
-          };
-
-          if (this.customQRLogo) {
-            drawCenterLogo(this.customQRLogo);
-          } else {
-            const defaultLogo = new Image();
-            defaultLogo.src = 'icon-192x192.png';
-            defaultLogo.onload = () => drawCenterLogo(defaultLogo);
-            defaultLogo.onerror = () => {
               ctx.fillStyle = '#FFFFFF';
               ctx.font = 'bold 26px sans-serif';
               ctx.textAlign = 'center';
               ctx.textBaseline = 'middle';
-              ctx.fillText('MENÚ', canvas.width / 2, canvas.height - (textSpace / 2));
+              ctx.fillText('MENÚ', centerX, canvas.height - (textSpace / 2));
             };
-          }
+
+            // 4. Dibujar logo central (Personalizado o por defecto)
+            if (this.customQRLogo) {
+              drawCenterLogo(this.customQRLogo);
+            } else {
+              const defaultLogo = new Image();
+              // IMPORTANTE: Definir el onload ANTES de asignar el src
+              defaultLogo.onload = () => drawCenterLogo(defaultLogo);
+              defaultLogo.onerror = () => {
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = 'bold 26px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('MENÚ', canvas.width / 2, canvas.height - (textSpace / 2));
+              };
+              defaultLogo.src = 'icon-192x192.png';
+            }
+          };
+          qrImg.src = url;
         });
       },
 
