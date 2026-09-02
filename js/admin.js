@@ -102,10 +102,11 @@ const SukidesuAdmin = {
     const payload = { promo_activa: document.getElementById("config-promo-activa").checked.toString(), promo_texto: document.getElementById("config-promo-texto").value, promo_imagen: document.getElementById("config-promo-img").value };
     const res = await MenuAPI.updateConfig(payload);
     if(res.status === "success") { showToast("Configuración guardada", "success"); this.adminConfig = payload; this.closeModalHelper("promoConfigModal"); }
-    btn.innerText = "Guardar Configuración"; btn.disabled = false;
+    btn.innerText = "Guardar"; btn.disabled = false;
   },
 
   openQRModal() { this.openModalHelper("qrModal"); this.renderAdminQR(); },
+  
   handleQRImageUpload(event) {
     const file = event.target.files[0];
     if (file) {
@@ -143,33 +144,60 @@ const SukidesuAdmin = {
   },
 
   populateCategorySelect() {
-    // Excluye "Combos y Promos" del formulario de creación
-    const categoriasReales = this.adminCategories.filter(cat => cat.nombre !== "Combos y Promos");
+    // Conserva las categorías reales para asignar platos, pero borra las combinaciones artificiales.
+    const categoriasReales = this.adminCategories.filter(cat => {
+      const name = (cat.nombre || "").toLowerCase();
+      return name !== "combos y promo" && name !== "combos y promos";
+    });
     document.getElementById("item-categoria").innerHTML = categoriasReales.map(cat => 
-      `<option value="${escapeHTML(cat.nombre)}" class="bg-[#242424] text-white">${escapeHTML(cat.nombre)}</option>`
+      `<option value="${escapeHTML(cat.nombre)}" class="bg-surface-container-high text-sushi-white">${escapeHTML(cat.nombre)}</option>`
     ).join("");
   },
 
   setupAdminCategories() {
     if (this.adminCategories.length === 0) return;
-    if (!this.selectedCategory || !this.adminCategories.some(c => c.nombre === this.selectedCategory)) this.selectedCategory = this.adminCategories[0].nombre;
-    document.getElementById("admin-category-bar").innerHTML = this.adminCategories.map(cat => `
-      <button data-category="${escapeHTML(cat.nombre)}" class="w-44 h-11 px-3 py-2 rounded-full font-label-bold text-sm shrink-0 transition-all ${cat.es_pausada ? 'opacity-50 grayscale border-dashed' : ''} ${this.selectedCategory === cat.nombre ? 'bg-primary-container text-sushi-white' : 'bg-surface-variant text-tertiary hover:bg-surface-bright'}">${escapeHTML(cat.nombre)} ${cat.es_pausada ? '⏸' : ''}</button>
+    
+    // Limpieza agresiva: Ocultamos de los botones cualquier categoría que contenga las palabras combo o promo
+    let categoriasVisibles = this.adminCategories.filter(c => {
+        const name = (c.nombre || "").toLowerCase();
+        return !name.includes("combo") && !name.includes("promo");
+    });
+    
+    // Inyectamos la categoría fusionada artificialmente de forma única
+    categoriasVisibles.push({ nombre: "Combos y Promo", es_pausada: false });
+
+    // Validación de seguridad
+    if (!this.selectedCategory || !categoriasVisibles.some(c => c.nombre === this.selectedCategory)) {
+      this.selectedCategory = categoriasVisibles[0].nombre;
+    }
+
+    document.getElementById("admin-category-bar").innerHTML = categoriasVisibles.map(cat => `
+      <button data-category="${escapeHTML(cat.nombre)}" class="w-44 h-11 px-3 py-2 rounded-full font-label-bold text-sm shrink-0 transition-all ${cat.es_pausada ? 'opacity-50 grayscale border-dashed' : ''} ${this.selectedCategory === cat.nombre ? 'bg-primary-container text-sushi-white' : 'bg-surface-container-highest text-tertiary hover:bg-surface-bright'}">${escapeHTML(cat.nombre)} ${cat.es_pausada ? '⏸' : ''}</button>
     `).join("");
   },
 
   filterAdminCategory(cat) { this.selectedCategory = cat; this.setupAdminCategories(); this.renderAdminGrid(); },
   handleSearch(query) { this.searchQuery = query.toLowerCase().trim(); this.renderAdminGrid(); },
 
- renderAdminGrid() {
+  renderAdminGrid() {
     const grid = document.getElementById("admin-grid");
     const filtered = this.adminItems.filter(i => {
-      const matchesSearch = !this.searchQuery || i.nombre.toLowerCase().includes(this.searchQuery);
+      const safeName = i.nombre || "";
+      const matchesSearch = !this.searchQuery || safeName.toLowerCase().includes(this.searchQuery);
       
-      // Si seleccionas Combos y Promos, muestra platos que tengan texto de promo o días asignados
       let matchesCategory = false;
-      if (this.selectedCategory === "Combos y Promos") {
-        matchesCategory = (i.texto_promo && i.texto_promo.trim() !== "") || (i.dias_promo && i.dias_promo.trim() !== "");
+      
+      // Lógica de Fusión: Agrupa todo lo que sea promocional bajo la pestaña unificada
+      if (this.selectedCategory === "Combos y Promo") {
+        const cat = (i.categoria || "").toLowerCase();
+        matchesCategory = (
+          cat === "combos" || 
+          cat === "promociones" || 
+          cat === "promos" || 
+          cat === "promo" ||
+          (i.texto_promo && i.texto_promo.trim() !== "") || 
+          (i.dias_promo && i.dias_promo.trim() !== "")
+        );
       } else {
         matchesCategory = this.searchQuery ? true : (i.categoria === this.selectedCategory);
       }
@@ -178,7 +206,7 @@ const SukidesuAdmin = {
     });
     
     const itemsHTML = filtered.map(item => UI.generarTarjetaPlato(item, 'admin')).join("");
-    const addCardHTML = `<div id="btn-add-grid" class="rounded-xl border-2 border-dashed border-outline-variant/40 hover:border-primary/60 hover:bg-primary/5 transition-colors flex flex-col items-center justify-center min-h-[240px] cursor-pointer group"><div class="w-16 h-16 rounded-full bg-surface-variant flex items-center justify-center mb-4 group-hover:bg-primary-container group-hover:text-white transition-colors"><span class="material-symbols-outlined text-3xl">add</span></div><span class="font-label-bold text-tertiary group-hover:text-primary">Añadir Nuevo</span></div>`;
+    const addCardHTML = `<div id="btn-add-grid" class="rounded-xl border-2 border-dashed border-outline-variant/40 hover:border-primary/60 hover:bg-primary/5 transition-colors flex flex-col items-center justify-center min-h-[240px] cursor-pointer group"><div class="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center mb-4 group-hover:bg-primary-container group-hover:text-white transition-colors"><span class="material-symbols-outlined text-3xl">add</span></div><span class="font-label-bold text-tertiary group-hover:text-primary">Añadir Nuevo</span></div>`;
     
     grid.innerHTML = itemsHTML + addCardHTML;
     document.getElementById("btn-add-grid")?.addEventListener('click', () => this.openModal());
@@ -250,9 +278,9 @@ const SukidesuAdmin = {
     document.querySelectorAll('input[name="promo-dia"]').forEach(cb => cb.checked = false);
     
     if (item) {
-      document.getElementById("item-nombre").value = item.nombre;
-      document.getElementById("item-precio").value = item.precio;
-      document.getElementById("item-categoria").value = item.categoria;
+      document.getElementById("item-nombre").value = item.nombre || "";
+      document.getElementById("item-precio").value = item.precio || 0;
+      document.getElementById("item-categoria").value = item.categoria || "";
       document.getElementById("item-imagen-url").value = item.imagen_url || "";
       document.getElementById("item-link-drive").value = item.imagen_url || "";
       document.getElementById("item-descripcion").value = item.descripcion || "";
@@ -268,7 +296,13 @@ const SukidesuAdmin = {
   },
 
   editItem(id) { const item = this.adminItems.find(i => i.id == id); if (item) this.openModal(item); },
-  async deleteItem(id) { if (confirm("¿Borrar este plato?")) { const res = await MenuAPI.deleteItem(id); if (res.status === "success") { showToast("Borrado", "success"); await this.loadAdminData(); } } },
+  
+  async deleteItem(id) { 
+    if (confirm("¿Borrar este plato?")) { 
+      const res = await MenuAPI.deleteItem(id); 
+      if (res.status === "success") { showToast("Borrado", "success"); await this.loadAdminData(); } 
+    } 
+  },
 
   async handleFormSubmit(e) {
     e.preventDefault();

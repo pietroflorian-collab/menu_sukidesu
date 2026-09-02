@@ -8,10 +8,12 @@ const SukidesuMenu = {
   getSelection() {
     try { return JSON.parse(localStorage.getItem(this.STORAGE_KEY)) || []; } catch (e) { return []; }
   },
+  
   saveSelection(list) {
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(list));
     this.updateUI();
   },
+  
   toggleSelection(itemId, itemNombre) {
     let list = this.getSelection();
     const index = list.findIndex(i => i.id === itemId);
@@ -20,6 +22,7 @@ const SukidesuMenu = {
     this.saveSelection(list);
     this.renderMenu();
   },
+  
   updateQuantity(itemId, delta) {
     let list = this.getSelection();
     const item = list.find(i => i.id === itemId);
@@ -30,11 +33,13 @@ const SukidesuMenu = {
       this.renderMenu();
     }
   },
+  
   clearList() {
     localStorage.removeItem(this.STORAGE_KEY);
     this.updateUI();
     this.renderMenu();
   },
+  
   openModal() { document.getElementById("order-modal").classList.remove("hidden"); },
   closeModal() { document.getElementById("order-modal").classList.add("hidden"); },
 
@@ -43,15 +48,17 @@ const SukidesuMenu = {
     const totalCount = list.reduce((acc, curr) => acc + curr.cantidad, 0);
     const fabContainer = document.getElementById("fab-container");
     
-    if (totalCount > 0) {
+    if (totalCount > 0 && fabContainer) {
       fabContainer.classList.remove("hidden");
       document.getElementById("fab-badge").innerText = totalCount;
-    } else {
+    } else if (fabContainer) {
       fabContainer.classList.add("hidden");
       this.closeModal();
     }
 
     const modalList = document.getElementById("modal-item-list");
+    if (!modalList) return;
+    
     if (list.length === 0) {
       modalList.innerHTML = `<div class="text-center py-8"><span class="material-symbols-outlined text-secondary text-4xl mb-2">remove_shopping_cart</span><p class="text-secondary text-sm">No has agregado platos a tu lista.</p></div>`;
     } else {
@@ -78,8 +85,8 @@ const SukidesuMenu = {
     } catch (e) {
       this.allItems = []; this.categoriesList = []; this.config = {};
     }
-    document.getElementById("loading-spinner").classList.add("hidden");
-    document.getElementById("menu-grid").classList.remove("hidden");
+    document.getElementById("loading-spinner")?.classList.add("hidden");
+    document.getElementById("menu-grid")?.classList.remove("hidden");
     
     this.setupCategoryFilter();
     this.renderMenu();
@@ -87,23 +94,24 @@ const SukidesuMenu = {
   },
 
   bindEvents() {
-    document.getElementById("btn-open-cart").addEventListener('click', () => this.openModal());
-    document.getElementById("btn-close-cart").addEventListener('click', () => this.closeModal());
-    document.getElementById("btn-clear-cart").addEventListener('click', () => this.clearList());
-    document.getElementById("btn-close-cart-bottom").addEventListener('click', () => this.closeModal());
+    const bindClick = (id, fn) => document.getElementById(id)?.addEventListener('click', fn);
+    bindClick("btn-open-cart", () => this.openModal());
+    bindClick("btn-close-cart", () => this.closeModal());
+    bindClick("btn-clear-cart", () => this.clearList());
+    bindClick("btn-close-cart-bottom", () => this.closeModal());
 
-    document.getElementById("category-bar").addEventListener('click', (e) => {
+    document.getElementById("category-bar")?.addEventListener('click', (e) => {
       const btn = e.target.closest('button[data-category]');
       if (btn) this.filterCategory(btn.dataset.category);
     });
 
-    document.getElementById("menu-grid").addEventListener('click', (e) => {
+    document.getElementById("menu-grid")?.addEventListener('click', (e) => {
       if (e.target.dataset.expandable) e.target.classList.toggle('line-clamp-3');
       const btn = e.target.closest('button[data-action="toggle-select"]');
       if (btn) this.toggleSelection(btn.dataset.id, btn.dataset.name);
     });
 
-    document.getElementById("modal-item-list").addEventListener('click', (e) => {
+    document.getElementById("modal-item-list")?.addEventListener('click', (e) => {
       const btn = e.target.closest('button[data-action]');
       if (!btn) return;
       if (btn.dataset.action === 'decrease') this.updateQuantity(btn.dataset.id, -1);
@@ -112,18 +120,34 @@ const SukidesuMenu = {
   },
 
   setupCategoryFilter() {
-    const activeCatNames = this.categoriesList.map(c => c.nombre);
-    const categoryBar = document.getElementById("category-bar");
-    if (activeCatNames.length === 0) {
-      categoryBar.innerHTML = `<p class="text-secondary text-sm">No hay categorías disponibles.</p>`;
+    if (this.categoriesList.length === 0) {
+      document.getElementById("category-bar").innerHTML = `<p class="text-secondary text-sm">No hay categorías disponibles.</p>`;
       return;
     }
-    if (!this.selectedCategory || !activeCatNames.includes(this.selectedCategory)) this.selectedCategory = activeCatNames[0];
+
+    // 1. Limpieza total: Excluye de los botones cualquier categoría que tenga las palabras combo o promo en su interior
+    let categoriasVisibles = this.categoriesList
+      .filter(c => {
+        const name = (c.nombre || "").toLowerCase();
+        return !name.includes("combo") && !name.includes("promo");
+      })
+      .map(c => c.nombre);
     
-    categoryBar.innerHTML = activeCatNames.map(cat => `
-      <button data-category="${escapeHTML(cat)}" class="w-[145px] h-10 px-2 py-1 rounded-full font-label-bold text-xs sm:text-sm text-center flex items-center justify-center shrink-0 transition-all ${this.selectedCategory === cat ? 'bg-primary-container text-sushi-white font-bold shadow-md' : 'bg-surface-variant text-tertiary hover:bg-surface-bright border border-outline-variant/20'}">${escapeHTML(cat)}</button>
+    // 2. Inyectamos la categoría fusionada
+    categoriasVisibles.push("Combos y Promo");
+
+    // Seguridad por si la categoría seleccionada no es válida tras el filtro
+    if (!this.selectedCategory || !categoriasVisibles.includes(this.selectedCategory)) {
+      this.selectedCategory = categoriasVisibles[0];
+    }
+    
+    const categoryBar = document.getElementById("category-bar");
+    categoryBar.innerHTML = categoriasVisibles.map(cat => `
+      <button data-category="${escapeHTML(cat)}" class="w-[145px] h-10 px-2 py-1 rounded-full font-label-bold text-xs sm:text-sm text-center flex items-center justify-center shrink-0 transition-all ${this.selectedCategory === cat ? 'bg-primary-container text-sushi-white font-bold shadow-md' : 'bg-surface-container-highest text-tertiary hover:bg-surface-bright border border-outline-variant/20'}">${escapeHTML(cat)}</button>
     `).join("");
-    document.getElementById("current-category-title").innerHTML = `<span class="material-symbols-outlined mr-2 text-primary">restaurant_menu</span> ${escapeHTML(this.selectedCategory)}`;
+    
+    const titleEl = document.getElementById("current-category-title");
+    if (titleEl) titleEl.innerHTML = `<span class="material-symbols-outlined mr-2 text-primary">restaurant_menu</span> ${escapeHTML(this.selectedCategory)}`;
   },
 
   filterCategory(cat) {
@@ -134,19 +158,28 @@ const SukidesuMenu = {
 
   renderMenu() {
     const grid = document.getElementById("menu-grid");
+    if (!grid) return;
     const today = new Date().toLocaleDateString('es-ES', { weekday: 'long' }).toLowerCase();
     
     const filtered = this.allItems.filter(i => {
-      // Filtro inteligente para el cliente: solo promos de hoy
-      if (this.selectedCategory === "Combos y Promos") {
+      // Lógica de Fusión: Mostrar Combos y Promociones válidas para HOY
+      if (this.selectedCategory === "Combos y Promo") {
+        const cat = (i.categoria || "").toLowerCase();
         const activeDays = i.dias_promo ? i.dias_promo.split(',').map(d => d.trim().toLowerCase()) : [];
-        return activeDays.includes(today) && i.texto_promo;
+        const isPromoToday = activeDays.includes(today) && i.texto_promo && i.texto_promo.trim() !== "";
+        
+        return (cat === "combos" || cat === "promociones" || cat === "promos" || cat === "promo" || isPromoToday);
       }
       return i.categoria === this.selectedCategory;
     });
 
     if (filtered.length === 0) {
-      grid.innerHTML = `<div class="col-span-full text-center py-12 bg-[#181818] rounded-xl border border-dashed border-outline-variant/30 my-4"><span class="material-symbols-outlined text-secondary text-5xl mb-3">ramen_dining</span><h3 class="text-secondary">No hay platos disponibles</h3></div>`;
+      grid.innerHTML = `
+        <div class="col-span-full text-center py-12 bg-surface-container rounded-xl border border-dashed border-outline-variant/30 my-4">
+          <span class="material-symbols-outlined text-secondary text-5xl mb-3">ramen_dining</span>
+          <h3 class="font-headline-lg-mobile text-lg text-secondary">No hay platos disponibles</h3>
+          <p class="font-body-md text-xs text-secondary/70 mt-1">Pronto añadiremos nuevas opciones.</p>
+        </div>`;
       return;
     }
     grid.innerHTML = filtered.map(item => UI.generarTarjetaPlato(item, 'client', this.getSelection())).join("");
