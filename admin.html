@@ -487,29 +487,25 @@
         canvas.width = qrSize + (padding * 2);
         canvas.height = qrSize + (padding * 2) + textSpace;
 
-        // 1. Pintar el fondo oscuro primero
+        // 1. Pintar el fondo oscuro general
         ctx.fillStyle = '#121212';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // 2. Pintar fondo blanco estricto para el área del QR
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(padding, padding, qrSize, qrSize);
 
-        // 2. Generar el QR como imagen (Base64) de forma segura
+        // 3. Generar el QR
         QRCode.toDataURL(menuUrl, {
           width: qrSize,
-          margin: 2,
-          color: {
-            dark: '#000000',
-            light: '#ffffff'
-          },
+          margin: 0,
+          color: { dark: '#000000', light: '#ffffff' },
           errorCorrectionLevel: 'H'
         }, (error, url) => {
-          if (error) {
-            console.error("Error generando QR:", error);
-            return;
-          }
+          if (error) return;
 
-          // 3. Crear el objeto imagen con el QR generado
           const qrImg = new Image();
           qrImg.onload = () => {
-            // Dibujar el QR sobre nuestro canvas principal
             ctx.drawImage(qrImg, padding, padding);
 
             const drawCenterLogo = (imgObj) => {
@@ -536,20 +532,11 @@
               ctx.fillText('MENÚ', centerX, canvas.height - (textSpace / 2));
             };
 
-            // 4. Dibujar logo central (Personalizado o por defecto)
             if (this.customQRLogo) {
               drawCenterLogo(this.customQRLogo);
             } else {
               const defaultLogo = new Image();
-              // IMPORTANTE: Definir el onload ANTES de asignar el src
               defaultLogo.onload = () => drawCenterLogo(defaultLogo);
-              defaultLogo.onerror = () => {
-                ctx.fillStyle = '#FFFFFF';
-                ctx.font = 'bold 26px sans-serif';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText('MENÚ', canvas.width / 2, canvas.height - (textSpace / 2));
-              };
               defaultLogo.src = 'icon-192x192.png';
             }
           };
@@ -841,7 +828,7 @@
           document.getElementById("item-texto-promo").value = item.texto_promo || "";
 
           if (item.dias_promo) {
-            const activeDays = item.dias_promo.split(',');
+            const activeDays = item.dias_promo.split(',').map(d => d.trim());
             document.querySelectorAll('input[name="promo-dia"]').forEach(cb => {
               if (activeDays.includes(cb.value)) cb.checked = true;
             });
