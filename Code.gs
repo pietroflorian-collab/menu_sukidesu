@@ -93,13 +93,20 @@ function handleRead(e) {
   
   var isAdmin = e && e.parameter && e.parameter.admin === "true";
   
-  // 1. Leer Configuración Global
-  var configData = configSheet.getDataRange().getValues();
-  var config = {};
-  for (var c = 1; c < configData.length; c++) {
-    config[configData[c][0]] = configData[c][1];
-  }
-  
+      // 1. Leer Configuración Global
+    var configData = configSheet.getDataRange().getValues();
+    var config = {};
+    for (var c = 1; c < configData.length; c++) {
+      var key = configData[c][0];
+      var value = configData[c][1];
+      
+      // Parseo estricto para evitar falsos positivos en JavaScript
+      if (String(value).toLowerCase() === "true") value = true;
+      if (String(value).toLowerCase() === "false") value = false;
+      
+      config[key] = value;
+    }
+
   // 2. Leer Categorías
   var catData = catSheet.getDataRange().getValues();
   var categories = [];
@@ -158,7 +165,7 @@ function handleRead(e) {
 
 function handleUpdateConfig(payload) {
   var sheet = getConfigSheet();
-  
+
   function upsertConfig(key, value) {
     var data = sheet.getDataRange().getValues();
     var found = false;
@@ -171,13 +178,26 @@ function handleUpdateConfig(payload) {
     }
     if (!found) sheet.appendRow([key, value]);
   }
+
+  if (payload.promo_activa !== undefined) {
+    upsertConfig("promo_activa", payload.promo_activa);
+  }
   
-  if (payload.promo_activa !== undefined) upsertConfig("promo_activa", payload.promo_activa);
-  if (payload.promo_texto !== undefined) upsertConfig("promo_texto", payload.promo_texto);
-  if (payload.promo_imagen !== undefined) upsertConfig("promo_imagen", payload.promo_imagen);
+  if (payload.promo_texto !== undefined) {
+    upsertConfig("promo_texto", payload.promo_texto);
+  }
   
+  // Enviar a Drive si es archivo local, o guardar URL directa si es un enlace existente
+  if (payload.promo_imagen_base64) {
+    var driveUrl = saveImageToDrive(payload.promo_imagen_base64, "promo_" + new Date().getTime());
+    if (driveUrl) upsertConfig("promo_imagen", driveUrl);
+  } else if (payload.promo_imagen !== undefined && payload.promo_imagen !== "") {
+    upsertConfig("promo_imagen", payload.promo_imagen);
+  }
+
   return responseJSON({ status: "success", message: "Configuración actualizada" });
 }
+
 
 /* =========================================
  * ACCIONES DE PLATOS
