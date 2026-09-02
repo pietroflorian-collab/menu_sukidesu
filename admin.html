@@ -1,940 +1,220 @@
 <!DOCTYPE html>
 <html class="dark" lang="es">
-<script src="js/api.js?v=2" defer></script>
-</head>
-
+<head>
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
   <title>Sukidesu Sushi - Menú</title>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com" rel="preconnect"/>
-  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <link href="css/output.css" rel="stylesheet"/>
-  <link href="https://fonts.googleapis.com/css2?family=Anybody:ital,wght@0,100..900;1,100..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;family=Space+Grotesk:wght@300..700&amp;display=swap" rel="stylesheet"/>
-  <link rel="manifest" href="./manifest-admin.json">
-  <meta name="theme-color" content="#000000">
-  <link rel="apple-touch-icon" href="./icon-192x192.png">
+  <link href="https://fonts.googleapis.com/css2?family=Anybody:wght@700;800&family=Plus+Jakarta+Sans:wght@400&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.4.4/qrcode.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="js/api.js" defer></script>
+  <script src="js/ui.js" defer></script>
+  <script src="js/admin.js" defer></script>
   <style>
-    body { background-color: #000000; color: theme('colors.on-background'); }
+    body { background-color: theme('colors.surface'); color: theme('colors.on-surface'); }
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: theme('colors.surface-container'); }
     ::-webkit-scrollbar-thumb { background: theme('colors.surface-variant'); border-radius: theme('borderRadius.full'); }
     ::-webkit-scrollbar-thumb:hover { background: theme('colors.primary'); }
-    
     .menu-card-img-wrapper { overflow: hidden; }
     .menu-card-img-wrapper img { transition: transform 0.3s ease; }
     .menu-card:hover .menu-card-img-wrapper img { transform: scale(1.05); }
-    .glow-hover:hover { box-shadow: 0 0 15px rgba(173, 32, 32, 0.4); }
+    .glow-hover:hover { box-shadow: 0 0 15px rgba(183, 31, 34, 0.4); }
     .scroll-container { cursor: grab; user-select: none; }
     .scroll-container:active { cursor: grabbing; }
   </style>
 </head>
 <body class="flex h-screen overflow-hidden font-body-md text-body-md relative">
-  <div id="toast-container" class="fixed bottom-5 right-5 flex flex-col gap-2 pointer-events-none" style="z-index: 100000;"></div>
-
-  <!-- Panel Lateral PC -->
-  <nav class="hidden md:flex h-screen w-64 fixed left-0 top-0 bg-surface-container dark:bg-surface-container-high border-r border-outline-variant/20 shadow-md flex-col h-full p-4 z-40">
+  <nav class="hidden md:flex h-screen w-64 fixed left-0 top-0 bg-surface-container border-r border-outline-variant/20 shadow-md flex-col p-4 z-40">
     <div class="mb-6 px-4 py-4 text-center border-b border-outline-variant/20">
       <div class="w-24 h-24 mx-auto mb-3 rounded-full overflow-hidden border-2 border-primary">
-        <div class="flex-1 flex justify-center items-center">
-          <img alt="SUKIDESU Mascot" class="w-0 h-0 md:w-0 md:h-0 object-contain" src="images/screen.png"/>
-        </div>
+        <div class="flex-1 flex justify-center items-center"><img class="object-contain" src="images/screen.png"/></div>
       </div>
       <h1 class="font-headline-lg text-lg text-primary tracking-tighter uppercase mb-0.5">Gestión de Menú</h1>
     </div>
     <div class="flex-1 space-y-2 px-2 overflow-y-auto">
-      <a class="flex items-center px-4 py-3 text-primary bg-primary/10 hover:bg-primary/20 rounded-lg transition-colors group border border-primary/30 mb-2" href="index.html" target="_blank" rel="noopener noreferrer">
-        <span class="material-symbols-outlined mr-3 text-primary">storefront</span>
-        <span class="font-label-bold text-body-md">Ver Carta (Cliente)</span>
+      <a class="flex items-center px-4 py-3 text-primary bg-primary/10 hover:bg-primary/20 rounded-lg border border-primary/30 mb-2" href="index.html" target="_blank">
+        <span class="material-symbols-outlined mr-3 text-primary pointer-events-none">storefront</span><span class="font-label-bold pointer-events-none">Ver Carta (Cliente)</span>
       </a>
-      
-      <!-- Botón Configuración de Banner Promo -->
-      <button class="w-full flex items-center px-4 py-3 text-tertiary bg-surface-variant hover:bg-surface-bright rounded-lg transition-colors border border-outline-variant/30 text-left group" onclick="SukidesuAdmin.openPromoModal()">
-        <span class="material-symbols-outlined mr-3 text-secondary group-hover:text-primary transition-colors">campaign</span>
-        <span class="font-label-bold text-body-md">Banner Promo</span>
+      <button id="nav-promo-btn" class="w-full flex items-center px-4 py-3 text-tertiary bg-surface-variant hover:bg-surface-bright rounded-lg border border-outline-variant/30 text-left group">
+        <span class="material-symbols-outlined mr-3 text-secondary group-hover:text-primary transition-colors pointer-events-none">campaign</span><span class="font-label-bold pointer-events-none">Banner Promo</span>
       </button>
-
-      <!-- Botón Generador de QR -->
-      <button class="w-full flex items-center px-4 py-3 text-tertiary bg-surface-variant hover:bg-surface-bright rounded-lg transition-colors border border-outline-variant/30 text-left group" onclick="SukidesuAdmin.openQRModal()">
-        <span class="material-symbols-outlined mr-3 text-secondary group-hover:text-primary transition-colors">qr_code_2</span>
-        <span class="font-label-bold text-body-md">Generar QR Mesa</span>
+      <button id="nav-qr-btn" class="w-full flex items-center px-4 py-3 text-tertiary bg-surface-variant hover:bg-surface-bright rounded-lg border border-outline-variant/30 text-left group">
+        <span class="material-symbols-outlined mr-3 text-secondary group-hover:text-primary transition-colors pointer-events-none">qr_code_2</span><span class="font-label-bold pointer-events-none">Generar QR Mesa</span>
       </button>
     </div>
-
     <div class="px-2 py-4 mt-auto border-t border-outline-variant/20 space-y-3">
-      <button class="w-full bg-primary-container text-on-primary-container font-label-bold text-sm py-3 rounded-lg hover:bg-primary transition-colors flex items-center justify-center" onclick="SukidesuAdmin.openModal()">
-        <span class="material-symbols-outlined mr-2 text-base">add</span> Nuevo Plato
+      <button id="nav-add-btn" class="w-full bg-primary-container text-on-primary-container font-label-bold text-sm py-3 rounded-lg hover:bg-primary flex items-center justify-center">
+        <span class="material-symbols-outlined mr-2 text-base pointer-events-none">add</span> Nuevo Plato
       </button>
-      <button class="w-full bg-surface-variant text-tertiary font-label-bold text-sm py-2.5 rounded-lg border border-outline-variant/40 hover:bg-surface-bright transition-colors flex items-center justify-center" onclick="SukidesuAdmin.openCategoryModal()">
-        <span class="material-symbols-outlined mr-2 text-base">folder_managed</span> Gestionar Categorías
+      <button id="nav-cat-btn" class="w-full bg-surface-variant text-tertiary font-label-bold text-sm py-2.5 rounded-lg border border-outline-variant/40 hover:bg-surface-bright flex items-center justify-center">
+        <span class="material-symbols-outlined mr-2 text-base pointer-events-none">folder_managed</span> Gestionar Categorías
       </button>
     </div>
   </nav>
 
   <main class="flex-1 ml-0 md:ml-64 h-full flex flex-col relative overflow-hidden bg-transparent">
-    <div class="md:hidden flex justify-between items-center px-5 py-4 bg-surface-container-high border-b border-outline-variant/20 z-30">
-      <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tighter uppercase">Gestor de Menú</h1>
-      <div class="flex items-center gap-2">
-        <button onclick="SukidesuAdmin.openPromoModal()" class="inline-flex items-center p-1.5 text-secondary border border-outline-variant/40 rounded-md hover:bg-surface-variant" title="Banner Promo">
-          <span class="material-symbols-outlined text-sm">campaign</span>
-        </button>
-        <button onclick="SukidesuAdmin.openQRModal()" class="inline-flex items-center p-1.5 text-secondary border border-outline-variant/40 rounded-md hover:bg-surface-variant" title="Generar QR">
-          <span class="material-symbols-outlined text-sm">qr_code_2</span>
-        </button>
-        <a class="inline-flex items-center gap-1 text-xs text-primary font-label-bold border border-primary/40 px-2.5 py-1.5 rounded-md hover:bg-primary/10 transition-colors" href="index.html" target="_blank" rel="noopener noreferrer">
-          <span class="material-symbols-outlined text-sm">storefront</span>
-        </a>
+    <div class="md:hidden flex justify-between items-center px-5 py-4 bg-surface-container border-b border-outline-variant/20 z-30">
+      <h1 class="font-headline-lg-mobile text-primary uppercase">Gestor de Menú</h1>
+      <div class="flex gap-2">
+        <button id="mobile-promo-btn" class="p-1.5 text-secondary border border-outline-variant/40 rounded-md hover:bg-surface-variant"><span class="material-symbols-outlined text-sm pointer-events-none">campaign</span></button>
+        <button id="mobile-qr-btn" class="p-1.5 text-secondary border border-outline-variant/40 rounded-md hover:bg-surface-variant"><span class="material-symbols-outlined text-sm pointer-events-none">qr_code_2</span></button>
+        <button id="mobile-new-btn" class="p-1.5 text-secondary border border-outline-variant/40 rounded-md hover:bg-surface-variant"><span class="material-symbols-outlined text-sm pointer-events-none">add</span></button>
       </div>
     </div>
 
-    <header class="px-5 md:px-12 py-8 md:py-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 z-10 shrink-0">
+    <header class="px-5 md:px-12 py-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 z-10 shrink-0">
       <div>
-        <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-primary tracking-tighter uppercase">Administra tus Productos</h2>
-        <p class="font-body-lg text-body-lg text-secondary">Ver, editar y organizar tus ofertas culinarias.</p>
+        <h2 class="font-headline-lg-mobile text-primary uppercase">Administra tus Productos</h2>
+        <p class="font-body-lg text-secondary">Ver, editar y organizar tus ofertas culinarias.</p>
       </div>
-      <div class="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
+      <div class="flex items-center gap-4 w-full md:w-auto">
         <div class="relative w-full sm:w-72">
           <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-primary">search</span>
-          <input id="admin-search-input" oninput="SukidesuAdmin.handleSearch(this.value)" class="w-full bg-[#1e1e1e] border border-outline-variant/60 rounded-lg pl-10 pr-4 py-2 text-white placeholder-secondary/50 focus:outline-none focus:border-primary text-sm font-body-md" placeholder="Buscar por nombre..." type="text"/>
+          <input id="admin-search-input" class="w-full bg-surface-container border border-outline-variant/60 rounded-lg pl-10 pr-4 py-2 text-white focus:border-primary text-sm font-body-md" placeholder="Buscar por nombre..." type="text"/>
         </div>
-        <button class="md:hidden w-full sm:w-auto bg-primary-container text-on-primary-container font-label-bold text-label-bold px-6 py-2 rounded-lg hover:bg-primary transition-colors whitespace-nowrap" onclick="SukidesuAdmin.openActionModal()">
-          Nuevo
-        </button>
       </div>
     </header>
 
     <div class="flex-1 overflow-y-auto px-5 md:px-12 pb-12 z-10">
       <div id="admin-category-bar" class="scroll-container flex gap-3 mb-8 overflow-x-auto pb-3 -mx-5 px-5 md:mx-0 md:px-0 flex-nowrap"></div>
-      <div id="admin-loading" class="text-center py-12">
-        <span class="material-symbols-outlined text-primary text-4xl animate-spin">progress_activity</span>
-        <p class="mt-2 text-secondary font-body-md">Cargando datos desde Sheets...</p>
-      </div>
+      <div id="admin-loading" class="text-center py-12"><span class="material-symbols-outlined text-primary text-4xl animate-spin">progress_activity</span></div>
       <div id="admin-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 hidden"></div>
     </div>
   </main>
 
-  <!-- Modal Selector Móvil -->
-  <div id="actionModal" class="fixed inset-0 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md" style="z-index: 99999;">
-    <div class="w-full max-w-xs bg-[#181818] rounded-xl p-5 border border-outline-variant/40 shadow-2xl flex flex-col gap-3">
-      <h3 class="text-center font-headline-lg-mobile text-lg text-primary mb-2 uppercase">¿Qué deseas crear?</h3>
-      <button onclick="SukidesuAdmin.closeActionModal(); SukidesuAdmin.openModal();" class="w-full py-3 bg-primary-container text-sushi-white font-label-bold rounded-lg hover:bg-primary transition-colors flex items-center justify-center gap-2">
-        <span class="material-symbols-outlined">add</span> Nuevo Plato
-      </button>
-      <button onclick="SukidesuAdmin.closeActionModal(); SukidesuAdmin.openCategoryModal();" class="w-full py-3 bg-surface-variant text-tertiary font-label-bold rounded-lg border border-outline-variant/40 hover:bg-surface-bright transition-colors flex items-center justify-center gap-2">
-        <span class="material-symbols-outlined">folder_managed</span> Gestionar Categorías
-      </button>
-      <button onclick="SukidesuAdmin.closeActionModal()" class="w-full py-2 text-secondary text-xs text-center mt-1">Cancelar</button>
-    </div>
-  </div>
-
-  <!-- Modal Banner Promo Global -->
-  <div id="promoConfigModal" class="fixed inset-0 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md" style="z-index: 99999;">
-    <div class="w-full max-w-lg bg-[#181818] rounded-xl shadow-2xl border border-primary/40 flex flex-col max-h-[90vh] overflow-hidden">
-      <div class="px-5 py-4 border-b border-outline-variant/30 flex justify-between items-center bg-[#121212]">
-        <h3 class="font-headline-lg-mobile text-xl text-primary flex items-center gap-2"><span class="material-symbols-outlined">campaign</span> Anuncio Principal</h3>
-        <button class="text-secondary hover:text-primary transition-colors p-1" onclick="SukidesuAdmin.closePromoModal()"><span class="material-symbols-outlined">close</span></button>
+  <!-- Modal Banner Promo -->
+  <div id="promoConfigModal" class="fixed inset-0 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md z-50">
+    <div class="w-full max-w-lg bg-surface-container-low rounded-xl shadow-2xl border border-primary/40 flex flex-col">
+      <div class="px-5 py-4 border-b border-outline-variant/30 flex justify-between items-center bg-surface">
+        <h3 class="font-headline-lg-mobile text-xl text-primary"><span class="material-symbols-outlined align-middle mr-2">campaign</span> Anuncio Principal</h3>
+        <button id="close-promo-btn" class="text-secondary hover:text-primary"><span class="material-symbols-outlined pointer-events-none">close</span></button>
       </div>
-      <div class="p-5 space-y-4 overflow-y-auto">
-        <label class="flex items-center gap-3 cursor-pointer p-4 bg-primary-container/10 border border-primary/30 rounded-lg hover:bg-primary-container/20 transition-colors">
-          <input id="config-promo-activa" type="checkbox" class="h-5 w-5 rounded bg-[#242424] border-outline-variant text-primary focus:ring-primary"/>
+      <div class="p-5 space-y-4">
+        <label class="flex items-center gap-3 cursor-pointer p-4 bg-primary-container/10 border border-primary/30 rounded-lg">
+          <input id="config-promo-activa" type="checkbox" class="h-5 w-5 bg-surface-container-high text-primary"/>
           <span class="font-label-bold text-sushi-white text-sm uppercase">Mostrar Anuncio al Entrar</span>
         </label>
         <div>
           <label class="block mb-1 text-primary-fixed font-label-bold text-sm">Texto del Anuncio</label>
-          <textarea id="config-promo-texto" rows="3" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white text-sm focus:outline-none focus:border-primary resize-none" placeholder="ej., Hoy Día de Promo Revisa Nuestra sección..."></textarea>
+          <textarea id="config-promo-texto" rows="3" class="w-full bg-surface-container-high border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white text-sm focus:border-primary resize-none"></textarea>
         </div>
         <div>
-          <label class="block mb-1 text-primary-fixed font-label-bold text-sm">Imagen (URL o ruta local)</label>
-          <input id="config-promo-img" type="text" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-secondary text-sm focus:outline-none focus:border-primary" placeholder="images/niguiripromo.png"/>
-          <p class="text-[10px] text-secondary/60 mt-1 font-label-bold">Predeterminado: images/niguiripromo.png</p>
+          <label class="block mb-1 text-primary-fixed font-label-bold text-sm">Imagen (URL)</label>
+          <input id="config-promo-img" type="text" class="w-full bg-surface-container-high border border-outline-variant/60 rounded-lg px-3 py-2 text-secondary text-sm focus:border-primary"/>
         </div>
-        <button id="promo-save-btn" onclick="SukidesuAdmin.savePromoConfig()" class="w-full py-3 bg-primary-container text-sushi-white font-label-bold rounded-lg hover:bg-primary transition-colors mt-2">Guardar Configuración</button>
+        <button id="promo-save-btn" class="w-full py-3 bg-primary-container text-sushi-white font-label-bold rounded-lg hover:bg-primary mt-2">Guardar Configuración</button>
       </div>
     </div>
   </div>
 
-  <!-- Modal Generador de QR Mesa -->
-  <div id="qrModal" class="fixed inset-0 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md" style="z-index: 99999;">
-    <div class="w-full max-w-md bg-[#181818] rounded-xl shadow-2xl border border-primary/40 flex flex-col max-h-[90vh] overflow-hidden">
-      <div class="px-5 py-4 border-b border-outline-variant/30 flex justify-between items-center bg-[#121212]">
-        <h3 class="font-headline-lg-mobile text-xl text-primary flex items-center gap-2"><span class="material-symbols-outlined">qr_code_2</span> Generador de QR</h3>
-        <button class="text-secondary hover:text-primary transition-colors p-1" onclick="SukidesuAdmin.closeQRModal()"><span class="material-symbols-outlined">close</span></button>
+  <!-- Modal QR -->
+  <div id="qrModal" class="fixed inset-0 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md z-50">
+    <div class="w-full max-w-md bg-surface-container-low rounded-xl shadow-2xl border border-primary/40 flex flex-col">
+      <div class="px-5 py-4 border-b border-outline-variant/30 flex justify-between items-center bg-surface">
+        <h3 class="font-headline-lg-mobile text-xl text-primary"><span class="material-symbols-outlined align-middle mr-2">qr_code_2</span> Generador de QR</h3>
+        <button id="close-qr-btn" class="text-secondary hover:text-primary"><span class="material-symbols-outlined pointer-events-none">close</span></button>
       </div>
-      
-      <div class="p-5 space-y-4 overflow-y-auto bg-[#181818]">
+      <div class="p-5 space-y-4">
         <div>
           <label class="block mb-1 text-primary-fixed font-label-bold text-xs uppercase">URL del Menú</label>
-          <input id="qr-input-url" type="text" oninput="SukidesuAdmin.renderAdminQR()" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white text-xs focus:outline-none focus:border-primary" value="https://pietroflorian-collab.github.io/menu_sukidesu/"/>
+          <input id="qr-input-url" type="text" class="w-full bg-surface-container-high border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white focus:border-primary" value="https://pietroflorian-collab.github.io/menu_sukidesu/"/>
         </div>
-
         <div>
-          <label class="block mb-1 text-primary-fixed font-label-bold text-xs uppercase">Imagen Central (Logo 192x192)</label>
-          <input id="qr-input-file" type="file" accept="image/*" onchange="SukidesuAdmin.handleQRImageUpload(event)" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-1.5 text-secondary text-xs focus:outline-none focus:border-primary file:mr-3 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:bg-primary-container file:text-white"/>
+          <label class="block mb-1 text-primary-fixed font-label-bold text-xs uppercase">Logo Central</label>
+          <input id="qr-input-file" type="file" accept="image/*" class="w-full bg-surface-container-high border border-outline-variant/60 rounded-lg px-3 py-1.5 text-secondary text-xs file:mr-3 file:py-1 file:px-2 file:rounded file:border-0 file:bg-primary-container file:text-white"/>
         </div>
-
-        <div class="flex justify-center bg-[#121212] p-4 rounded-2xl border border-primary/30 shadow-2xl">
-          <canvas id="admin-qr-canvas" class="rounded-xl"></canvas>
-        </div>
-
-        <button onclick="SukidesuAdmin.downloadAdminQR()" class="w-full py-3 bg-primary-container text-sushi-white font-label-bold rounded-lg hover:bg-primary transition-colors flex items-center justify-center gap-2 text-sm">
-          <span class="material-symbols-outlined">download</span> Guardar Imagen en PC
-        </button>
+        <div class="flex justify-center bg-surface p-4 rounded-2xl border border-primary/30"><canvas id="admin-qr-canvas" class="rounded-xl"></canvas></div>
+        <button id="qr-download-btn" class="w-full py-3 bg-primary-container text-sushi-white font-label-bold rounded-lg flex items-center justify-center gap-2"><span class="material-symbols-outlined">download</span> Guardar Imagen en PC</button>
       </div>
     </div>
   </div>
 
   <!-- Modal Categorías -->
-  <div id="categoryModal" class="fixed inset-0 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md" style="z-index: 99999;">
-    <div class="w-full max-w-lg bg-[#181818] rounded-xl shadow-2xl border border-primary-container/40 flex flex-col max-h-[85vh] overflow-hidden">
-      <div class="px-5 py-3 border-b border-outline-variant/30 flex justify-between items-center bg-[#121212]">
+  <div id="categoryModal" class="fixed inset-0 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md z-50">
+    <div class="w-full max-w-lg bg-surface-container-low rounded-xl shadow-2xl border border-primary-container/40 flex flex-col">
+      <div class="px-5 py-3 border-b border-outline-variant/30 flex justify-between items-center bg-surface">
         <h3 class="font-headline-lg-mobile text-xl text-primary-fixed">Gestionar Categorías</h3>
-        <button class="text-secondary hover:text-primary transition-colors p-1" onclick="SukidesuAdmin.closeCategoryModal()">
-          <span class="material-symbols-outlined">close</span>
-        </button>
+        <button id="close-cat-btn" class="text-secondary hover:text-primary"><span class="material-symbols-outlined pointer-events-none">close</span></button>
       </div>
-      <div class="p-5 overflow-y-auto space-y-5 bg-[#181818]">
-        <form onsubmit="SukidesuAdmin.handleCreateCategorySubmit(event)" class="flex gap-2">
-          <input id="new-cat-name" type="text" required placeholder="Nueva categoría..." class="flex-1 bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white font-body-md text-sm focus:outline-none focus:border-primary"/>
-          <button type="submit" id="add-cat-btn" class="bg-primary-container text-sushi-white px-4 py-2 rounded-lg font-label-bold text-sm hover:bg-primary transition-colors whitespace-nowrap">
-            + Crear
-          </button>
+      <div class="p-5 overflow-y-auto space-y-5">
+        <form id="catForm" class="flex gap-2">
+          <input id="new-cat-name" type="text" required class="flex-1 bg-surface-container-high border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white font-body-md focus:border-primary"/>
+          <button type="submit" id="add-cat-btn" class="bg-primary-container text-sushi-white px-4 py-2 rounded-lg font-label-bold hover:bg-primary">+ Crear</button>
         </form>
-        <div>
-          <h4 class="text-xs font-label-bold uppercase text-secondary mb-3">Categorías Existentes:</h4>
-          <div id="category-manage-list" class="space-y-2"></div>
-        </div>
+        <div id="category-manage-list" class="space-y-2"></div>
       </div>
     </div>
   </div>
 
-  <!-- Modal Formulario Plato -->
-  <div id="itemModal" class="fixed inset-0 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md" style="z-index: 99999;">
-    <div class="w-full max-w-4xl bg-[#181818] rounded-xl shadow-2xl border border-primary-container/40 flex flex-col max-h-[90vh] overflow-hidden">
-      <div class="px-5 py-3 border-b border-outline-variant/30 flex justify-between items-center bg-[#121212]">
+  <!-- Modal Item -->
+  <div id="itemModal" class="fixed inset-0 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md z-50">
+    <div class="w-full max-w-4xl bg-surface-container-low rounded-xl shadow-2xl border border-primary-container/40 flex flex-col max-h-[90vh] overflow-hidden">
+      <div class="px-5 py-3 border-b border-outline-variant/30 flex justify-between items-center bg-surface">
         <h3 id="modal-title" class="font-headline-lg-mobile text-xl text-primary-fixed">Añadir Nuevo Plato</h3>
-        <button class="text-secondary hover:text-primary transition-colors p-1" onclick="SukidesuAdmin.closeModal()">
-          <span class="material-symbols-outlined">close</span>
-        </button>
+        <button id="close-item-btn" class="text-secondary hover:text-primary"><span class="material-symbols-outlined pointer-events-none">close</span></button>
       </div>
-
-      <div class="p-4 overflow-y-auto custom-scrollbar bg-[#181818]">
-        <form id="itemForm" onsubmit="SukidesuAdmin.handleFormSubmit(event)" class="space-y-4">
+      <div class="p-4 overflow-y-auto">
+        <form id="itemForm" class="space-y-4">
           <input type="hidden" id="item-id" />
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
             <div class="space-y-3">
-              <div>
-                <label class="block mb-1 text-primary-fixed font-label-bold text-sm">Nombre del Plato</label>
-                <input id="item-nombre" required oninput="SukidesuAdmin.updateModalPreview()" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white placeholder:text-secondary/40 focus:outline-none focus:border-primary font-body-md text-sm" placeholder="ej., Dragon Roll" type="text"/>
+              <input id="item-nombre" required class="w-full bg-surface-container-high border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white focus:border-primary" placeholder="Nombre" type="text"/>
+              <div class="grid grid-cols-2 gap-3">
+                <input id="item-precio" required class="w-full bg-surface-container-high rounded-lg px-3 py-2 text-sushi-white focus:border-primary" placeholder="Precio" type="number"/>
+                <select id="item-categoria" class="w-full bg-surface-container-high rounded-lg px-3 py-2 text-sushi-white focus:border-primary"></select>
               </div>
-              
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label class="block mb-1 text-primary-fixed font-label-bold text-sm">Precio ($)</label>
-                  <input id="item-precio" required step="1" oninput="SukidesuAdmin.updateModalPreview()" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white placeholder:text-secondary/40 focus:outline-none focus:border-primary font-body-md text-sm" placeholder="0" type="number"/>
-                </div>
-                <div>
-                  <label class="block mb-1 text-primary-fixed font-label-bold text-sm">Categoría</label>
-                  <select id="item-categoria" onchange="SukidesuAdmin.updateModalPreview()" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white focus:outline-none focus:border-primary font-body-md text-sm">
-                  </select>
-                </div>
+              <textarea id="item-descripcion" rows="2" class="w-full bg-surface-container-high border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white focus:border-primary resize-none" placeholder="Descripción..."></textarea>
+              <div class="grid grid-cols-2 gap-2 pt-2 border-t border-outline-variant/30">
+                <label class="flex items-center gap-2"><input id="item-picante" type="checkbox" class="h-4 w-4 bg-surface-container-high"/><span class="text-xs">Picante</span></label>
+                <label class="flex items-center gap-2"><input id="item-pausado" type="checkbox" class="h-4 w-4 bg-surface-container-high"/><span class="text-xs">Pausar</span></label>
               </div>
-
-              <div>
-                <label class="block mb-1 text-primary-fixed font-label-bold text-sm">Descripción</label>
-                <textarea id="item-descripcion" rows="2" oninput="SukidesuAdmin.updateModalPreview()" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white placeholder:text-secondary/40 focus:outline-none focus:border-primary font-body-md text-sm resize-none" placeholder="Describe los ingredientes..."></textarea>
-              </div>
-
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-outline-variant/30">
-                <label class="flex items-center gap-2 cursor-pointer">
-                  <input id="item-picante" type="checkbox" class="rounded bg-[#242424] border-outline-variant text-primary focus:ring-primary h-4 w-4"/>
-                  <span class="font-label-bold text-xs text-on-surface">Picante</span>
-                  <span class="material-symbols-outlined text-primary text-[16px]">local_fire_department</span>
-                </label>
-                <label class="flex items-center gap-2 cursor-pointer">
-                  <input id="item-pausado" type="checkbox" class="rounded bg-[#242424] border-outline-variant text-primary-container focus:ring-primary-container h-4 w-4"/>
-                  <span class="font-label-bold text-xs text-on-surface">Pausar Plato</span>
-                  <span class="material-symbols-outlined text-primary-container text-[16px]">pause_circle</span>
-                </label>
-              </div>
-
-              <div class="pt-3 border-t border-outline-variant/30 space-y-2">
-                <label class="block text-primary-fixed font-label-bold text-sm">Etiqueta de Promo Diaria</label>
-                <input id="item-texto-promo" type="text" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white font-body-md text-sm placeholder:text-secondary/40 focus:outline-none focus:border-primary mb-2" placeholder="ej., 2x1 en Cócteles / 20% OFF" />
-                
-                <label class="block text-secondary font-label-bold text-xs uppercase tracking-wider mb-1">Días activos de la etiqueta:</label>
-                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-                  <label class="flex items-center gap-1.5 cursor-pointer bg-[#242424] p-2 rounded border border-outline-variant/30 hover:border-primary/50 transition-colors">
-                    <input type="checkbox" name="promo-dia" value="Lunes" class="rounded bg-[#181818] border-outline-variant text-primary focus:ring-primary h-3.5 w-3.5"/>
-                    <span class="text-on-surface">Lunes</span>
-                  </label>
-                  <label class="flex items-center gap-1.5 cursor-pointer bg-[#242424] p-2 rounded border border-outline-variant/30 hover:border-primary/50 transition-colors">
-                    <input type="checkbox" name="promo-dia" value="Martes" class="rounded bg-[#181818] border-outline-variant text-primary focus:ring-primary h-3.5 w-3.5"/>
-                    <span class="text-on-surface">Martes</span>
-                  </label>
-                  <label class="flex items-center gap-1.5 cursor-pointer bg-[#242424] p-2 rounded border border-outline-variant/30 hover:border-primary/50 transition-colors">
-                    <input type="checkbox" name="promo-dia" value="Miércoles" class="rounded bg-[#181818] border-outline-variant text-primary focus:ring-primary h-3.5 w-3.5"/>
-                    <span class="text-on-surface">Miércoles</span>
-                  </label>
-                  <label class="flex items-center gap-1.5 cursor-pointer bg-[#242424] p-2 rounded border border-outline-variant/30 hover:border-primary/50 transition-colors">
-                    <input type="checkbox" name="promo-dia" value="Jueves" class="rounded bg-[#181818] border-outline-variant text-primary focus:ring-primary h-3.5 w-3.5"/>
-                    <span class="text-on-surface">Jueves</span>
-                  </label>
-                  <label class="flex items-center gap-1.5 cursor-pointer bg-[#242424] p-2 rounded border border-outline-variant/30 hover:border-primary/50 transition-colors">
-                    <input type="checkbox" name="promo-dia" value="Viernes" class="rounded bg-[#181818] border-outline-variant text-primary focus:ring-primary h-3.5 w-3.5"/>
-                    <span class="text-on-surface">Viernes</span>
-                  </label>
-                  <label class="flex items-center gap-1.5 cursor-pointer bg-[#242424] p-2 rounded border border-outline-variant/30 hover:border-primary/50 transition-colors">
-                    <input type="checkbox" name="promo-dia" value="Sábado" class="rounded bg-[#181818] border-outline-variant text-primary focus:ring-primary h-3.5 w-3.5"/>
-                    <span class="text-on-surface">Sábado</span>
-                  </label>
-                  <label class="flex items-center gap-1.5 cursor-pointer bg-[#242424] p-2 rounded border border-outline-variant/30 hover:border-primary/50 transition-colors">
-                    <input type="checkbox" name="promo-dia" value="Domingo" class="rounded bg-[#181818] border-outline-variant text-primary focus:ring-primary h-3.5 w-3.5"/>
-                    <span class="text-on-surface">Domingo</span>
-                  </label>
+              <div class="pt-3 border-t border-outline-variant/30">
+                <input id="item-texto-promo" type="text" class="w-full bg-surface-container-high rounded-lg px-3 py-2 mb-2 text-sm text-sushi-white" placeholder="Texto de Promo" />
+                <div class="grid grid-cols-4 gap-2 text-xs">
+                  <!-- Días -->
+                  <label class="flex items-center gap-1.5"><input type="checkbox" name="promo-dia" value="Lunes" class="h-3.5 w-3.5 bg-surface-container"/>Lunes</label>
+                  <label class="flex items-center gap-1.5"><input type="checkbox" name="promo-dia" value="Martes" class="h-3.5 w-3.5 bg-surface-container"/>Martes</label>
+                  <label class="flex items-center gap-1.5"><input type="checkbox" name="promo-dia" value="Miércoles" class="h-3.5 w-3.5 bg-surface-container"/>Miércoles</label>
+                  <label class="flex items-center gap-1.5"><input type="checkbox" name="promo-dia" value="Jueves" class="h-3.5 w-3.5 bg-surface-container"/>Jueves</label>
+                  <label class="flex items-center gap-1.5"><input type="checkbox" name="promo-dia" value="Viernes" class="h-3.5 w-3.5 bg-surface-container"/>Viernes</label>
+                  <label class="flex items-center gap-1.5"><input type="checkbox" name="promo-dia" value="Sábado" class="h-3.5 w-3.5 bg-surface-container"/>Sábado</label>
+                  <label class="flex items-center gap-1.5"><input type="checkbox" name="promo-dia" value="Domingo" class="h-3.5 w-3.5 bg-surface-container"/>Domingo</label>
                 </div>
               </div>
             </div>
-
-            <div class="flex flex-col bg-[#121212] p-4 rounded-lg border border-outline-variant/30">
-              <label class="block mb-1 text-primary-fixed font-label-bold text-sm">Enlace de Google Drive</label>
-              <input id="item-link-drive" type="text" oninput="SukidesuAdmin.processDriveLink()" class="w-full bg-[#242424] border border-outline-variant/60 rounded-lg px-3 py-2 text-sushi-white font-body-md text-sm placeholder:text-secondary/40 focus:outline-none focus:border-primary" placeholder="Pega el enlace público..."/>
+            <div class="bg-surface p-4 rounded-lg border border-outline-variant/30">
+              <input id="item-link-drive" type="text" class="w-full bg-surface-container-high rounded-lg px-3 py-2 text-sm text-sushi-white mb-2" placeholder="Enlace Drive o URL..."/>
               <input type="hidden" id="item-imagen-url" />
-
-              <div class="mt-4">
-                <span class="block mb-2 text-xs text-secondary font-label-bold uppercase tracking-wider">Vista previa final:</span>
-                
-                <div class="menu-card bg-[#121212] rounded-lg border border-primary-container/20 overflow-hidden flex flex-col sm:flex-row w-full shadow-lg">
-                  <div class="menu-card-img-wrapper w-full sm:w-2/5 min-h-[140px] relative bg-surface-container-highest flex items-center justify-center shrink-0">
-                    <img id="image-preview" src="" alt="Vista previa" class="absolute inset-0 w-full h-full object-cover hidden" />
-                    <span id="preview-placeholder" class="font-label-bold text-secondary text-xs">Pegar enlace</span>
-                    
-                    <div id="preview-badges" class="absolute top-2 left-2 flex flex-col gap-1 pointer-events-none z-10 hidden">
-                      <div class="bg-surface-container-high/90 px-2 py-0.5 rounded-full border border-outline-variant/50 w-fit max-w-full">
-                        <span id="preview-cat-text" class="font-label-bold text-[10px] text-tertiary truncate block">Entradas</span>
-                      </div>
-                    </div>
+              <div class="menu-card bg-surface rounded-lg border border-primary-container/20 overflow-hidden flex w-full shadow-lg">
+                <div class="menu-card-img-wrapper w-2/5 min-h-[140px] relative bg-surface-container flex items-center justify-center">
+                  <img id="image-preview" src="" class="absolute inset-0 w-full h-full object-cover hidden" />
+                  <span id="preview-placeholder" class="text-xs text-secondary">Pegar enlace</span>
+                </div>
+                <div class="p-3 w-3/5 flex flex-col">
+                  <div class="flex justify-between mb-1">
+                    <h3 id="preview-name-text" class="text-sm text-primary-fixed">Plato</h3>
+                    <div class="bg-black px-2 py-0.5 rounded-full text-xs text-sushi-white"><span id="preview-price-text">$0</span></div>
                   </div>
-                  <div class="p-3 w-full sm:w-3/5 flex flex-col flex-grow">
-                    <div class="flex items-start justify-between gap-1 mb-1">
-                      <h3 id="preview-name-text" class="font-headline-lg-mobile text-sm text-primary-fixed leading-tight">Nombre Plato</h3>
-                      <div class="bg-black px-2 py-0.5 rounded-full font-price-display text-xs text-sushi-white border border-outline-variant/50 shadow-md shrink-0">
-                        <span id="preview-price-text">$0</span>
-                      </div>
-                    </div>
-                    <p id="preview-desc-text" class="font-body-md text-secondary text-[11px] leading-tight flex-grow line-clamp-3">Descripción...</p>
-                  </div>
+                  <p id="preview-cat-text" class="text-[10px] text-tertiary mb-1">Categoría</p>
+                  <p id="preview-desc-text" class="text-[11px] text-secondary line-clamp-2">Desc...</p>
                 </div>
               </div>
             </div>
           </div>
-
-          <div class="px-5 py-3 border-t border-outline-variant/30 bg-[#121212] flex justify-end gap-3 -mx-4 -mb-4 mt-2">
-            <button type="button" class="px-5 py-2 rounded-lg font-label-bold text-sm border border-outline-variant text-on-surface hover:bg-surface-variant transition-colors" onclick="SukidesuAdmin.closeModal()">
-              Cancelar
-            </button>
-            <button id="submit-btn" type="submit" class="px-5 py-2 rounded-lg font-label-bold text-sm bg-primary-container text-sushi-white hover:bg-primary transition-colors">
-              Guardar Plato
-            </button>
+          <div class="px-5 py-3 border-t border-outline-variant/30 bg-surface flex justify-end gap-3 -mx-4 -mb-4 mt-2">
+            <button type="button" id="cancel-item-btn" class="px-5 py-2 rounded-lg font-label-bold text-sm border border-outline-variant">Cancelar</button>
+            <button id="submit-btn" type="submit" class="px-5 py-2 rounded-lg font-label-bold text-sm bg-primary-container text-sushi-white hover:bg-primary">Guardar Plato</button>
           </div>
         </form>
       </div>
     </div>
   </div>
-
-    <script>
-    // INYECCIÓN DE LA FUNCIÓN GLOBAL SHOWTOAST
-    function showToast(message, type = "success") {
-      const container = document.getElementById("toast-container");
-      if (!container) return;
-      const toast = document.createElement("div");
-      toast.className = `px-4 py-2 mt-2 rounded shadow-lg text-sm font-bold ${type === "success" ? "bg-wasabi-green text-black" : "bg-error text-white"} transition-opacity duration-300`;
-      toast.innerText = message;
-      container.appendChild(toast);
-      setTimeout(() => {
-        toast.style.opacity = '0';
-        setTimeout(() => toast.remove(), 300);
-      }, 3000);
-    }
-
-    const SukidesuAdmin = {
-      adminItems: [],
-      adminCategories: [],
-      adminConfig: {},
-      selectedCategory: "",
-      searchQuery: "",
-      customQRLogo: null,
-
-      init() {
-        this.loadAdminData();
-        this.enableDragScroll("admin-category-bar");
-      },
-
-      enableDragScroll(id) {
-        const slider = document.getElementById(id);
-        if (!slider) return;
-        let isDown = false, startX, scrollLeft;
-        slider.addEventListener('mousedown', (e) => { isDown = true; startX = e.pageX - slider.offsetLeft; scrollLeft = slider.scrollLeft; });
-        slider.addEventListener('mouseleave', () => isDown = false);
-        slider.addEventListener('mouseup', () => isDown = false);
-        slider.addEventListener('mousemove', (e) => {
-          if (!isDown) return; e.preventDefault(); const x = e.pageX - slider.offsetLeft; const walk = (x - startX) * 2; slider.scrollLeft = scrollLeft - walk;
-        });
-        slider.addEventListener('wheel', (e) => { if (e.deltaY !== 0) { e.preventDefault(); slider.scrollLeft += e.deltaY; } }, { passive: false });
-      },
-
-      async loadAdminData() {
-        document.getElementById("admin-loading").classList.remove("hidden");
-        document.getElementById("admin-grid").classList.add("hidden");
-        
-        const res = await MenuAPI.fetchItems(true);
-        this.adminItems = res.items || [];
-        this.adminCategories = res.categories || [];
-        this.adminConfig = res.config || {};
-        
-        document.getElementById("admin-loading").classList.add("hidden");
-        document.getElementById("admin-grid").classList.remove("hidden");
-        
-        this.populateCategorySelect();
-        this.setupAdminCategories();
-        this.renderAdminGrid();
-      },
-
-      openModalHelper(id) {
-        const el = document.getElementById(id);
-        if (!el) return;
-        el.classList.remove("hidden");
-        el.classList.add("flex");
-      },
-
-      closeModalHelper(id) {
-        const el = document.getElementById(id);
-        if (!el) return;
-        el.classList.add("hidden");
-        el.classList.remove("flex");
-      },
-
-      // Lógica de Banner Promo Global
-      openPromoModal() {
-        document.getElementById("config-promo-activa").checked = String(this.adminConfig.promo_activa).toLowerCase() === "true";
-        document.getElementById("config-promo-texto").value = this.adminConfig.promo_texto || "Hoy Día de Promo Revisa Nuestra sección de Promociones no te lo pierdas";
-        document.getElementById("config-promo-img").value = this.adminConfig.promo_imagen || "images/niguiripromo.png";
-        this.openModalHelper("promoConfigModal");
-      },
-      closePromoModal() {
-        this.closeModalHelper("promoConfigModal");
-      },
-      async savePromoConfig() {
-        const btn = document.getElementById("promo-save-btn");
-        btn.innerText = "Guardando..."; 
-        btn.disabled = true;
-        
-        const payload = {
-          promo_activa: document.getElementById("config-promo-activa").checked.toString(),
-          promo_texto: document.getElementById("config-promo-texto").value,
-          promo_imagen: document.getElementById("config-promo-img").value || "images/niguiripromo.png"
-        };
-        
-        const res = await MenuAPI.updateConfig(payload);
-        
-        if(res.status === "success") {
-          showToast("Configuración del Anuncio guardada con éxito", "success");
-          this.adminConfig = payload;
-          this.closePromoModal();
-        } else {
-          showToast("Error al guardar la configuración", "error");
-        }
-        
-        btn.innerText = "Guardar Configuración"; 
-        btn.disabled = false;
-      },
-
-      // Lógica de Generador de Código QR
-      openQRModal() {
-        this.openModalHelper("qrModal");
-        this.renderAdminQR();
-      },
-      
-      closeQRModal() {
-        this.closeModalHelper("qrModal");
-      },
-
-      handleQRImageUpload(event) {
-        const file = event.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            const img = new Image();
-            img.onload = () => {
-              this.customQRLogo = img;
-              this.renderAdminQR();
-            };
-            img.src = e.target.result;
-          };
-          reader.readAsDataURL(file);
-        }
-      },
-
-      renderAdminQR() {
-        const canvas = document.getElementById('admin-qr-canvas');
-        if (!canvas) return;
-        const ctx = canvas.getContext('2d');
-        const menuUrl = document.getElementById('qr-input-url').value.trim() || "https://pietroflorian-collab.github.io/menu_sukidesu/";
-
-        const qrSize = 260;
-        const padding = 16;
-        const textSpace = 50;
-
-        canvas.width = qrSize + (padding * 2);
-        canvas.height = qrSize + (padding * 2) + textSpace;
-
-        // 1. Pintar el fondo oscuro general
-        ctx.fillStyle = '#121212';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        // 2. Pintar fondo blanco estricto para el área del QR
-        ctx.fillStyle = '#FFFFFF';
-        ctx.fillRect(padding, padding, qrSize, qrSize);
-
-        // 3. Generar el QR
-        QRCode.toDataURL(menuUrl, {
-          width: qrSize,
-          margin: 0,
-          color: { dark: '#000000', light: '#ffffff' },
-          errorCorrectionLevel: 'H'
-        }, (error, url) => {
-          if (error) return;
-
-          const qrImg = new Image();
-          qrImg.onload = () => {
-            ctx.drawImage(qrImg, padding, padding);
-
-            const drawCenterLogo = (imgObj) => {
-              const centerX = canvas.width / 2;
-              const centerY = padding + (qrSize / 2);
-              const logoSize = 64;
-
-              ctx.beginPath();
-              ctx.arc(centerX, centerY, (logoSize / 2) + 4, 0, Math.PI * 2);
-              ctx.fillStyle = '#FFFFFF';
-              ctx.fill();
-
-              ctx.save();
-              ctx.beginPath();
-              ctx.arc(centerX, centerY, logoSize / 2, 0, Math.PI * 2);
-              ctx.clip();
-              ctx.drawImage(imgObj, centerX - logoSize / 2, centerY - logoSize / 2, logoSize, logoSize);
-              ctx.restore();
-
-              ctx.fillStyle = '#FFFFFF';
-              ctx.font = 'bold 26px sans-serif';
-              ctx.textAlign = 'center';
-              ctx.textBaseline = 'middle';
-              ctx.fillText('MENÚ', centerX, canvas.height - (textSpace / 2));
-            };
-
-            if (this.customQRLogo) {
-              drawCenterLogo(this.customQRLogo);
-            } else {
-              const defaultLogo = new Image();
-              defaultLogo.onload = () => drawCenterLogo(defaultLogo);
-              defaultLogo.src = 'icon-192x192.png';
-            }
-          };
-          qrImg.src = url;
-        });
-      },
-
-      downloadAdminQR() {
-        const canvas = document.getElementById('admin-qr-canvas');
-        const link = document.createElement('a');
-        link.download = 'QR_Mesa_Sukidesu.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-      },
-
-      populateCategorySelect() {
-        const select = document.getElementById("item-categoria");
-        select.innerHTML = this.adminCategories.map(cat => 
-          `<option value="${escapeHTML(cat.nombre)}" class="bg-[#242424] text-white">${escapeHTML(cat.nombre)}${cat.es_pausada ? ' (Pausada)' : ''}</option>`
-        ).join("");
-      },
-
-      setupAdminCategories() {
-        if (this.adminCategories.length === 0) return;
-        if (!this.selectedCategory || !this.adminCategories.some(c => c.nombre === this.selectedCategory)) {
-          this.selectedCategory = this.adminCategories[0].nombre;
-        }
-
-        const categoryBar = document.getElementById("admin-category-bar");
-        categoryBar.innerHTML = this.adminCategories.map(cat => `
-          <button onclick="SukidesuAdmin.filterAdminCategory('${escapeHTML(cat.nombre)}')" 
-            class="w-44 h-11 px-3 py-2 rounded-full font-label-bold text-xs sm:text-sm text-center flex items-center justify-center shrink-0 transition-all ${
-              cat.es_pausada ? 'opacity-50 grayscale border border-dashed border-outline-variant/60' : ''
-            } ${
-              this.selectedCategory === cat.nombre ? 'bg-primary-container text-sushi-white font-bold shadow-md' : 'bg-surface-variant text-tertiary hover:bg-surface-bright border border-outline-variant/20'
-            }">
-            ${escapeHTML(cat.nombre)} ${cat.es_pausada ? '⏸' : ''}
-          </button>
-        `).join("");
-      },
-
-      filterAdminCategory(cat) { this.selectedCategory = cat; this.setupAdminCategories(); this.renderAdminGrid(); },
-      handleSearch(query) { this.searchQuery = query.toLowerCase().trim(); this.renderAdminGrid(); },
-
-      renderAdminGrid() {
-        const grid = document.getElementById("admin-grid");
-        const filtered = this.adminItems.filter(item => {
-          const matchesSearch = !this.searchQuery || item.nombre.toLowerCase().includes(this.searchQuery);
-          const matchesCategory = this.searchQuery ? true : (item.categoria === this.selectedCategory);
-          return matchesCategory && matchesSearch;
-        });
-
-        const itemsHTML = filtered.map(item => {
-          const isPausado = String(item.es_pausado).toLowerCase() === "true";
-          const rawUrl = item.imagen_url || '';
-          const optimizedImgUrl = rawUrl.replace('sz=w800', 'sz=w400');
-
-          return `
-          <div class="menu-card bg-[#121212] rounded-lg border border-primary-container/20 overflow-hidden flex flex-col sm:flex-row glow-hover transition-all duration-300 relative group ${isPausado ? 'opacity-60 grayscale-[40%] border-primary-container/40' : ''}">
-            <div class="menu-card-img-wrapper w-full sm:w-2/5 min-h-[240px] relative bg-surface-container-highest flex items-center justify-center shrink-0">
-              ${optimizedImgUrl 
-                ? `<img src="${escapeHTML(optimizedImgUrl)}" alt="${escapeHTML(item.nombre)}" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />` 
-                : `<span class="font-label-bold text-secondary">Sin imagen</span>`}
-              
-              <div class="absolute top-3 left-3 flex flex-col gap-2 pointer-events-none z-10">
-                <div class="bg-surface-container-high/90 px-3 py-1 rounded-full border border-outline-variant/50 w-fit max-w-full">
-                  <span class="font-label-bold text-xs text-tertiary truncate block">${escapeHTML(item.categoria || 'Entradas')}</span>
-                </div>
-              </div>
-            </div>
-            
-            <div class="p-5 w-full sm:w-3/5 flex flex-col flex-grow">
-              <div class="flex items-start justify-between gap-2 mb-2">
-                <div class="flex flex-col gap-1">
-                  <h3 class="font-headline-lg-mobile text-xl text-primary-fixed leading-tight">${escapeHTML(item.nombre)}</h3>
-                  <div class="flex items-center gap-1">
-                    ${String(item.es_picante).toLowerCase() === "true" ? `<span class="material-symbols-outlined text-primary text-sm">local_fire_department</span>` : ''}
-                    ${item.dias_promo ? `<span class="material-symbols-outlined text-wasabi-green text-sm" title="Promoción: ${escapeHTML(item.texto_promo)}">local_offer</span>` : ''}
-                  </div>
-                </div>
-                <div class="bg-black px-3 py-1 rounded-full font-price-display text-base text-sushi-white border border-outline-variant/50 shadow-md shrink-0">
-                  ${formatPrice(item.precio)}
-                </div>
-              </div>
-              
-              <p class="font-body-md text-secondary text-sm mb-4 flex-grow line-clamp-3">${escapeHTML(item.descripcion || '')}</p>
-              
-              <div class="flex justify-end gap-2 pt-4 border-t border-outline-variant/20 mt-auto">
-                <button onclick="SukidesuAdmin.togglePausado('${escapeHTML(item.id)}')" title="Retira el plato del Menú" class="w-10 h-10 rounded-full flex items-center justify-center transition-colors ${isPausado ? 'bg-primary-container text-sushi-white' : 'bg-surface-variant text-on-surface hover:bg-surface-bright'}">
-                  <span class="material-symbols-outlined text-[20px]">pause_circle</span>
-                </button>
-                <button onclick="SukidesuAdmin.editItem('${escapeHTML(item.id)}')" title="Editar Plato" class="w-10 h-10 rounded-full bg-surface-variant text-on-surface flex items-center justify-center hover:bg-primary/20 hover:text-primary transition-colors">
-                  <span class="material-symbols-outlined text-[20px]">edit</span>
-                </button>
-                <button onclick="SukidesuAdmin.deleteItem('${escapeHTML(item.id)}')" title="Borrar Plato" class="w-10 h-10 rounded-full bg-surface-variant text-on-surface flex items-center justify-center hover:bg-primary-container/20 hover:text-primary transition-colors">
-                  <span class="material-symbols-outlined text-[20px]">delete</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        `;
-        }).join("");
-
-        const addCardHTML = `
-          <div onclick="SukidesuAdmin.openModal()" class="rounded-xl overflow-hidden border-2 border-dashed border-outline-variant/40 hover:border-primary/60 hover:bg-primary/5 transition-colors duration-300 flex flex-col items-center justify-center min-h-[240px] cursor-pointer group">
-            <div class="w-16 h-16 rounded-full bg-surface-variant flex items-center justify-center mb-4 group-hover:bg-primary-container group-hover:text-sushi-white transition-colors">
-              <span class="material-symbols-outlined text-3xl">add</span>
-            </div>
-            <span class="font-label-bold text-label-bold text-tertiary group-hover:text-primary transition-colors">Añadir Nuevo Plato</span>
-          </div>
-        `;
-
-        if (filtered.length === 0 && this.searchQuery) {
-          grid.innerHTML = `
-            <div class="col-span-full text-center py-10 bg-[#121212] rounded-xl border border-outline-variant/20 mb-4">
-              <span class="material-symbols-outlined text-secondary text-4xl mb-2">search_off</span>
-              <p class="text-secondary font-body-md text-sm">No encontramos platos que coincidan con "${escapeHTML(this.searchQuery)}" en ninguna categoría.</p>
-            </div>` + addCardHTML;
-        } else {
-          grid.innerHTML = itemsHTML + addCardHTML;
-        }
-      },
-
-      openActionModal() { this.openModalHelper("actionModal"); },
-      closeActionModal() { this.closeModalHelper("actionModal"); },
-
-      openCategoryModal() {
-        this.renderCategoryManageList();
-        this.openModalHelper("categoryModal");
-      },
-      closeCategoryModal() { this.closeModalHelper("categoryModal"); },
-
-      renderCategoryManageList() {
-        const list = document.getElementById("category-manage-list");
-        list.innerHTML = this.adminCategories.map(cat => `
-          <div class="flex items-center justify-between p-3 rounded-lg bg-[#242424] border border-outline-variant/30">
-            <span class="font-label-bold text-sm ${cat.es_pausada ? 'line-through text-secondary' : 'text-sushi-white'}">${escapeHTML(cat.nombre)}</span>
-            <div class="flex items-center gap-2">
-              <button onclick="SukidesuAdmin.toggleCategoryPause('${escapeHTML(cat.id)}', ${!cat.es_pausada})" class="px-3 py-1 rounded text-xs font-label-bold transition-colors ${cat.es_pausada ? 'bg-primary-container text-white' : 'bg-surface-variant text-secondary hover:bg-surface-bright'}">
-                ${cat.es_pausada ? 'Reactivar' : 'Pausar'}
-              </button>
-              <button onclick="SukidesuAdmin.deleteCategory('${escapeHTML(cat.id)}')" class="p-1 text-error hover:bg-error/10 rounded transition-colors">
-                <span class="material-symbols-outlined text-lg">delete</span>
-              </button>
-            </div>
-          </div>
-        `).join("");
-      },
-
-      async handleCreateCategorySubmit(e) {
-        e.preventDefault();
-        const input = document.getElementById("new-cat-name");
-        const btn = document.getElementById("add-cat-btn");
-        btn.disabled = true;
-        btn.innerText = "Creando...";
-
-        const res = await MenuAPI.createCategory({ nombre: input.value.trim() });
-        btn.disabled = false;
-        btn.innerText = "+ Crear";
-
-        if (res.status === "success") {
-          input.value = "";
-          showToast("Categoría creada con éxito", "success");
-          await this.loadAdminData();
-          this.renderCategoryManageList();
-        } else {
-          showToast(res.message || "Error al crear categoría", "error");
-        }
-      },
-
-      async toggleCategoryPause(id, esPausada) {
-        const res = await MenuAPI.updateCategory({ id: id, es_pausada: esPausada });
-        if (res.status === "success") {
-          showToast(esPausada ? "Categoría pausada" : "Categoría reactivada", "info");
-          await this.loadAdminData();
-          this.renderCategoryManageList();
-        } else {
-          showToast("Error al cambiar estado de la categoría", "error");
-        }
-      },
-
-      async deleteCategory(id) {
-        if (confirm("¿Estás seguro de intentar eliminar esta categoría?")) {
-          const res = await MenuAPI.deleteCategory(id);
-          if (res.status === "success") {
-            showToast("Categoría eliminada con éxito", "success");
-            await this.loadAdminData();
-            this.renderCategoryManageList();
-          } else {
-            showToast(res.message, "error");
-          }
-        }
-      },
-
-      updateModalPreview() {
-        const nameVal = document.getElementById("item-nombre").value || "Nombre Plato";
-        const catVal = document.getElementById("item-categoria").value || "Entradas";
-        const priceVal = document.getElementById("item-precio").value || 0;
-        const descVal = document.getElementById("item-descripcion").value || "Descripción...";
-        
-        document.getElementById("preview-name-text").innerText = nameVal;
-        document.getElementById("preview-cat-text").innerText = catVal;
-        document.getElementById("preview-desc-text").innerText = descVal;
-        document.getElementById("preview-price-text").innerText = formatPrice ? formatPrice(priceVal) : `$${priceVal}`;
-      },
-
-      processDriveLink() {
-        const input = document.getElementById("item-link-drive").value.trim();
-        const urlField = document.getElementById("item-imagen-url");
-        const previewImg = document.getElementById("image-preview");
-        const placeholder = document.getElementById("preview-placeholder");
-        const badges = document.getElementById("preview-badges");
-
-        let finalUrl = "";
-        const regex = /(?:file\/d\/|id=)([\w-]+)/;
-        const match = input.match(regex);
-
-        if (match && match[1]) {
-          finalUrl = `https://drive.google.com/thumbnail?id=${match[1]}&sz=w400`;
-        } else if (input.startsWith('http')) {
-          finalUrl = input.replace('sz=w800', 'sz=w400');
-        }
-
-        urlField.value = finalUrl;
-
-        if (finalUrl) {
-          previewImg.src = finalUrl;
-          previewImg.classList.remove("hidden");
-          placeholder.classList.add("hidden");
-          badges.classList.remove("hidden");
-        } else {
-          previewImg.src = "";
-          previewImg.classList.add("hidden");
-          placeholder.classList.remove("hidden");
-          badges.classList.add("hidden");
-        }
-      },
-
-      async togglePausado(id) {
-        const item = this.adminItems.find(i => i.id == id);
-        if (!item) return;
-        
-        const nuevoEstado = !(String(item.es_pausado).toLowerCase() === "true");
-        
-        const payload = {
-          id: item.id,
-          nombre: item.nombre,
-          precio: item.precio,
-          categoria: item.categoria,
-          imagen_url: item.imagen_url || "",
-          descripcion: item.descripcion || "",
-          es_picante: String(item.es_picante).toLowerCase() === "true",
-          es_pausado: nuevoEstado,
-          dias_promo: item.dias_promo || "",
-          texto_promo: item.texto_promo || ""
-        };
-        
-        item.es_pausado = nuevoEstado;
-        const res = await MenuAPI.updateItem(payload);
-        if (res.status === "success") {
-          showToast(nuevoEstado ? "Plato pausado del menú" : "Plato reactivado en el menú", "info");
-          this.renderAdminGrid();
-        } else {
-          showToast("Error al actualizar el estado del plato", "error");
-        }
-      },
-
-      openModal(item = null) {
-        document.getElementById("itemForm").reset();
-        document.getElementById("item-id").value = item ? item.id : "";
-        document.getElementById("modal-title").innerText = item ? "Editar Plato" : "Añadir Nuevo Plato";
-        document.getElementById("item-link-drive").value = "";
-        
-        document.querySelectorAll('input[name="promo-dia"]').forEach(cb => cb.checked = false);
-        
-        const previewImg = document.getElementById("image-preview");
-        const placeholder = document.getElementById("preview-placeholder");
-        const badges = document.getElementById("preview-badges");
-
-        if (item) {
-          document.getElementById("item-nombre").value = item.nombre;
-          document.getElementById("item-precio").value = item.precio;
-          document.getElementById("item-categoria").value = item.categoria;
-          document.getElementById("item-imagen-url").value = item.imagen_url || "";
-          document.getElementById("item-link-drive").value = item.imagen_url || "";
-          document.getElementById("item-descripcion").value = item.descripcion || "";
-          document.getElementById("item-picante").checked = String(item.es_picante).toLowerCase() === "true";
-          document.getElementById("item-pausado").checked = String(item.es_pausado).toLowerCase() === "true";
-          document.getElementById("item-texto-promo").value = item.texto_promo || "";
-
-          if (item.dias_promo) {
-            const activeDays = item.dias_promo.split(',').map(d => d.trim());
-            document.querySelectorAll('input[name="promo-dia"]').forEach(cb => {
-              if (activeDays.includes(cb.value)) cb.checked = true;
-            });
-          }
-
-          if (item.imagen_url) {
-            previewImg.src = item.imagen_url.replace('sz=w800', 'sz=w400');
-            previewImg.classList.remove("hidden");
-            placeholder.classList.add("hidden");
-            badges.classList.remove("hidden");
-          } else {
-            previewImg.classList.add("hidden");
-            placeholder.classList.remove("hidden");
-            badges.classList.add("hidden");
-          }
-        } else {
-          document.getElementById("item-imagen-url").value = "";
-          previewImg.classList.add("hidden");
-          placeholder.classList.remove("hidden");
-          badges.classList.add("hidden");
-        }
-        
-        this.updateModalPreview();
-        this.openModalHelper("itemModal");
-      },
-
-      closeModal() { this.closeModalHelper("itemModal"); },
-
-      editItem(id) {
-        const item = this.adminItems.find(i => i.id == id);
-        if (item) this.openModal(item);
-      },
-
-      async deleteItem(id) {
-        if (confirm("¿Estás seguro de eliminar este plato del menú?")) {
-          const res = await MenuAPI.deleteItem(id);
-          if (res.status === "success") {
-            showToast("Plato eliminado con éxito", "success");
-            await this.loadAdminData();
-          } else {
-            showToast(res.message || "Error al eliminar plato", "error");
-          }
-        }
-      },
-
-      async handleFormSubmit(e) {
-        e.preventDefault();
-        const btn = document.getElementById("submit-btn");
-        btn.disabled = true;
-        btn.innerText = "Guardando...";
-
-        const selectedDays = Array.from(document.querySelectorAll('input[name="promo-dia"]:checked'))
-          .map(cb => cb.value)
-          .join(',');
-
-        const id = document.getElementById("item-id").value;
-        const payload = {
-          id: id,
-          nombre: document.getElementById("item-nombre").value,
-          precio: document.getElementById("item-precio").value,
-          categoria: document.getElementById("item-categoria").value,
-          imagen_url: document.getElementById("item-imagen-url").value,
-          descripcion: document.getElementById("item-descripcion").value,
-          es_picante: document.getElementById("item-picante").checked,
-          es_pausado: document.getElementById("item-pausado").checked,
-          dias_promo: selectedDays,
-          texto_promo: document.getElementById("item-texto-promo").value.trim()
-        };
-
-        let res;
-        if (id) {
-          res = await MenuAPI.updateItem(payload);
-        } else {
-          res = await MenuAPI.createItem(payload);
-        }
-
-        btn.disabled = false;
-        btn.innerText = "Guardar Plato";
-        
-        if (res.status === "success") {
-          showToast(id ? "Plato actualizado con éxito" : "Plato creado con éxito", "success");
-          this.closeModal();
-          await this.loadAdminData();
-        } else {
-          showToast(res.message || "Error al guardar plato", "error");
-        }
-      }
-    };
-
-    document.addEventListener("DOMContentLoaded", () => SukidesuAdmin.init());
-  </script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then(registration => { console.log('SW registrado'); })
-          .catch(error => { console.log('Error SW:', error); });
-      });
-    }
-  </script>
-</body>
-</html>
-
+  
   <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
-<script>eruda.init();</script>
-
+  <script>eruda.init();</script>
 </body>
 </html>
