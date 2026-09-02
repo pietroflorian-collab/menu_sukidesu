@@ -6,19 +6,16 @@ function doPost(e) {
   try {
     var contents = JSON.parse(e.postData.contents);
     var action = contents.action;
-    var payload = contents.data || contents; // Soporte por si payload viene directo
+    var payload = contents.data || contents; 
     
-    // Acciones de Platos
     if (action === "create") return handleCreate(payload);
     if (action === "update") return handleUpdate(payload);
     if (action === "delete") return handleDelete(payload);
     
-    // Acciones de Categorías
     if (action === "create_category") return handleCreateCategory(payload);
     if (action === "update_category") return handleUpdateCategory(payload);
     if (action === "delete_category") return handleDeleteCategory(payload);
     
-    // Acciones de Configuración (Banner Promo)
     if (action === "updateConfig") return handleUpdateConfig(payload);
     
     return responseJSON({ status: "error", message: "Acción no reconocida" });
@@ -26,10 +23,6 @@ function doPost(e) {
     return responseJSON({ status: "error", message: err.toString() });
   }
 }
-
-/* =========================================
- * FUNCIONES PARA OBTENER HOJAS (SHEETS)
- * ========================================= */
 
 function getMainSheet() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -81,10 +74,6 @@ function getConfigSheet() {
   return sheet;
 }
 
-/* =========================================
- * LECTURA GLOBAL (Menú Cliente y Admin)
- * ========================================= */
-
 function handleRead(e) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var mainSheet = getMainSheet();
@@ -93,21 +82,18 @@ function handleRead(e) {
   
   var isAdmin = e && e.parameter && e.parameter.admin === "true";
   
-      // 1. Leer Configuración Global
-    var configData = configSheet.getDataRange().getValues();
-    var config = {};
-    for (var c = 1; c < configData.length; c++) {
-      var key = configData[c][0];
-      var value = configData[c][1];
-      
-      // Parseo estricto para evitar falsos positivos en JavaScript
-      if (String(value).toLowerCase() === "true") value = true;
-      if (String(value).toLowerCase() === "false") value = false;
-      
-      config[key] = value;
-    }
+  var configData = configSheet.getDataRange().getValues();
+  var config = {};
+  for (var c = 1; c < configData.length; c++) {
+    var key = configData[c][0];
+    var value = configData[c][1];
+    
+    if (String(value).toLowerCase() === "true") value = true;
+    if (String(value).toLowerCase() === "false") value = false;
+    
+    config[key] = value;
+  }
 
-  // 2. Leer Categorías
   var catData = catSheet.getDataRange().getValues();
   var categories = [];
   for (var i = 1; i < catData.length; i++) {
@@ -126,14 +112,13 @@ function handleRead(e) {
   
   var activeCatNames = categories.map(function(c) { return c.nombre; });
   
-  // 3. Leer Platos
   var mainData = mainSheet.getDataRange().getValues();
   var items = [];
   if (mainData.length > 1) {
     var headers = mainData[0];
     for (var j = 1; j < mainData.length; j++) {
       var itemRow = mainData[j];
-      if (!itemRow[0]) continue; // Saltar filas vacías
+      if (!itemRow[0]) continue; 
       
       var item = {};
       for (var k = 0; k < headers.length; k++) {
@@ -153,15 +138,12 @@ function handleRead(e) {
   
   return responseJSON({ 
     status: "success", 
-    items: items,         // El frontend lo espera como "items", no "data"
+    data: items,         
+    items: items,        
     categories: categories, 
     config: config 
   });
 }
-
-/* =========================================
- * ACCIONES DE CONFIGURACIÓN
- * ========================================= */
 
 function handleUpdateConfig(payload) {
   var sheet = getConfigSheet();
@@ -187,7 +169,6 @@ function handleUpdateConfig(payload) {
     upsertConfig("promo_texto", payload.promo_texto);
   }
   
-  // Enviar a Drive si es archivo local, o guardar URL directa si es un enlace existente
   if (payload.promo_imagen_base64) {
     var driveUrl = saveImageToDrive(payload.promo_imagen_base64, "promo_" + new Date().getTime());
     if (driveUrl) upsertConfig("promo_imagen", driveUrl);
@@ -197,11 +178,6 @@ function handleUpdateConfig(payload) {
 
   return responseJSON({ status: "success", message: "Configuración actualizada" });
 }
-
-
-/* =========================================
- * ACCIONES DE PLATOS
- * ========================================= */
 
 function handleCreate(payload) {
   var sheet = getMainSheet();
@@ -226,7 +202,6 @@ function handleCreate(payload) {
     payload.texto_promo || ""
   ];
   
-  // Validar encabezados si la hoja está vacía
   if (sheet.getLastRow() === 0) {
     sheet.appendRow(["id", "nombre", "precio", "categoria", "descripcion", "imagen_url", "es_picante", "es_pausado", "dias_promo", "texto_promo"]);
   }
@@ -283,10 +258,6 @@ function handleDelete(payload) {
   }
   return responseJSON({ status: "error", message: "Plato no encontrado" });
 }
-
-/* =========================================
- * ACCIONES DE CATEGORÍAS
- * ========================================= */
 
 function handleCreateCategory(payload) {
   var sheet = getCategorySheet();
@@ -358,13 +329,9 @@ function handleDeleteCategory(payload) {
   return responseJSON({ status: "success", message: "Categoría eliminada" });
 }
 
-/* =========================================
- * FUNCIONES UTILITARIAS
- * ========================================= */
-
 function saveImageToDrive(base64Data, filename) {
   try {
-    if (!base64Data || typeof base64Data !== 'string' || !base64Data.indexOf(",") === -1) {
+    if (!base64Data || typeof base64Data !== 'string' || base64Data.indexOf(",") === -1) {
       return "";
     }
     var folderName = "Fotos_Menu_Sukidesu";
@@ -386,11 +353,7 @@ function saveImageToDrive(base64Data, filename) {
   }
 }
 
-  return responseJSON({ 
-    status: "success", 
-    data: items,         // Para que tu api.js lo reconozca como antes
-    items: items,        // Para que el HTML nuevo lo lea directamente
-    categories: categories, 
-    config: config 
-  });
+function responseJSON(data) {
+  return ContentService.createTextOutput(JSON.stringify(data))
+    .setMimeType(ContentService.MimeType.JSON);
 }
