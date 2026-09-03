@@ -79,7 +79,7 @@
     </div>
   </nav>
 
-  <main class="flex-1 ml-0 md:ml-64 h-full flex flex-col relative overflow-hidden bg-transparent">
+  <main class="flex-1 ml-0 md:ml-64 h-full flex flex-col relative overflow-hidden bg-transparent z-10">
     <div class="md:hidden flex justify-between items-center px-5 py-4 bg-surface-container border-b border-primary/20 z-30">
       <h1 class="font-headline-lg-mobile text-primary uppercase">Gestor de Menú</h1>
       <div class="flex gap-2">
@@ -89,7 +89,7 @@
       </div>
     </div>
 
-    <header class="px-5 md:px-12 py-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 z-10 shrink-0">
+    <header class="px-5 md:px-12 py-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shrink-0">
       <div>
         <h2 class="font-headline-lg-mobile text-primary uppercase">Administra tus Productos</h2>
         <p class="font-body-lg text-secondary">Ver, editar y organizar tus ofertas culinarias.</p>
@@ -102,28 +102,24 @@
       </div>
     </header>
 
-    <div class="flex-1 overflow-y-auto px-5 md:px-12 pb-12 z-10">
+    <div class="flex-1 overflow-y-auto px-5 md:px-12 pb-12">
       <div id="admin-category-bar" class="scroll-container flex gap-3 mb-8 overflow-x-auto pb-3 -mx-5 px-5 md:mx-0 md:px-0 flex-nowrap"></div>
       <div id="admin-loading" class="text-center py-12"><span class="material-symbols-outlined text-primary text-4xl animate-spin">progress_activity</span></div>
       <div id="admin-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 hidden"></div>
     </div>
   </main>
 
-  <!-- Modal Plato: Restaurado al diseño compacto ("Fútbol 5") -->
+  <!-- Modal Plato -->
   <div id="itemModal" class="fixed inset-0 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md z-50">
     <div class="w-full max-w-3xl bg-surface-container-low rounded-xl shadow-2xl border border-primary/50 flex flex-col max-h-[95vh] overflow-hidden">
-      
       <div class="px-4 py-3 border-b border-primary/30 flex justify-between items-center bg-surface shrink-0">
         <h3 id="modal-title" class="font-headline-lg-mobile text-lg text-primary">Añadir Nuevo Plato</h3>
         <button id="close-item-btn" class="text-secondary hover:text-primary"><span class="material-symbols-outlined pointer-events-none">close</span></button>
       </div>
-      
       <form id="itemForm" class="flex flex-col flex-1 overflow-hidden">
         <input type="hidden" id="item-id" />
-        
         <div class="p-4 overflow-y-auto flex-1">
           <div class="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-5 items-start h-full">
-            
             <div class="flex flex-col gap-3">
               <div class="grid grid-cols-[1fr_2fr] gap-3">
                 <div class="flex flex-col gap-1">
@@ -135,7 +131,6 @@
                   <input id="item-nombre" required class="w-full bg-surface-container-high border border-primary/50 rounded-lg px-3 py-1.5 text-sushi-white focus:border-primary text-sm" type="text"/>
                 </div>
               </div>
-              
               <div class="flex items-start gap-3">
                 <div class="flex flex-col gap-1 w-28 shrink-0">
                   <label class="text-[10px] font-label-bold text-primary uppercase ml-1">Precio</label>
@@ -146,7 +141,6 @@
                   <textarea id="item-descripcion" rows="2" maxlength="300" class="w-full bg-surface-container-high border border-primary/50 rounded-lg px-3 py-1.5 text-sushi-white focus:border-primary resize-y text-sm min-h-[44px]"></textarea>
                 </div>
               </div>
-              
               <div class="flex items-center gap-4 py-1">
                 <label class="flex items-center gap-2 cursor-pointer">
                   <input id="item-picante" type="checkbox" class="h-3.5 w-3.5 bg-surface-container-high rounded border-primary/50 text-primary"/>
@@ -157,17 +151,15 @@
                   <span class="text-xs text-secondary">Pausar Plato</span>
                 </label>
               </div>
-
               <div class="flex flex-col gap-1">
                 <label class="text-[10px] font-label-bold text-primary uppercase ml-1">Enlace de Imagen</label>
                 <input id="item-link-drive" type="text" class="w-full bg-surface-container-high border border-primary/50 rounded-lg px-3 py-1.5 text-sm text-sushi-white focus:border-primary"/>
                 <input type="hidden" id="item-imagen-url" />
               </div>
-              
               <div class="pt-3 border-t border-primary/30 flex flex-col gap-2">
-                <div class="flex flex-col gap-1">
-                  <label class="text-[10px] font-label-bold text-wasabi-green uppercase ml-1">Etiqueta Promo</label>
-                  <input id="item-texto-promo" type="text" class="w-full bg-surface-container-high border border-primary/50 rounded-lg px-3 py-1.5 text-sm text-sushi-white" />
+                <div class="flex flex-col mb-1">
+                  <label class="text-[10px] font-label-bold text-wasabi-green uppercase ml-1">Días Activos (Promociones)</label>
+                  <p class="text-[9px] text-secondary/70 ml-1 leading-tight">Si no marcas ningún día, el plato no aparecerá en el menú.</p>
                 </div>
                 <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;" class="text-[11px]">
                   <label class="flex items-center justify-center gap-1.5 cursor-pointer bg-surface p-1.5 rounded border border-primary/40 hover:bg-surface-bright"><input type="checkbox" name="promo-dia" value="Domingo" class="h-3 w-3 bg-surface-container rounded border-primary/50"/>Domingo</label>
@@ -180,8 +172,6 @@
                 </div>
               </div>
             </div>
-
-            <!-- Vista Previa Exacta con 12% extra (235px) y centrada globalmente en su columna -->
             <div class="flex items-center justify-center w-full h-full">
               <div class="bg-surface rounded-lg border border-primary/40 overflow-hidden flex flex-col w-full max-w-[235px] shadow-lg">
                 <div class="w-full relative bg-surface-container-highest flex items-center justify-center shrink-0" style="aspect-ratio: 4/5;">
@@ -206,10 +196,8 @@
                 </div>
               </div>
             </div>
-            
           </div>
         </div>
-        
         <div class="px-4 py-3 border-t border-primary/30 bg-surface flex justify-end items-center gap-3 shrink-0">
           <button type="button" id="cancel-item-btn" class="px-5 py-1.5 rounded-lg font-label-bold text-sm border border-primary/40 text-secondary hover:text-sushi-white">Salir</button>
           <button id="submit-btn" type="submit" class="px-5 py-1.5 rounded-lg font-label-bold text-sm bg-primary-container text-sushi-white hover:opacity-90">Guardar Plato</button>
@@ -218,30 +206,81 @@
     </div>
   </div>
 
-  <!-- Modal Promo -->
-  <div id="promoConfigModal" class="fixed inset-0 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md z-50">
-    <div class="w-full max-w-sm bg-surface-container-low rounded-xl shadow-2xl border border-primary/50 flex flex-col max-h-[90vh] overflow-hidden">
-      <div class="px-4 py-3 border-b border-primary/30 flex justify-between items-center bg-surface shrink-0">
-        <h3 class="font-headline-lg-mobile text-lg text-primary"><span class="material-symbols-outlined align-middle mr-2">campaign</span> Promo</h3>
-        <button id="close-promo-btn" class="text-secondary hover:text-primary"><span class="material-symbols-outlined pointer-events-none">close</span></button>
+  <!-- Modal Promo Frontal (MENSAJE EN LA BARRA INFERIOR) -->
+  <div id="promoConfigModal" class="fixed inset-0 hidden items-center justify-center p-4 bg-black/90 backdrop-blur-md" style="z-index: 9999;">
+    <div class="w-full bg-[#1b1b1b] rounded-xl shadow-2xl border border-[#b71f22]/50 flex flex-col overflow-hidden max-h-[95vh]" style="max-width: 544px;">
+      
+      <div class="px-4 py-3 border-b border-[#b71f22]/30 flex justify-between items-center bg-[#131313] shrink-0">
+        <h3 class="font-headline-lg-mobile text-lg text-[#ffb3ac] flex items-center"><span class="material-symbols-outlined mr-2">campaign</span> Creador de Anuncio Frontal</h3>
+        <button id="close-promo-btn" class="text-[#ffb3b1] hover:text-white transition-colors"><span class="material-symbols-outlined pointer-events-none">close</span></button>
       </div>
-      <div class="p-4 space-y-3 overflow-y-auto flex-1">
-        <label class="flex items-center gap-2 cursor-pointer p-3 bg-primary-container/10 border border-primary/30 rounded-lg">
-          <input id="config-promo-activa" type="checkbox" class="h-4 w-4 bg-surface-container-high text-primary rounded border-primary/50"/>
-          <span class="font-label-bold text-sushi-white text-xs uppercase">Activar Anuncio</span>
-        </label>
-        <div class="flex flex-col gap-1">
-          <label class="text-[10px] text-primary font-bold">Texto</label>
-          <textarea id="config-promo-texto" rows="3" class="w-full bg-surface-container-high border border-primary/50 rounded-lg px-3 py-1.5 text-sushi-white text-sm focus:border-primary resize-none"></textarea>
+      
+      <div class="p-4 overflow-y-auto flex-1 flex flex-col gap-4">
+        
+        <!-- Formulario Arriba -->
+        <div class="flex flex-col gap-3">
+          <label class="flex items-center gap-2 cursor-pointer p-3 bg-[#b71f22]/10 border border-[#b71f22]/40 rounded-lg hover:bg-[#b71f22]/20 transition-colors">
+            <input id="config-promo-activa" type="checkbox" class="h-4 w-4 bg-[#131313] text-[#b71f22] rounded border-[#b71f22]/50"/>
+            <span class="font-label-bold text-white text-xs uppercase">Activar Anuncio Pop-up</span>
+          </label>
+          
+          <div class="flex flex-col gap-1">
+            <label class="text-[10px] text-[#ffb3ac] font-bold uppercase ml-1">Texto del Anuncio</label>
+            <textarea id="config-promo-texto" rows="2" class="w-full bg-[#131313] border border-[#b71f22]/40 rounded-lg px-3 py-2 text-white text-sm focus:border-[#ffb3ac] resize-none shadow-inner" placeholder="Escribe tu promoción aquí..."></textarea>
+          </div>
+          
+          <div class="flex flex-col gap-1">
+            <label class="text-[10px] text-[#ffb3ac] font-bold uppercase ml-1">Enlace de la Imagen</label>
+            <input id="config-promo-img" type="text" class="w-full bg-[#131313] border border-[#b71f22]/40 rounded-lg px-3 py-2 text-[#ffb3b1] text-sm focus:border-[#ffb3ac] shadow-inner" placeholder="Escribe: images/niguiripro.webp"/>
+          </div>
         </div>
-        <div class="flex flex-col gap-1">
-          <label class="text-[10px] text-primary font-bold">Imagen (URL)</label>
-          <input id="config-promo-img" type="text" class="w-full bg-surface-container-high border border-primary/50 rounded-lg px-3 py-1.5 text-secondary text-sm focus:border-primary"/>
+
+        <!-- Vista Previa Exacta Abajo -->
+        <div class="flex flex-col items-center justify-center bg-black/40 p-0 rounded-xl border border-dashed border-[#b71f22]/30 relative overflow-hidden mt-1">
+          
+          <div class="relative bg-[#0a0a0a] overflow-hidden shrink-0" style="width: 100%; aspect-ratio: 512/192;">
+            <img id="admin-preview-promo-img" src="" class="absolute inset-0 w-full h-full object-cover object-left z-0" />
+            
+            <div class="absolute inset-0 flex pointer-events-none z-10 border-4 border-transparent hover:border-[#ACC677]/30 transition-all">
+              <div class="h-full border-r-2 border-dashed border-[#ACC677] flex items-start p-1.5" style="width: 45%;">
+                <span class="bg-black/90 text-[#ACC677] text-[8px] font-black px-1.5 py-0.5 rounded shadow-md h-fit">ÁREA MASCOTA</span>
+              </div>
+              <div class="h-full flex items-start justify-end p-1.5" style="width: 55%;">
+                <span class="bg-black/90 text-[#ffb3ac] text-[8px] font-black px-1.5 py-0.5 rounded shadow-md h-fit">ÁREA TEXTO</span>
+              </div>
+            </div>
+
+            <div class="absolute inset-0 flex z-20 pointer-events-none">
+              <div style="width: 45%;"></div>
+              <div class="flex flex-col justify-center items-end text-right p-4" style="width: 55%;">
+                <div class="flex items-center gap-1 mb-1.5">
+                  <span class="material-symbols-outlined text-[#ACC677] text-sm">campaign</span>
+                  <h3 class="font-headline-lg-mobile text-sm text-[#ffb3ac] uppercase tracking-wide">¡Novedad!</h3>
+                </div>
+                <p id="admin-preview-promo-texto" class="font-body-md text-white text-[10px] leading-tight mb-2 drop-shadow-md line-clamp-3">El texto irá aquí...</p>
+                <button class="bg-[#b71f22] text-white px-3 py-1.5 font-label-bold rounded-lg text-[10px] shadow-lg pointer-events-auto">¡Ver el Menú!</button>
+              </div>
+            </div>
+          </div>
         </div>
+
       </div>
-      <div class="px-4 py-3 border-t border-primary/30 bg-surface flex justify-end gap-2 shrink-0">
-        <button type="button" onclick="document.getElementById('promoConfigModal').classList.replace('flex','hidden')" class="px-4 py-1.5 rounded-lg font-label-bold text-xs border border-primary/40 text-secondary">Salir</button>
-        <button id="promo-save-btn" class="px-4 py-1.5 bg-primary-container text-sushi-white font-label-bold text-xs rounded-lg">Guardar</button>
+      
+      <!-- Footer con los botones y la info a la izquierda -->
+      <div class="px-4 py-3 border-t border-[#b71f22]/30 bg-[#131313] flex justify-between items-center gap-2 shrink-0">
+        <!-- Mensaje Informativo -->
+        <div class="flex items-center gap-2 text-[#ffb3b1]">
+          <span class="material-symbols-outlined text-[18px] text-[#ACC677]">info</span>
+          <span class="text-[10px] leading-tight text-left">
+            Medida recomendada para la imagen:<br/>
+            <strong class="text-white">512px ancho &times; 192px alto</strong>
+          </span>
+        </div>
+        <!-- Botones de Acción -->
+        <div class="flex gap-2 shrink-0">
+          <button type="button" onclick="document.getElementById('promoConfigModal').classList.replace('flex','hidden')" class="px-4 py-1.5 rounded-lg font-label-bold text-xs border border-[#b71f22]/40 text-[#ffb3b1] hover:text-white transition-colors">Salir</button>
+          <button id="promo-save-btn" class="px-4 py-1.5 bg-[#b71f22] text-white font-label-bold text-xs rounded-lg shadow-lg">Guardar Anuncio</button>
+        </div>
       </div>
     </div>
   </div>

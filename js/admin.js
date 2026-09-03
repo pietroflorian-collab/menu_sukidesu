@@ -38,6 +38,13 @@ const SukidesuAdmin = {
     ['item-nombre', 'item-precio', 'item-categoria', 'item-descripcion'].forEach(id => {
       document.getElementById(id)?.addEventListener('input', () => this.updateModalPreview());
     });
+    document.getElementById('item-picante')?.addEventListener('change', () => this.updateModalPreview());
+
+    // Eventos para la vista previa de la Promo (El Banner Horizontal)
+    ['config-promo-texto', 'config-promo-img'].forEach(id => {
+      document.getElementById(id)?.addEventListener('input', () => this.updatePromoPreview());
+    });
+    document.getElementById('config-promo-activa')?.addEventListener('change', () => this.updatePromoPreview());
 
     document.getElementById("admin-category-bar")?.addEventListener('click', (e) => {
       const btn = e.target.closest('button[data-category]');
@@ -93,7 +100,25 @@ const SukidesuAdmin = {
     document.getElementById("config-promo-activa").checked = String(this.adminConfig.promo_activa).toLowerCase() === "true";
     document.getElementById("config-promo-texto").value = this.adminConfig.promo_texto || "";
     document.getElementById("config-promo-img").value = this.adminConfig.promo_imagen || "";
+    this.updatePromoPreview();
     this.openModalHelper("promoConfigModal");
+  },
+
+  updatePromoPreview() {
+    const texto = document.getElementById("config-promo-texto").value || "Tu texto aparecerá aquí...";
+    const url = document.getElementById("config-promo-img").value.trim();
+    
+    document.getElementById("admin-preview-promo-texto").innerText = texto;
+    
+    const imgEl = document.getElementById("admin-preview-promo-img");
+    
+    if (url) {
+      imgEl.src = url;
+      imgEl.classList.remove("hidden");
+    } else {
+      imgEl.src = "";
+      imgEl.classList.add("hidden");
+    }
   },
 
   async savePromoConfig() {
@@ -102,7 +127,7 @@ const SukidesuAdmin = {
     const payload = { promo_activa: document.getElementById("config-promo-activa").checked.toString(), promo_texto: document.getElementById("config-promo-texto").value, promo_imagen: document.getElementById("config-promo-img").value };
     const res = await MenuAPI.updateConfig(payload);
     if(res.status === "success") { showToast("Configuración guardada", "success"); this.adminConfig = payload; this.closeModalHelper("promoConfigModal"); }
-    btn.innerText = "Guardar"; btn.disabled = false;
+    btn.innerText = "Guardar Anuncio"; btn.disabled = false;
   },
 
   openQRModal() { this.openModalHelper("qrModal"); this.renderAdminQR(); },
@@ -144,7 +169,6 @@ const SukidesuAdmin = {
   },
 
   populateCategorySelect() {
-    // Conserva las categorías reales para asignar platos, pero borra las combinaciones artificiales.
     const categoriasReales = this.adminCategories.filter(cat => {
       const name = (cat.nombre || "").toLowerCase();
       return name !== "combos y promo" && name !== "combos y promos";
@@ -157,16 +181,13 @@ const SukidesuAdmin = {
   setupAdminCategories() {
     if (this.adminCategories.length === 0) return;
     
-    // Limpieza agresiva: Ocultamos de los botones cualquier categoría que contenga las palabras combo o promo
     let categoriasVisibles = this.adminCategories.filter(c => {
         const name = (c.nombre || "").toLowerCase();
         return !name.includes("combo") && !name.includes("promo");
     });
     
-    // Inyectamos la categoría fusionada artificialmente de forma única
     categoriasVisibles.push({ nombre: "Combos y Promo", es_pausada: false });
 
-    // Validación de seguridad
     if (!this.selectedCategory || !categoriasVisibles.some(c => c.nombre === this.selectedCategory)) {
       this.selectedCategory = categoriasVisibles[0].nombre;
     }
@@ -184,10 +205,8 @@ const SukidesuAdmin = {
     const filtered = this.adminItems.filter(i => {
       const safeName = i.nombre || "";
       const matchesSearch = !this.searchQuery || safeName.toLowerCase().includes(this.searchQuery);
-      
       let matchesCategory = false;
       
-      // Lógica de Fusión: Agrupa todo lo que sea promocional bajo la pestaña unificada
       if (this.selectedCategory === "Combos y Promo") {
         const cat = (i.categoria || "").toLowerCase();
         matchesCategory = (
@@ -195,18 +214,16 @@ const SukidesuAdmin = {
           cat === "promociones" || 
           cat === "promos" || 
           cat === "promo" ||
-          (i.texto_promo && i.texto_promo.trim() !== "") || 
           (i.dias_promo && i.dias_promo.trim() !== "")
         );
       } else {
         matchesCategory = this.searchQuery ? true : (i.categoria === this.selectedCategory);
       }
-      
       return matchesSearch && matchesCategory;
     });
     
     const itemsHTML = filtered.map(item => UI.generarTarjetaPlato(item, 'admin')).join("");
-    const addCardHTML = `<div id="btn-add-grid" class="rounded-xl border-2 border-dashed border-outline-variant/40 hover:border-primary/60 hover:bg-primary/5 transition-colors flex flex-col items-center justify-center min-h-[240px] cursor-pointer group"><div class="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center mb-4 group-hover:bg-primary-container group-hover:text-white transition-colors"><span class="material-symbols-outlined text-3xl">add</span></div><span class="font-label-bold text-tertiary group-hover:text-primary">Añadir Nuevo</span></div>`;
+    const addCardHTML = `<div id="btn-add-grid" class="rounded-xl border-2 border-dashed border-primary/40 hover:border-primary hover:bg-primary/5 transition-colors flex flex-col items-center justify-center min-h-[240px] cursor-pointer group"><div class="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center mb-4 group-hover:bg-primary-container group-hover:text-white transition-colors"><span class="material-symbols-outlined text-3xl">add</span></div><span class="font-label-bold text-tertiary group-hover:text-primary">Añadir Nuevo</span></div>`;
     
     grid.innerHTML = itemsHTML + addCardHTML;
     document.getElementById("btn-add-grid")?.addEventListener('click', () => this.openModal());
@@ -248,9 +265,24 @@ const SukidesuAdmin = {
 
   updateModalPreview() {
     document.getElementById("preview-name-text").innerText = document.getElementById("item-nombre").value || "Nombre Plato";
-    document.getElementById("preview-cat-text").innerText = document.getElementById("item-categoria").value || "Entradas";
+    document.getElementById("preview-cat-text").innerText = document.getElementById("item-categoria").value || "Categoría";
     document.getElementById("preview-desc-text").innerText = document.getElementById("item-descripcion").value || "Descripción...";
     document.getElementById("preview-price-text").innerText = formatPrice(document.getElementById("item-precio").value || 0);
+
+    const isPicante = document.getElementById("item-picante").checked;
+    let picanteContainer = document.getElementById("preview-picante-container");
+    
+    if (!picanteContainer) {
+      picanteContainer = document.createElement("div");
+      picanteContainer.id = "preview-picante-container";
+      picanteContainer.className = "flex items-center gap-2 mt-1.5";
+      const nameElement = document.getElementById("preview-name-text").parentNode;
+      nameElement.appendChild(picanteContainer);
+    }
+    
+    picanteContainer.innerHTML = isPicante 
+      ? `<div class="flex items-center gap-1 bg-primary-container/20 border border-primary-container/40 px-2 py-0.5 rounded text-primary text-[9px] font-bold uppercase tracking-wider w-fit"><span class="material-symbols-outlined text-[12px]">local_fire_department</span> Picante</div>` 
+      : '';
   },
 
   processDriveLink() {
@@ -286,7 +318,6 @@ const SukidesuAdmin = {
       document.getElementById("item-descripcion").value = item.descripcion || "";
       document.getElementById("item-picante").checked = String(item.es_picante).toLowerCase() === "true";
       document.getElementById("item-pausado").checked = String(item.es_pausado).toLowerCase() === "true";
-      document.getElementById("item-texto-promo").value = item.texto_promo || "";
       if (item.dias_promo) {
         const activeDays = item.dias_promo.split(',').map(d => d.trim());
         document.querySelectorAll('input[name="promo-dia"]').forEach(cb => { if (activeDays.includes(cb.value)) cb.checked = true; });
@@ -312,8 +343,7 @@ const SukidesuAdmin = {
       precio: document.getElementById("item-precio").value, categoria: document.getElementById("item-categoria").value,
       imagen_url: document.getElementById("item-imagen-url").value, descripcion: document.getElementById("item-descripcion").value,
       es_picante: document.getElementById("item-picante").checked, es_pausado: document.getElementById("item-pausado").checked,
-      dias_promo: Array.from(document.querySelectorAll('input[name="promo-dia"]:checked')).map(cb => cb.value).join(','),
-      texto_promo: document.getElementById("item-texto-promo").value.trim()
+      dias_promo: Array.from(document.querySelectorAll('input[name="promo-dia"]:checked')).map(cb => cb.value).join(',')
     };
     const res = payload.id ? await MenuAPI.updateItem(payload) : await MenuAPI.createItem(payload);
     btn.disabled = false; btn.innerText = "Guardar Plato";

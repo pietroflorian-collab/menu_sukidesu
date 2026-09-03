@@ -78,10 +78,16 @@ const SukidesuMenu = {
   async init() {
     this.bindEvents();
     try {
-      const data = await MenuAPI.fetchItems(false);
+      // FORZAMOS LA LECTURA EN VIVO PASANDO "true" TEMPORALMENTE
+      // Esto engaña a la API para que obvie el caché del cliente en la carga inicial y baje el config fresco.
+      const data = await MenuAPI.fetchItems(true); 
       this.allItems = data.items || [];
       this.categoriesList = data.categories || [];
       this.config = data.config || {};
+      
+      // Actualizamos manualmente el caché del cliente con los datos frescos
+      localStorage.setItem('sukidesu_client_cache', JSON.stringify(data));
+      
     } catch (e) {
       this.allItems = []; this.categoriesList = []; this.config = {};
     }
@@ -91,6 +97,9 @@ const SukidesuMenu = {
     this.setupCategoryFilter();
     this.renderMenu();
     this.updateUI();
+
+    // 🚀 Aquí disparamos el pop-up frontal de publicidad con los datos 100% frescos
+    this.mostrarPromoFrontal(this.config);
   },
 
   bindEvents() {
@@ -125,7 +134,6 @@ const SukidesuMenu = {
       return;
     }
 
-    // 1. Limpieza total: Excluye de los botones cualquier categoría que tenga las palabras combo o promo en su interior
     let categoriasVisibles = this.categoriesList
       .filter(c => {
         const name = (c.nombre || "").toLowerCase();
@@ -133,10 +141,8 @@ const SukidesuMenu = {
       })
       .map(c => c.nombre);
     
-    // 2. Inyectamos la categoría fusionada
     categoriasVisibles.push("Combos y Promo");
 
-    // Seguridad por si la categoría seleccionada no es válida tras el filtro
     if (!this.selectedCategory || !categoriasVisibles.includes(this.selectedCategory)) {
       this.selectedCategory = categoriasVisibles[0];
     }
@@ -162,11 +168,11 @@ const SukidesuMenu = {
     const today = new Date().toLocaleDateString('es-ES', { weekday: 'long' }).toLowerCase();
     
     const filtered = this.allItems.filter(i => {
-      // Lógica de Fusión: Mostrar Combos y Promociones válidas para HOY
       if (this.selectedCategory === "Combos y Promo") {
         const cat = (i.categoria || "").toLowerCase();
+        // Solo verificamos si el día de hoy está tildado en la base de datos
         const activeDays = i.dias_promo ? i.dias_promo.split(',').map(d => d.trim().toLowerCase()) : [];
-        const isPromoToday = activeDays.includes(today) && i.texto_promo && i.texto_promo.trim() !== "";
+        const isPromoToday = activeDays.includes(today);
         
         return (cat === "combos" || cat === "promociones" || cat === "promos" || cat === "promo" || isPromoToday);
       }
@@ -183,6 +189,48 @@ const SukidesuMenu = {
       return;
     }
     grid.innerHTML = filtered.map(item => UI.generarTarjetaPlato(item, 'client', this.getSelection())).join("");
+  },
+
+  mostrarPromoFrontal(config) {
+    if (!config) return;
+    
+    const isActiva = String(config.promo_activa).toLowerCase() === "true";
+    const texto = config.promo_texto || "";
+    const imagenUrl = config.promo_imagen || "";
+
+    // Si está inactivo o no hay texto, garantizamos que no se ejecute nada
+    if (!isActiva || texto.trim() === "") return;
+
+    const modal = document.getElementById("clientePromoModal");
+    const modalContent = document.getElementById("clientePromoContent");
+    if(!modal || !modalContent) return;
+    
+    document.getElementById("cliente-promo-texto").innerText = texto;
+    const imgElement = document.getElementById("cliente-promo-img");
+    
+    // Eliminamos la referencia al placeholder ya que tú no lo tienes en el index.html
+    if (imagenUrl) {
+      imgElement.src = imagenUrl;
+      imgElement.classList.remove("hidden");
+    } else {
+      imgElement.classList.add("hidden");
+    }
+
+    modal.classList.replace("hidden", "flex");
+    setTimeout(() => {
+      modal.classList.remove("opacity-0");
+      modalContent.classList.remove("scale-95");
+    }, 50);
+
+    const cerrarPromo = () => {
+      modal.classList.add("opacity-0");
+      modalContent.classList.add("scale-95");
+      setTimeout(() => modal.classList.replace("flex", "hidden"), 300);
+    };
+
+    document.getElementById("close-cliente-promo").onclick = cerrarPromo;
+    document.getElementById("btn-entendido-promo").onclick = cerrarPromo;
   }
 };
+
 document.addEventListener("DOMContentLoaded", () => SukidesuMenu.init());

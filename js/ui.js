@@ -5,15 +5,6 @@ const UI = {
     const optimizedImgUrl = rawUrl.replace('sz=w800', 'sz=w400');
     const isPicante = String(item.es_picante).toLowerCase() === "true";
     
-    let promoHtml = '';
-    if (rol === 'client') {
-      const today = new Date().toLocaleDateString('es-ES', { weekday: 'long' }).toLowerCase();
-      const activeDays = item.dias_promo ? item.dias_promo.split(',').map(d => d.trim().toLowerCase()) : [];
-      if (activeDays.includes(today) && item.texto_promo) {
-        promoHtml = `<div class="bg-wasabi-green/20 text-wasabi-green border border-wasabi-green/50 px-2.5 py-1 rounded-md text-xs font-bold inline-flex items-center gap-1 mb-2 animate-pulse w-fit"><span class="material-symbols-outlined text-sm">local_offer</span><span>PROMO HOY: ${escapeHTML(item.texto_promo)}</span></div>`;
-      }
-    }
-
     const adminStyles = rol === 'admin' && isPausado ? 'opacity-60 grayscale-[40%] border-primary-container/40' : '';
     const adminImageTag = optimizedImgUrl 
       ? `<img src="${escapeHTML(optimizedImgUrl)}" alt="${escapeHTML(item.nombre)}" loading="lazy" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />` 
@@ -52,20 +43,21 @@ const UI = {
           </div>
         </div>
         <div class="p-5 w-full sm:w-3/5 flex flex-col flex-grow">
-          ${promoHtml}
           <div class="flex items-start justify-between gap-2 mb-2">
-            <div class="flex flex-col gap-1">
+            <div class="flex flex-col gap-1.5">
               <h3 class="font-headline-lg-mobile text-xl text-primary-fixed leading-tight">${escapeHTML(item.nombre)}</h3>
-              <div class="flex items-center gap-1">
-                ${isPicante ? `<span class="material-symbols-outlined text-primary text-sm" title="Picante">local_fire_department</span>` : ''}
-                ${rol === 'admin' && item.dias_promo ? `<span class="material-symbols-outlined text-wasabi-green text-sm" title="Promo">local_offer</span>` : ''}
+              
+              <!-- Etiqueta Picante -->
+              <div class="flex items-center gap-2">
+                ${isPicante ? `<div class="flex items-center gap-1 bg-primary-container/20 border border-primary-container/40 px-2 py-0.5 rounded text-primary text-[10px] font-bold uppercase tracking-wider w-fit"><span class="material-symbols-outlined text-[14px]">local_fire_department</span> Picante</div>` : ''}
               </div>
+              
             </div>
-            <div class="bg-black px-3 py-1 rounded-full font-price-display text-base text-sushi-white border border-outline-variant/50 shadow-md shrink-0">
+            <div class="bg-black px-3 py-1 rounded-full font-price-display text-base text-sushi-white border border-outline-variant/50 shadow-md shrink-0 mt-1 sm:mt-0">
               ${formatPrice(item.precio)}
             </div>
           </div>
-          <p data-expandable="true" class="font-body-md text-secondary text-sm mb-4 flex-grow line-clamp-3 cursor-pointer select-none transition-all duration-200" title="Toca para expandir">${escapeHTML(item.descripcion || '')}</p>
+          <p data-expandable="true" class="font-body-md text-secondary text-sm mb-4 flex-grow line-clamp-3 cursor-pointer select-none transition-all duration-200 mt-2" title="Toca para expandir">${escapeHTML(item.descripcion || '')}</p>
           <div class="flex justify-${rol === 'admin' ? 'end' : 'between items-center'} gap-2 pt-4 border-t border-outline-variant/20 mt-auto">
             ${actionButtons}
           </div>

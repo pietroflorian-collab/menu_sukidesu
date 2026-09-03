@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
   <link href="css/output.css" rel="stylesheet"/>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="js/api.js" defer></script>
   <script src="js/ui.js" defer></script>
   <script src="js/menu.js" defer></script>
@@ -83,11 +83,41 @@
     </div>
   </div>
 
-  <footer class="bg-surface-container-lowest text-tertiary font-body-md text-body-md mt-auto border-t border-outline-variant/20">
+ <footer class="bg-surface-container-lowest text-tertiary font-body-md text-body-md mt-auto border-t border-outline-variant/20">
     <div class="flex flex-col md:flex-row justify-between items-center px-5 md:px-12 py-4 max-w-7xl mx-auto min-h-[80px]">
       <div class="font-headline-lg text-primary mb-4 md:mb-0">SUKIDESU SUSHI</div>
       <div class="text-sm text-secondary">© 2026 SUKIDESU SUSHI. Todos los Derechos Reservados.</div>
     </div>
   </footer>
+
+  <!-- Modal Pop-up Promo Frontal (Cliente) BLINDADO -->
+  <div id="clientePromoModal" class="fixed inset-0 hidden items-center justify-center p-4 opacity-0 transition-opacity duration-300" style="z-index: 9999; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px);">
+    
+    <!-- Contenedor rígido para que nunca se estire más allá de su límite -->
+    <div class="w-full bg-[#0a0a0a] rounded-xl shadow-2xl border border-[#ffb3ac]/50 flex flex-col overflow-hidden transform scale-95 transition-transform duration-300 relative" style="max-width: 512px; aspect-ratio: 512/192;" id="clientePromoContent">
+
+      <button id="close-cliente-promo" class="absolute top-2 right-2 z-30 bg-black/60 hover:bg-black text-[#ffb3b1] hover:text-white p-1 rounded-full backdrop-blur-sm transition-colors border border-[#ffb3ac]/30">
+        <span class="material-symbols-outlined text-[14px] pointer-events-none">close</span>
+      </button>
+
+      <!-- Imagen de Fondo Horizontal -->
+      <img id="cliente-promo-img" src="" class="absolute inset-0 w-full h-full object-cover object-left z-0" />
+
+      <!-- Text Container EXACTAMENTE como la previsualización del Admin -->
+      <div class="absolute inset-0 flex z-20 pointer-events-none">
+        <div style="width: 45%;"></div>
+        <div class="flex flex-col justify-center items-end text-right p-3 sm:p-4" style="width: 55%;">
+          <div class="flex items-center gap-1 sm:gap-1.5 mb-1 sm:mb-2">
+            <span class="material-symbols-outlined text-[#ACC677] text-[14px] sm:text-base">campaign</span>
+            <h3 class="font-headline-lg-mobile text-[14px] sm:text-base text-[#ffb3ac] uppercase tracking-wide leading-none">¡Novedad!</h3>
+          </div>
+          <!-- Texto ajustado y limitado a 3 líneas -->
+          <p id="cliente-promo-texto" class="font-body-md text-white text-[10px] sm:text-xs leading-tight mb-2 sm:mb-3 drop-shadow-md line-clamp-3"></p>
+          <button id="btn-entendido-promo" class="bg-[#b71f22] text-white px-3 sm:px-4 py-1.5 font-label-bold rounded-lg text-[10px] sm:text-[11px] shadow-lg pointer-events-auto hover:bg-[#ffb3ac] hover:text-[#131313] transition-colors">¡Ver el Menú!</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </body>
 </html>
