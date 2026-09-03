@@ -4,31 +4,31 @@
 @source "../js/**/*.js";
 
 @theme {
-  /* Negro puro absoluto: base petróleo */
-  --color-surface: #000000;
-  --color-surface-bright: #000000;
+  /* Negro puro absoluto para el fondo y la base */
+  --color-surface: #000000; 
   --color-surface-container-lowest: #000000;
-  --color-surface-container-low: #000000;
-  --color-surface-container: #000000;
   
-  /* Ligeros reflejos para que los bordes y tarjetas no desaparezcan por completo */
-  --color-surface-container-high: #050505;
-  --color-surface-container-highest: #0a0a0a;
+  /* Degradado ultra oscuro para las tarjetas (cero gris lavado) */
+  --color-surface-container-low: #050505; 
+  --color-surface-container: #080808; 
+  --color-surface-container-high: #0d0d0d;
+  --color-surface-container-highest: #121212;
+  --color-surface-bright: #151515;
 
-  /* Rojo radical #AD2020 unificado (cero salmón) */
+  /* Cero salmón: Rojo radical absoluto para acentos y botones */
   --color-primary: #AD2020;
   --color-primary-container: #AD2020;
   --color-secondary: #AD2020;
   --color-error: #AD2020;
   
-  /* Colores de contraste preservados */
-  --color-tertiary: #d1c4b9; 
+  /* Colores de contraste excepcionales (blanco y verde para etiquetas específicas) */
+  --color-tertiary: #d1c4b9;
   --color-sushi-white: #FFFFFF;
   --color-wasabi-green: #ACC677;
   
-  /* Todo el texto principal en rojo y líneas divisorias ultra oscuras */
+  /* Todo el texto base en rojo y líneas divisorias casi negras */
   --color-on-surface: #AD2020;
-  --color-outline-variant: #111111;
+  --color-outline-variant: #1a1a1a;
 }
 
 @keyframes miRebote {
