@@ -35,12 +35,12 @@ const SukidesuAdmin = {
     document.getElementById("qr-input-file")?.addEventListener('change', (e) => this.handleQRImageUpload(e));
     document.getElementById("item-link-drive")?.addEventListener('input', () => this.processDriveLink());
     
-    ['item-nombre', 'item-precio', 'item-categoria', 'item-descripcion'].forEach(id => {
+    // Escucha el nuevo campo item-promo-texto para la vista previa
+    ['item-nombre', 'item-precio', 'item-categoria', 'item-descripcion', 'item-promo-texto'].forEach(id => {
       document.getElementById(id)?.addEventListener('input', () => this.updateModalPreview());
     });
     document.getElementById('item-picante')?.addEventListener('change', () => this.updateModalPreview());
 
-    // Eventos para la vista previa de la Promo (El Banner Horizontal)
     ['config-promo-texto', 'config-promo-img'].forEach(id => {
       document.getElementById(id)?.addEventListener('input', () => this.updatePromoPreview());
     });
@@ -107,18 +107,10 @@ const SukidesuAdmin = {
   updatePromoPreview() {
     const texto = document.getElementById("config-promo-texto").value || "Tu texto aparecerá aquí...";
     const url = document.getElementById("config-promo-img").value.trim();
-    
     document.getElementById("admin-preview-promo-texto").innerText = texto;
-    
     const imgEl = document.getElementById("admin-preview-promo-img");
-    
-    if (url) {
-      imgEl.src = url;
-      imgEl.classList.remove("hidden");
-    } else {
-      imgEl.src = "";
-      imgEl.classList.add("hidden");
-    }
+    if (url) { imgEl.src = url; imgEl.classList.remove("hidden"); } 
+    else { imgEl.src = ""; imgEl.classList.add("hidden"); }
   },
 
   async savePromoConfig() {
@@ -147,7 +139,7 @@ const SukidesuAdmin = {
     const ctx = canvas.getContext('2d');
     const menuUrl = document.getElementById('qr-input-url').value.trim() || "https://pietroflorian-collab.github.io/menu_sukidesu/";
     canvas.width = 292; canvas.height = 342;
-    ctx.fillStyle = '#131313'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#000000'; ctx.fillRect(0, 0, canvas.width, canvas.height); // Modificado a negro puro
     ctx.fillStyle = '#FFFFFF'; ctx.fillRect(16, 16, 260, 260);
     
     QRCode.toDataURL(menuUrl, { width: 260, margin: 0, errorCorrectionLevel: 'H' }, (err, url) => {
@@ -174,18 +166,16 @@ const SukidesuAdmin = {
       return name !== "combos y promo" && name !== "combos y promos";
     });
     document.getElementById("item-categoria").innerHTML = categoriasReales.map(cat => 
-      `<option value="${escapeHTML(cat.nombre)}" class="bg-surface-container-high text-sushi-white">${escapeHTML(cat.nombre)}</option>`
+      `<option value="${escapeHTML(cat.nombre)}" class="bg-surface-container-high text-on-surface">${escapeHTML(cat.nombre)}</option>`
     ).join("");
   },
 
   setupAdminCategories() {
     if (this.adminCategories.length === 0) return;
-    
     let categoriasVisibles = this.adminCategories.filter(c => {
         const name = (c.nombre || "").toLowerCase();
         return !name.includes("combo") && !name.includes("promo");
     });
-    
     categoriasVisibles.push({ nombre: "Combos y Promo", es_pausada: false });
 
     if (!this.selectedCategory || !categoriasVisibles.some(c => c.nombre === this.selectedCategory)) {
@@ -193,7 +183,7 @@ const SukidesuAdmin = {
     }
 
     document.getElementById("admin-category-bar").innerHTML = categoriasVisibles.map(cat => `
-      <button data-category="${escapeHTML(cat.nombre)}" class="w-44 h-11 px-3 py-2 rounded-full font-label-bold text-sm shrink-0 transition-all ${cat.es_pausada ? 'opacity-50 grayscale border-dashed' : ''} ${this.selectedCategory === cat.nombre ? 'bg-primary-container text-sushi-white' : 'bg-surface-container-highest text-tertiary hover:bg-surface-bright'}">${escapeHTML(cat.nombre)} ${cat.es_pausada ? '⏸' : ''}</button>
+      <button data-category="${escapeHTML(cat.nombre)}" class="w-44 h-11 px-3 py-2 rounded-full font-label-bold text-sm shrink-0 transition-all ${cat.es_pausada ? 'opacity-50 grayscale border-dashed' : ''} ${this.selectedCategory === cat.nombre ? 'bg-primary text-sushi-white' : 'bg-surface-container-highest text-tertiary hover:bg-surface-bright'}">${escapeHTML(cat.nombre)} ${cat.es_pausada ? '⏸' : ''}</button>
     `).join("");
   },
 
@@ -210,10 +200,7 @@ const SukidesuAdmin = {
       if (this.selectedCategory === "Combos y Promo") {
         const cat = (i.categoria || "").toLowerCase();
         matchesCategory = (
-          cat === "combos" || 
-          cat === "promociones" || 
-          cat === "promos" || 
-          cat === "promo" ||
+          cat === "combos" || cat === "promociones" || cat === "promos" || cat === "promo" ||
           (i.dias_promo && i.dias_promo.trim() !== "")
         );
       } else {
@@ -223,7 +210,7 @@ const SukidesuAdmin = {
     });
     
     const itemsHTML = filtered.map(item => UI.generarTarjetaPlato(item, 'admin')).join("");
-    const addCardHTML = `<div id="btn-add-grid" class="rounded-xl border-2 border-dashed border-primary/40 hover:border-primary hover:bg-primary/5 transition-colors flex flex-col items-center justify-center min-h-[240px] cursor-pointer group"><div class="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center mb-4 group-hover:bg-primary-container group-hover:text-white transition-colors"><span class="material-symbols-outlined text-3xl">add</span></div><span class="font-label-bold text-tertiary group-hover:text-primary">Añadir Nuevo</span></div>`;
+    const addCardHTML = `<div id="btn-add-grid" class="rounded-xl border-2 border-dashed border-primary/40 hover:border-primary hover:bg-primary/5 transition-colors flex flex-col items-center justify-center min-h-[240px] cursor-pointer group"><div class="w-16 h-16 rounded-full bg-surface-container-highest flex items-center justify-center mb-4 group-hover:bg-primary group-hover:text-white transition-colors"><span class="material-symbols-outlined text-3xl">add</span></div><span class="font-label-bold text-tertiary group-hover:text-primary">Añadir Nuevo</span></div>`;
     
     grid.innerHTML = itemsHTML + addCardHTML;
     document.getElementById("btn-add-grid")?.addEventListener('click', () => this.openModal());
@@ -235,9 +222,9 @@ const SukidesuAdmin = {
   renderCategoryManageList() {
     document.getElementById("category-manage-list").innerHTML = this.adminCategories.map(cat => `
       <div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-high border border-outline-variant/30">
-        <span class="font-label-bold text-sm ${cat.es_pausada ? 'line-through text-secondary' : 'text-sushi-white'}">${escapeHTML(cat.nombre)}</span>
+        <span class="font-label-bold text-sm ${cat.es_pausada ? 'line-through text-secondary' : 'text-on-surface'}">${escapeHTML(cat.nombre)}</span>
         <div class="flex gap-2">
-          <button data-action="toggle-cat" data-id="${escapeHTML(cat.id)}" data-state="${!cat.es_pausada}" class="px-3 py-1 rounded text-xs font-label-bold ${cat.es_pausada ? 'bg-primary-container text-white' : 'bg-surface-variant text-secondary'}">${cat.es_pausada ? 'Reactivar' : 'Pausar'}</button>
+          <button data-action="toggle-cat" data-id="${escapeHTML(cat.id)}" data-state="${!cat.es_pausada}" class="px-3 py-1 rounded text-xs font-label-bold ${cat.es_pausada ? 'bg-primary text-sushi-white' : 'bg-surface-variant text-secondary'}">${cat.es_pausada ? 'Reactivar' : 'Pausar'}</button>
           <button data-action="delete-cat" data-id="${escapeHTML(cat.id)}" class="p-1 text-error hover:bg-error/10 rounded"><span class="material-symbols-outlined pointer-events-none">delete</span></button>
         </div>
       </div>`).join("");
@@ -271,18 +258,25 @@ const SukidesuAdmin = {
 
     const isPicante = document.getElementById("item-picante").checked;
     let picanteContainer = document.getElementById("preview-picante-container");
-    
     if (!picanteContainer) {
       picanteContainer = document.createElement("div");
       picanteContainer.id = "preview-picante-container";
       picanteContainer.className = "flex items-center gap-2 mt-1.5";
-      const nameElement = document.getElementById("preview-name-text").parentNode;
-      nameElement.appendChild(picanteContainer);
+      document.getElementById("preview-name-text").parentNode.appendChild(picanteContainer);
     }
-    
     picanteContainer.innerHTML = isPicante 
-      ? `<div class="flex items-center gap-1 bg-primary-container/20 border border-primary-container/40 px-2 py-0.5 rounded text-primary text-[9px] font-bold uppercase tracking-wider w-fit"><span class="material-symbols-outlined text-[12px]">local_fire_department</span> Picante</div>` 
+      ? `<div class="flex items-center gap-1 bg-primary/20 border border-primary/40 px-2 py-0.5 rounded text-primary text-[9px] font-bold uppercase tracking-wider w-fit"><span class="material-symbols-outlined text-[12px]">local_fire_department</span> Picante</div>` 
       : '';
+
+    // Lógica para mostrar la etiqueta del banner promocional en vivo
+    const promoText = document.getElementById("item-promo-texto").value.trim();
+    const promoBanner = document.getElementById("preview-promo-banner");
+    if (promoText) {
+      promoBanner.innerText = promoText;
+      promoBanner.classList.remove("hidden");
+    } else {
+      promoBanner.classList.add("hidden");
+    }
   },
 
   processDriveLink() {
@@ -318,6 +312,8 @@ const SukidesuAdmin = {
       document.getElementById("item-descripcion").value = item.descripcion || "";
       document.getElementById("item-picante").checked = String(item.es_picante).toLowerCase() === "true";
       document.getElementById("item-pausado").checked = String(item.es_pausado).toLowerCase() === "true";
+      document.getElementById("item-promo-texto").value = item.texto_promo || ""; 
+
       if (item.dias_promo) {
         const activeDays = item.dias_promo.split(',').map(d => d.trim());
         document.querySelectorAll('input[name="promo-dia"]').forEach(cb => { if (activeDays.includes(cb.value)) cb.checked = true; });
@@ -343,6 +339,7 @@ const SukidesuAdmin = {
       precio: document.getElementById("item-precio").value, categoria: document.getElementById("item-categoria").value,
       imagen_url: document.getElementById("item-imagen-url").value, descripcion: document.getElementById("item-descripcion").value,
       es_picante: document.getElementById("item-picante").checked, es_pausado: document.getElementById("item-pausado").checked,
+      texto_promo: document.getElementById("item-promo-texto").value.trim(),
       dias_promo: Array.from(document.querySelectorAll('input[name="promo-dia"]:checked')).map(cb => cb.value).join(',')
     };
     const res = payload.id ? await MenuAPI.updateItem(payload) : await MenuAPI.createItem(payload);
