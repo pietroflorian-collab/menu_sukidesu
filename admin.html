@@ -27,7 +27,6 @@
   </style>
 </head>
 
-<!-- SOLUCIÓN: Scroll nativo en móvil, Pantalla congelada en PC (md:h-screen md:overflow-hidden) -->
 <body class="flex min-h-[100dvh] md:h-screen overflow-x-hidden md:overflow-hidden font-body-md text-sm relative bg-surface text-on-surface overscroll-y-auto">
   
   <nav class="hidden md:flex h-screen w-64 fixed left-0 top-0 bg-surface-container border-r border-primary/20 shadow-md flex-col p-4 z-40">
@@ -87,7 +86,6 @@
       </div>
     </header>
 
-    <!-- SOLUCIÓN: Scroll independiente SOLO en PC (md:overflow-y-auto) -->
     <div class="flex-1 md:overflow-y-auto px-5 md:px-12 pb-12 min-h-0 w-full">
       <div id="admin-category-bar" class="scroll-container flex gap-3 mb-8 overflow-x-auto pb-3 -mx-5 px-5 md:mx-0 md:px-0 flex-nowrap"></div>
       <div id="admin-loading" class="text-center py-12"><span class="material-symbols-outlined text-primary text-4xl animate-spin">progress_activity</span></div>
@@ -96,7 +94,7 @@
   </main>
 
   <!-- Modal Plato -->
-  <div id="admin-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 hidden"></div>
+  <div id="itemModal" class="fixed inset-0 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md z-50">
     <div class="w-full max-w-4xl bg-surface-container-low rounded-xl shadow-2xl border border-primary/50 flex flex-col max-h-[95vh] overflow-hidden">
       <div class="px-4 py-3 border-b border-primary/30 flex justify-between items-center bg-surface shrink-0">
         <h3 id="modal-title" class="font-headline-lg-mobile text-lg text-primary">Añadir Nuevo Plato</h3>
