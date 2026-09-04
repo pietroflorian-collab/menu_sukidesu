@@ -16,7 +16,7 @@ const SukidesuAdmin = {
     bindClick("nav-cat-btn", () => this.openCategoryModal());
    bindClick("mobile-promo-btn", () => this.openPromoModal());
     bindClick("mobile-qr-btn", () => this.openQRModal());
-    bindClick("mobile-new-btn", () => this.openModal()); 
+    bindClick("mobile-new-btn", () => this.openModal()); // <-- Conectado al modal correcto
     
     bindClick("close-promo-btn", () => this.closeModalHelper("promoConfigModal"));
     bindClick("close-qr-btn", () => this.closeModalHelper("qrModal"));
