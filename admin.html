@@ -261,26 +261,34 @@
     </div>
   </div>
 
-  <!-- Modal QR y Categorías permanecen igual estructuralmente, heredando colores nativos -->
   <div id="qrModal" class="fixed inset-0 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md z-50">
     <div class="w-full max-w-sm bg-surface-container-low rounded-xl shadow-2xl border border-primary/50 flex flex-col max-h-[90vh] overflow-hidden">
       <div class="px-4 py-3 border-b border-primary/30 flex justify-between items-center bg-surface shrink-0">
         <h3 class="font-headline-lg-mobile text-lg text-primary"><span class="material-symbols-outlined align-middle mr-2">qr_code_2</span> Generador QR</h3>
         <button id="close-qr-btn" class="text-secondary hover:text-primary"><span class="material-symbols-outlined pointer-events-none">close</span></button>
       </div>
+      
       <div class="p-4 space-y-3 overflow-y-auto flex-1">
         <div class="flex flex-col gap-1">
-          <label class="text-[10px] text-primary font-bold uppercase">URL del Menú</label>
-          <input id="qr-input-url" type="text" class="w-full bg-surface-container-high border border-primary/50 rounded-lg px-3 py-1.5 text-on-surface text-sm" value="https://pietroflorian-collab.github.io/menu_sukidesu/"/>
+          <label class="text-[10px] text-primary font-bold uppercase">URL del Menú Base</label>
+          <input id="qr-input-url" type="text" class="w-full bg-surface-container-high border border-outline-variant rounded-lg px-3 py-1.5 text-on-surface text-sm" value="https://pietroflorian-collab.github.io/menu_sukidesu/"/>
         </div>
+        
+        <!-- NUEVO: Etiqueta dinámica de la mesa -->
+        <div class="flex flex-col gap-1">
+          <label class="text-[10px] text-wasabi-green font-bold uppercase">Identificador (Ej: Mesa 1, VIP, Barra)</label>
+          <input id="qr-input-texto" type="text" class="w-full bg-surface-container-high border border-outline-variant rounded-lg px-3 py-1.5 text-on-surface text-sm" value="Mesa 1"/>
+        </div>
+
         <div class="flex flex-col gap-1">
           <label class="text-[10px] text-primary font-bold uppercase">Logo Central</label>
-          <input id="qr-input-file" type="file" accept="image/*" class="w-full bg-surface-container-high border border-primary/50 rounded-lg px-2 py-1 text-secondary text-xs file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-primary file:text-sushi-white"/>
+          <input id="qr-input-file" type="file" accept="image/*" class="w-full bg-surface-container-high border border-outline-variant rounded-lg px-2 py-1 text-secondary text-xs file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-primary-container file:text-sushi-white"/>
         </div>
-        <div class="flex justify-center bg-surface p-2 rounded-lg border border-primary/30">
+        <div class="flex justify-center bg-surface-container-lowest p-2 rounded-lg border border-outline-variant">
           <canvas id="admin-qr-canvas" style="max-height: 180px; width: auto; object-fit: contain;" class="rounded-md"></canvas>
         </div>
       </div>
+      
       <div class="px-4 py-3 border-t border-primary/30 bg-surface flex justify-end gap-2 shrink-0">
         <button type="button" onclick="document.getElementById('qrModal').classList.replace('flex','hidden')" class="px-4 py-1.5 rounded-lg font-label-bold text-xs border border-primary/40 text-secondary">Salir</button>
         <button id="qr-download-btn" class="px-4 py-1.5 bg-primary text-sushi-white font-label-bold text-xs rounded-lg flex items-center gap-1"><span class="material-symbols-outlined text-sm">download</span> Guardar</button>

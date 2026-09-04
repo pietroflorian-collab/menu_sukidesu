@@ -51,20 +51,19 @@
     --default-mono-font-family: var(--font-mono);
     --color-surface: #000000;
     --color-surface-container-lowest: #000000;
-    --color-surface-container-low: #050505;
-    --color-surface-container: #080808;
-    --color-surface-container-high: #0d0d0d;
-    --color-surface-container-highest: #121212;
-    --color-surface-bright: #151515;
+    --color-surface-container-low: #0a0a0a;
+    --color-surface-container: #121212;
+    --color-surface-container-high: #1a1a1a;
+    --color-surface-container-highest: #242424;
+    --color-surface-bright: #393939;
     --color-primary: #AD2020;
-    --color-primary-container: #AD2020;
-    --color-secondary: #AD2020;
-    --color-error: #AD2020;
-    --color-tertiary: #d1c4b9;
+    --color-primary-container: #b71f22;
+    --color-on-surface: #e2e2e2;
     --color-sushi-white: #FFFFFF;
+    --color-outline-variant: #5b403e;
+    --color-tertiary: #d1c4b9;
     --color-wasabi-green: #ACC677;
-    --color-on-surface: #AD2020;
-    --color-outline-variant: #1a1a1a;
+    --color-error: #AD2020;
   }
 }
 @layer base {
@@ -726,26 +725,29 @@
       border-color: color-mix(in oklab, var(--color-error) 40%, transparent);
     }
   }
+  .border-outline-variant {
+    border-color: var(--color-outline-variant);
+  }
   .border-outline-variant\/20 {
-    border-color: color-mix(in srgb, #1a1a1a 20%, transparent);
+    border-color: color-mix(in srgb, #5b403e 20%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       border-color: color-mix(in oklab, var(--color-outline-variant) 20%, transparent);
     }
   }
   .border-outline-variant\/30 {
-    border-color: color-mix(in srgb, #1a1a1a 30%, transparent);
+    border-color: color-mix(in srgb, #5b403e 30%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       border-color: color-mix(in oklab, var(--color-outline-variant) 30%, transparent);
     }
   }
   .border-outline-variant\/40 {
-    border-color: color-mix(in srgb, #1a1a1a 40%, transparent);
+    border-color: color-mix(in srgb, #5b403e 40%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       border-color: color-mix(in oklab, var(--color-outline-variant) 40%, transparent);
     }
   }
   .border-outline-variant\/50 {
-    border-color: color-mix(in srgb, #1a1a1a 50%, transparent);
+    border-color: color-mix(in srgb, #5b403e 50%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       border-color: color-mix(in oklab, var(--color-outline-variant) 50%, transparent);
     }
@@ -856,7 +858,7 @@
     background-color: var(--color-surface-container-high);
   }
   .bg-surface-container-high\/90 {
-    background-color: color-mix(in srgb, #0d0d0d 90%, transparent);
+    background-color: color-mix(in srgb, #1a1a1a 90%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--color-surface-container-high) 90%, transparent);
     }
@@ -865,7 +867,7 @@
     background-color: var(--color-surface-container-highest);
   }
   .bg-surface-container-highest\/90 {
-    background-color: color-mix(in srgb, #121212 90%, transparent);
+    background-color: color-mix(in srgb, #242424 90%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
       background-color: color-mix(in oklab, var(--color-surface-container-highest) 90%, transparent);
     }
@@ -1104,21 +1106,6 @@
   .text-primary {
     color: var(--color-primary);
   }
-  .text-secondary {
-    color: var(--color-secondary);
-  }
-  .text-secondary\/60 {
-    color: color-mix(in srgb, #AD2020 60%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      color: color-mix(in oklab, var(--color-secondary) 60%, transparent);
-    }
-  }
-  .text-secondary\/70 {
-    color: color-mix(in srgb, #AD2020 70%, transparent);
-    @supports (color: color-mix(in lab, red, red)) {
-      color: color-mix(in oklab, var(--color-secondary) 70%, transparent);
-    }
-  }
   .text-surface {
     color: var(--color-surface);
   }
@@ -1287,6 +1274,9 @@
   }
   .file\:bg-primary::file-selector-button {
     background-color: var(--color-primary);
+  }
+  .file\:bg-primary-container::file-selector-button {
+    background-color: var(--color-primary-container);
   }
   .file\:px-2::file-selector-button {
     padding-inline: calc(var(--spacing) * 2);

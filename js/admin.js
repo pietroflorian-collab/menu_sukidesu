@@ -33,6 +33,7 @@ const SukidesuAdmin = {
     
     document.getElementById("qr-input-url")?.addEventListener('input', () => this.renderAdminQR());
     document.getElementById("qr-input-file")?.addEventListener('change', (e) => this.handleQRImageUpload(e));
+    document.getElementById("qr-input-texto")?.addEventListener('input', () => this.renderAdminQR());
     document.getElementById("item-link-drive")?.addEventListener('input', () => this.processDriveLink());
     
     // Escucha el nuevo campo item-promo-texto para la vista previa
@@ -137,27 +138,57 @@ const SukidesuAdmin = {
     const canvas = document.getElementById('admin-qr-canvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    const menuUrl = document.getElementById('qr-input-url').value.trim() || "https://pietroflorian-collab.github.io/menu_sukidesu/";
+    
+    let baseUrl = document.getElementById('qr-input-url').value.trim() || "https://pietroflorian-collab.github.io/menu_sukidesu/";
+    if(baseUrl.endsWith('/')) baseUrl = baseUrl.slice(0, -1); // Limpiar barra final
+    
+    // Capturar el texto de la mesa
+    const textoQR = document.getElementById('qr-input-texto')?.value.trim() || 'MENÚ';
+    
+    // --- LÓGICA DE AFILIADO / RASTREO ---
+    const hoy = new Date();
+    const dia = hoy.getDate();
+    const anio = hoy.getFullYear();
+    const tokenSecreto = dia + (anio * 76); // Tu fórmula matemática
+    
+    // Crear el enlace envenenado con los datos de rastreo
+    // Ejemplo: https://.../menu_sukidesu/?mesa=Mesa_1&tk=153980
+    const urlRastreo = `${baseUrl}/?mesa=${encodeURIComponent(textoQR.replace(/\s+/g, '_'))}&tk=${tokenSecreto}`;
+
     canvas.width = 292; canvas.height = 342;
-    ctx.fillStyle = '#000000'; ctx.fillRect(0, 0, canvas.width, canvas.height); // Modificado a negro puro
+    ctx.fillStyle = '#0a0a0a'; ctx.fillRect(0, 0, canvas.width, canvas.height); 
     ctx.fillStyle = '#FFFFFF'; ctx.fillRect(16, 16, 260, 260);
     
-    QRCode.toDataURL(menuUrl, { width: 260, margin: 0, errorCorrectionLevel: 'H' }, (err, url) => {
+    QRCode.toDataURL(urlRastreo, { // Inyectamos la URL con rastreo al código
+      width: 260, margin: 0, errorCorrectionLevel: 'H',
+      color: { dark: '#000000', light: '#FFFFFF' }
+    }, (err, url) => {
       if (err) return;
       const qrImg = new Image();
       qrImg.onload = () => {
         ctx.drawImage(qrImg, 16, 16);
-        ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.arc(146, 146, 36, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#FFFFFF'; ctx.fillRect(106, 106, 80, 80); 
         if (this.customQRLogo) ctx.drawImage(this.customQRLogo, 114, 114, 64, 64);
-        ctx.font = 'bold 26px sans-serif'; ctx.textAlign = 'center'; ctx.fillText('MENÚ', 146, 317);
+        
+        // Escribir el texto de la mesa en el diseño final
+        ctx.fillStyle = '#FFFFFF'; 
+        ctx.font = 'bold 26px sans-serif'; 
+        ctx.textAlign = 'center'; 
+        ctx.fillText(textoQR.toUpperCase(), 146, 317);
       };
       qrImg.src = url;
     });
   },
 
   downloadAdminQR() {
-    const link = document.createElement('a'); link.download = 'QR_Sukidesu.png';
-    link.href = document.getElementById('admin-qr-canvas').toDataURL(); link.click();
+    // Generar nombre de archivo dinámico
+    const textoQR = document.getElementById('qr-input-texto')?.value.trim() || 'QR';
+    const nombreLimpio = textoQR.replace(/\s+/g, '_'); // Mesa 1 -> Mesa_1
+    
+    const link = document.createElement('a'); 
+    link.download = `QR_${nombreLimpio}.png`; // Se descargará como QR_Mesa_1.png
+    link.href = document.getElementById('admin-qr-canvas').toDataURL(); 
+    link.click();
   },
 
   populateCategorySelect() {

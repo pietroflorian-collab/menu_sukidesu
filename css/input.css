@@ -4,40 +4,39 @@
 @source "../js/**/*.js";
 
 @theme {
-  /* Negro puro absoluto para el fondo y la base */
-  --color-surface: #000000; 
+  /* 1. FONDOS: Negro puro para el lienzo, gris muy oscuro (#121212) para tarjetas */
+  --color-surface: #000000;
   --color-surface-container-lowest: #000000;
-  
-  /* Degradado ultra oscuro para las tarjetas (cero gris lavado) */
-  --color-surface-container-low: #050505; 
-  --color-surface-container: #080808; 
-  --color-surface-container-high: #0d0d0d;
-  --color-surface-container-highest: #121212;
-  --color-surface-bright: #151515;
+  --color-surface-container-low: #0a0a0a;
+  --color-surface-container: #121212; 
+  --color-surface-container-high: #1a1a1a;
+  --color-surface-container-highest: #242424;
+  --color-surface-bright: #393939;
 
-  /* Cero salmón: Rojo radical absoluto para acentos y botones */
+  /* 2. TÍTULOS Y LOGOS: Tu rojo oficial de marca (Cero salmón) */
   --color-primary: #AD2020;
-  --color-primary-container: #AD2020;
-  --color-secondary: #AD2020;
-  --color-error: #AD2020;
+  --color-primary-fixed: #AD2020;
   
-  /* Colores de contraste excepcionales (blanco y verde para etiquetas específicas) */
-  --color-tertiary: #d1c4b9;
+  /* 3. BOTONES PRINCIPALES: Combinación de rojo profundo y texto blanco */
+  --color-primary-container: #b71f22;
+  --color-on-primary-container: #ffffff;
+  
+  /* 4. TEXTOS SECUNDARIOS: Tonos opacos para descripciones e ingredientes */
+  --color-on-surface: #e2e2e2;
+  --color-on-surface-variant: #e3beba;
+  --color-secondary-fixed: #ffb3b1;
   --color-sushi-white: #FFFFFF;
+
+  /* 5. LÍNEAS DIVISORIAS Y ACENTOS */
+  --color-outline-variant: #5b403e; /* Borde ultra sutil con un mínimo tinte rojizo/marrón */
+  --color-tertiary: #d1c4b9;
   --color-wasabi-green: #ACC677;
-  
-  /* Todo el texto base en rojo y líneas divisorias casi negras */
-  --color-on-surface: #AD2020;
-  --color-outline-variant: #1a1a1a;
+  --color-error: #AD2020;
 }
 
 @keyframes miRebote {
-  0%, 100% {
-    transform: translateY(-20px);
-  }
-  50% {
-    transform: translateY(15px);
-  }
+  0%, 100% { transform: translateY(-20px); }
+  50% { transform: translateY(15px); }
 }
 
 .rebote-amplio {
