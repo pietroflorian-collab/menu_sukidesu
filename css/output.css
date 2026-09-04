@@ -456,6 +456,9 @@
   .max-h-\[95vh\] {
     max-height: 95vh;
   }
+  .min-h-0 {
+    min-height: 0px;
+  }
   .min-h-\[44px\] {
     min-height: 44px;
   }
@@ -545,6 +548,9 @@
   }
   .max-w-sm {
     max-width: var(--container-sm);
+  }
+  .min-w-0 {
+    min-width: 0px;
   }
   .flex-1 {
     flex: 1;
@@ -693,6 +699,9 @@
   }
   .overscroll-y-auto {
     overscroll-behavior-y: auto;
+  }
+  .overscroll-y-contain {
+    overscroll-behavior-y: contain;
   }
   .rounded {
     border-radius: 0.25rem;
