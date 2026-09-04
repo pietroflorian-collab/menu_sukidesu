@@ -42,6 +42,7 @@
     --radius-lg: 0.5rem;
     --radius-xl: 0.75rem;
     --drop-shadow-md: 0 3px 3px rgb(0 0 0 / 0.12);
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
     --animate-spin: spin 1s linear infinite;
     --blur-sm: 8px;
     --blur-md: 12px;
@@ -239,6 +240,9 @@
   .top-0 {
     top: 0px;
   }
+  .top-1 {
+    top: var(--spacing);
+  }
   .top-1\/2 {
     top: calc(1 / 2 * 100%);
   }
@@ -338,6 +342,9 @@
   .mr-3 {
     margin-right: calc(var(--spacing) * 3);
   }
+  .mb-0 {
+    margin-bottom: 0px;
+  }
   .mb-0\.5 {
     margin-bottom: calc(var(--spacing) * 0.5);
   }
@@ -398,6 +405,9 @@
   .hidden {
     display: none;
   }
+  .table {
+    display: table;
+  }
   .h-3 {
     height: calc(var(--spacing) * 3);
   }
@@ -424,6 +434,9 @@
   }
   .h-28 {
     height: calc(var(--spacing) * 28);
+  }
+  .h-\[100dvh\] {
+    height: 100dvh;
   }
   .h-fit {
     height: fit-content;
@@ -536,11 +549,21 @@
   .flex-1 {
     flex: 1;
   }
+  .flex-shrink {
+    flex-shrink: 1;
+  }
   .shrink-0 {
     flex-shrink: 0;
   }
   .flex-grow {
     flex-grow: 1;
+  }
+  .border-collapse {
+    border-collapse: collapse;
+  }
+  .-translate-y-1 {
+    --tw-translate-y: calc(var(--spacing) * -1);
+    translate: var(--tw-translate-x) var(--tw-translate-y);
   }
   .-translate-y-1\/2 {
     --tw-translate-y: calc(calc(1 / 2 * 100%) * -1);
@@ -567,6 +590,9 @@
   }
   .cursor-pointer {
     cursor: pointer;
+  }
+  .resize {
+    resize: both;
   }
   .resize-none {
     resize: none;
@@ -606,6 +632,9 @@
   }
   .justify-end {
     justify-content: flex-end;
+  }
+  .gap-0 {
+    gap: 0px;
   }
   .gap-0\.5 {
     gap: calc(var(--spacing) * 0.5);
@@ -661,6 +690,9 @@
   }
   .overflow-y-auto {
     overflow-y: auto;
+  }
+  .overscroll-y-auto {
+    overscroll-behavior-y: auto;
   }
   .rounded {
     border-radius: 0.25rem;
@@ -718,6 +750,9 @@
   }
   .border-\[\#ffb3ac\]\/50 {
     border-color: color-mix(in oklab, #ffb3ac 50%, transparent);
+  }
+  .border-error {
+    border-color: var(--color-error);
   }
   .border-error\/40 {
     border-color: color-mix(in srgb, #AD2020 40%, transparent);
@@ -779,6 +814,9 @@
       border-color: color-mix(in oklab, var(--color-primary) 50%, transparent);
     }
   }
+  .border-sushi-white {
+    border-color: var(--color-sushi-white);
+  }
   .border-sushi-white\/20 {
     border-color: color-mix(in srgb, #FFFFFF 20%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
@@ -835,6 +873,12 @@
   }
   .bg-primary-container {
     background-color: var(--color-primary-container);
+  }
+  .bg-primary-container\/20 {
+    background-color: color-mix(in srgb, #b71f22 20%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-primary-container) 20%, transparent);
+    }
   }
   .bg-primary\/10 {
     background-color: color-mix(in srgb, #AD2020 10%, transparent);
@@ -937,6 +981,9 @@
   }
   .px-5 {
     padding-inline: calc(var(--spacing) * 5);
+  }
+  .py-0 {
+    padding-block: 0px;
   }
   .py-0\.5 {
     padding-block: calc(var(--spacing) * 0.5);
@@ -1130,6 +1177,9 @@
   .line-through {
     text-decoration-line: line-through;
   }
+  .underline {
+    text-decoration-line: underline;
+  }
   .antialiased {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -1167,6 +1217,12 @@
     --tw-shadow: 0 1px 3px 0 var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 1px 2px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
+  .shadow-primary {
+    --tw-shadow-color: #AD2020;
+    @supports (color: color-mix(in lab, red, red)) {
+      --tw-shadow-color: color-mix(in oklab, var(--color-primary) var(--tw-shadow-alpha), transparent);
+    }
+  }
   .shadow-primary\/30 {
     --tw-shadow-color: color-mix(in srgb, #AD2020 30%, transparent);
     @supports (color: color-mix(in lab, red, red)) {
@@ -1188,6 +1244,9 @@
   }
   .grayscale-\[40\%\] {
     --tw-grayscale: grayscale(40%);
+    filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
+  }
+  .filter {
     filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
   }
   .backdrop-blur-md {
@@ -1241,6 +1300,10 @@
     --tw-duration: 500ms;
     transition-duration: 500ms;
   }
+  .ease-in-out {
+    --tw-ease: var(--ease-in-out);
+    transition-timing-function: var(--ease-in-out);
+  }
   .select-none {
     -webkit-user-select: none;
     user-select: none;
@@ -1271,9 +1334,6 @@
   .file\:border-0::file-selector-button {
     border-style: var(--tw-border-style);
     border-width: 0px;
-  }
-  .file\:bg-primary::file-selector-button {
-    background-color: var(--color-primary);
   }
   .file\:bg-primary-container::file-selector-button {
     background-color: var(--color-primary-container);
@@ -1315,6 +1375,14 @@
     }
     .hover\:bg-primary:hover {
       background-color: var(--color-primary);
+    }
+    .hover\:bg-primary-container\/30:hover {
+      background-color: color-mix(in srgb, #b71f22 30%, transparent);
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .hover\:bg-primary-container\/30:hover {
+        background-color: color-mix(in oklab, var(--color-primary-container) 30%, transparent);
+      }
     }
     .hover\:bg-primary\/5:hover {
       background-color: color-mix(in srgb, #AD2020 5%, transparent);
@@ -1428,6 +1496,9 @@
     }
     .md\:h-52 {
       height: calc(var(--spacing) * 52);
+    }
+    .md\:h-screen {
+      height: 100vh;
     }
     .md\:w-52 {
       width: calc(var(--spacing) * 52);
@@ -1727,6 +1798,10 @@
   syntax: "*";
   inherits: false;
 }
+@property --tw-ease {
+  syntax: "*";
+  inherits: false;
+}
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -1790,6 +1865,7 @@
       --tw-backdrop-saturate: initial;
       --tw-backdrop-sepia: initial;
       --tw-duration: initial;
+      --tw-ease: initial;
     }
   }
 }

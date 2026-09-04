@@ -29,7 +29,7 @@
     .scroll-container:active { cursor: grabbing; }
   </style>
 </head>
-<body class="flex h-screen overflow-hidden font-body-md text-sm relative bg-surface text-on-surface">
+<body class="flex h-[100dvh] md:h-screen font-body-md text-sm relative bg-surface text-on-surface overscroll-y-auto">
   
   <nav class="hidden md:flex h-screen w-64 fixed left-0 top-0 bg-surface-container border-r border-primary/20 shadow-md flex-col p-4 z-40">
     <div class="mb-6 px-4 py-4 text-center border-b border-primary/20">
@@ -59,13 +59,26 @@
     </div>
   </nav>
 
-  <main class="flex-1 ml-0 md:ml-64 h-full flex flex-col relative overflow-hidden bg-transparent z-10">
-    <div class="md:hidden flex justify-between items-center px-5 py-4 bg-surface-container border-b border-primary/20 z-30">
-      <h1 class="font-headline-lg-mobile text-primary uppercase">Gestor de Menú</h1>
-      <div class="flex gap-2">
-        <button id="mobile-promo-btn" class="p-1.5 text-secondary border border-primary/40 rounded-md hover:bg-surface-container-highest"><span class="material-symbols-outlined text-sm pointer-events-none">campaign</span></button>
-        <button id="mobile-qr-btn" class="p-1.5 text-secondary border border-primary/40 rounded-md hover:bg-surface-container-highest"><span class="material-symbols-outlined text-sm pointer-events-none">qr_code_2</span></button>
-        <button id="mobile-new-btn" class="p-1.5 text-secondary border border-primary/40 rounded-md hover:bg-surface-container-highest"><span class="material-symbols-outlined text-sm pointer-events-none">add</span></button>
+  <main class="flex-1 ml-0 md:ml-64 h-full flex flex-col relative bg-transparent z-10">
+    <<div class="md:hidden flex justify-between items-center px-4 py-3 bg-surface-container border-b border-primary/20 z-30 shrink-0">
+      <h1 class="font-headline-lg-mobile text-primary uppercase text-sm">Gestor</h1>
+      <div class="flex gap-1.5">
+        
+        <!-- NUEVO: Botón Ir al Menú Cliente -->
+        <a href="index.html" target="_blank" class="p-1.5 text-secondary border border-primary/40 rounded-md hover:bg-surface-container-highest flex items-center justify-center shadow-sm">
+          <span class="material-symbols-outlined text-[18px]">storefront</span>
+        </a>
+        
+        <!-- NUEVO: Botón Refrescar Manual (Por si el jalar falla) -->
+        <button onclick="location.reload()" class="p-1.5 text-secondary border border-primary/40 rounded-md hover:bg-surface-container-highest flex items-center justify-center shadow-sm">
+          <span class="material-symbols-outlined text-[18px]">refresh</span>
+        </button>
+
+        <button id="mobile-promo-btn" class="p-1.5 text-secondary border border-primary/40 rounded-md hover:bg-surface-container-highest flex items-center justify-center"><span class="material-symbols-outlined text-[18px] pointer-events-none">campaign</span></button>
+        <button id="mobile-qr-btn" class="p-1.5 text-secondary border border-primary/40 rounded-md hover:bg-surface-container-highest flex items-center justify-center"><span class="material-symbols-outlined text-[18px] pointer-events-none">qr_code_2</span></button>
+        
+        <!-- ACTUALIZADO: Botón Añadir Plato (Resaltado en Rojo) -->
+        <button id="mobile-new-btn" class="p-1.5 bg-primary-container/20 text-primary border border-primary/50 rounded-md hover:bg-primary-container/30 flex items-center justify-center shadow-sm"><span class="material-symbols-outlined text-[18px] pointer-events-none">add</span></button>
       </div>
     </div>
 
