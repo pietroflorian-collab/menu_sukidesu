@@ -479,6 +479,9 @@
   .min-h-\[80px\] {
     min-height: 80px;
   }
+  .min-h-\[100dvh\] {
+    min-height: 100dvh;
+  }
   .min-h-\[240px\] {
     min-height: 240px;
   }
@@ -716,6 +719,9 @@
   }
   .overflow-x-auto {
     overflow-x: auto;
+  }
+  .overflow-x-hidden {
+    overflow-x: hidden;
   }
   .overflow-y-auto {
     overflow-y: auto;
@@ -1573,6 +1579,12 @@
     }
     .md\:gap-6 {
       gap: calc(var(--spacing) * 6);
+    }
+    .md\:overflow-hidden {
+      overflow: hidden;
+    }
+    .md\:overflow-y-auto {
+      overflow-y: auto;
     }
     .md\:p-3 {
       padding: calc(var(--spacing) * 3);
