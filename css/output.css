@@ -1532,6 +1532,12 @@
     .sm\:mb-3 {
       margin-bottom: calc(var(--spacing) * 3);
     }
+    .sm\:flex {
+      display: flex;
+    }
+    .sm\:hidden {
+      display: none;
+    }
     .sm\:w-2\/5 {
       width: calc(2 / 5 * 100%);
     }
