@@ -93,7 +93,7 @@
     </div>
   </main>
 
-  <!-- Modal Plato -->
+ <!-- Modal Plato REFACTORIZADO (DRY) -->
   <div id="itemModal" class="fixed inset-0 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md z-50">
     <div class="w-full max-w-4xl bg-surface-container-low rounded-xl shadow-2xl border border-primary/50 flex flex-col max-h-[95vh] overflow-hidden">
       <div class="px-4 py-3 border-b border-primary/30 flex justify-between items-center bg-surface shrink-0">
@@ -104,107 +104,84 @@
       <form id="itemForm" class="flex flex-col flex-1 overflow-hidden">
         <input type="hidden" id="item-id" />
         <div class="p-4 overflow-y-auto flex-1">
-          <div class="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-6 items-start h-full">
+          <!-- Estructura: 1.5fr (Formulario condensado) | 1fr (Tarjeta Cliente) -->
+          <div class="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-5 items-start h-full">
             
+            <!-- FORMULARIO ULTRACOMPACTO -->
             <div class="flex flex-col gap-3">
               <div class="grid grid-cols-[1fr_2fr] gap-3">
                 <div class="flex flex-col gap-1">
                   <label class="text-[10px] font-label-bold text-primary uppercase ml-1">Categoría</label>
-                  <select id="item-categoria" class="w-full bg-surface-container-high border border-primary/50 rounded-lg px-3 py-2 text-on-surface focus:border-primary text-sm"></select>
+                  <select id="item-categoria" class="w-full bg-surface-container-high border border-primary/50 rounded-lg px-3 py-1.5 text-sushi-white focus:border-primary text-sm"></select>
                 </div>
                 <div class="flex flex-col gap-1">
                   <label class="text-[10px] font-label-bold text-primary uppercase ml-1">Nombre del Plato</label>
-                  <input id="item-nombre" required class="w-full bg-surface-container-high border border-primary/50 rounded-lg px-3 py-2 text-on-surface focus:border-primary text-sm" type="text"/>
+                  <input id="item-nombre" required class="w-full bg-surface-container-high border border-primary/50 rounded-lg px-3 py-1.5 text-sushi-white focus:border-primary text-sm" type="text"/>
                 </div>
               </div>
-              
-              <div class="flex flex-col lg:flex-row items-start gap-3">
-                <div class="flex flex-col gap-1 w-full lg:w-32 shrink-0">
+              <div class="flex items-start gap-3">
+                <div class="flex flex-col gap-1 w-28 shrink-0">
                   <label class="text-[10px] font-label-bold text-primary uppercase ml-1">Precio</label>
-                  <input id="item-precio" required class="w-full bg-surface-container-high border border-primary/50 rounded-lg px-3 py-2 text-on-surface focus:border-primary text-sm" type="number"/>
+                  <input id="item-precio" required class="w-full bg-surface-container-high border border-primary/50 rounded-lg px-3 py-1.5 text-sushi-white focus:border-primary text-sm" type="number"/>
                 </div>
-                <div class="flex flex-col gap-1 flex-1 w-full">
+                <div class="flex flex-col gap-1 flex-1">
                   <label class="text-[10px] font-label-bold text-primary uppercase ml-1">Descripción</label>
-                  <textarea id="item-descripcion" rows="2" maxlength="300" class="w-full bg-surface-container-high border border-primary/50 rounded-lg px-3 py-2 text-on-surface focus:border-primary resize-y text-sm min-h-[44px]"></textarea>
+                  <textarea id="item-descripcion" rows="2" maxlength="300" class="w-full bg-surface-container-high border border-primary/50 rounded-lg px-3 py-1.5 text-sushi-white focus:border-primary resize-y text-sm min-h-[44px]"></textarea>
                 </div>
               </div>
-
               <div class="flex items-center gap-4 py-1">
                 <label class="flex items-center gap-2 cursor-pointer">
-                  <input id="item-picante" type="checkbox" class="h-4 w-4 bg-surface-container-high rounded border-primary text-primary"/>
-                  <span class="text-xs text-secondary font-bold">Es Picante</span>
+                  <input id="item-picante" type="checkbox" class="h-3.5 w-3.5 bg-surface-container-high rounded border-primary/50 text-primary"/>
+                  <span class="text-xs text-secondary">Es Picante</span>
                 </label>
                 <label class="flex items-center gap-2 cursor-pointer">
-                  <input id="item-pausado" type="checkbox" class="h-4 w-4 bg-surface-container-high rounded border-primary text-error"/>
-                  <span class="text-xs text-secondary font-bold">Pausar Plato</span>
+                  <input id="item-pausado" type="checkbox" class="h-3.5 w-3.5 bg-surface-container-high rounded border-primary/50 text-error"/>
+                  <span class="text-xs text-secondary">Pausar Plato</span>
                 </label>
               </div>
-
               <div class="flex flex-col gap-1">
-                <label class="text-[10px] font-label-bold text-primary uppercase ml-1">Enlace de Imagen</label>
-                <input id="item-link-drive" type="text" class="w-full bg-surface-container-high border border-primary/50 rounded-lg px-3 py-2 text-sm text-on-surface focus:border-primary"/>
+                <label class="text-[10px] font-label-bold text-primary uppercase ml-1">Enlace Imagen</label>
+                <input id="item-link-drive" type="text" class="w-full bg-surface-container-high border border-primary/50 rounded-lg px-3 py-1.5 text-sm text-sushi-white focus:border-primary"/>
                 <input type="hidden" id="item-imagen-url" />
               </div>
               
-              <div class="pt-3 border-t border-primary/30 flex flex-col gap-2 mt-2">
+              <div class="pt-3 border-t border-primary/30 flex flex-col gap-2">
                 <div class="flex flex-col mb-1">
-                  <label class="text-[10px] font-label-bold text-wasabi-green uppercase ml-1">Días Activos (Promociones)</label>
+                  <label class="text-[10px] font-label-bold text-wasabi-green uppercase ml-1">Días Promoción</label>
                 </div>
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;" class="text-xs">
-                  <label class="flex items-center justify-center gap-1.5 cursor-pointer bg-surface p-1.5 rounded border border-primary/40 hover:bg-surface-bright"><input type="checkbox" name="promo-dia" value="Domingo" class="h-3.5 w-3.5 bg-surface-container rounded border-primary/50"/>Dom</label>
-                  <label class="flex items-center justify-center gap-1.5 cursor-pointer bg-surface p-1.5 rounded border border-primary/40 hover:bg-surface-bright"><input type="checkbox" name="promo-dia" value="Lunes" class="h-3.5 w-3.5 bg-surface-container rounded border-primary/50"/>Lun</label>
-                  <label class="flex items-center justify-center gap-1.5 cursor-pointer bg-surface p-1.5 rounded border border-primary/40 hover:bg-surface-bright"><input type="checkbox" name="promo-dia" value="Martes" class="h-3.5 w-3.5 bg-surface-container rounded border-primary/50"/>Mar</label>
-                  <label class="flex items-center justify-center gap-1.5 cursor-pointer bg-surface p-1.5 rounded border border-primary/40 hover:bg-surface-bright"><input type="checkbox" name="promo-dia" value="Miércoles" class="h-3.5 w-3.5 bg-surface-container rounded border-primary/50"/>Mié</label>
-                  <label class="flex items-center justify-center gap-1.5 cursor-pointer bg-surface p-1.5 rounded border border-primary/40 hover:bg-surface-bright"><input type="checkbox" name="promo-dia" value="Jueves" class="h-3.5 w-3.5 bg-surface-container rounded border-primary/50"/>Jue</label>
-                  <label class="flex items-center justify-center gap-1.5 cursor-pointer bg-surface p-1.5 rounded border border-primary/40 hover:bg-surface-bright"><input type="checkbox" name="promo-dia" value="Viernes" class="h-3.5 w-3.5 bg-surface-container rounded border-primary/50"/>Vie</label>
-                  <label style="grid-column: span 3;" class="flex items-center justify-center gap-1.5 cursor-pointer bg-surface p-2 rounded border border-primary/40 hover:bg-surface-bright"><input type="checkbox" name="promo-dia" value="Sábado" class="h-3.5 w-3.5 bg-surface-container rounded border-primary/50"/>Sábado</label>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;" class="text-[11px]">
+                  <label class="flex items-center justify-center gap-1.5 cursor-pointer bg-surface p-1.5 rounded border border-primary/40 hover:bg-surface-bright"><input type="checkbox" name="promo-dia" value="Domingo" class="h-3 w-3 bg-surface-container rounded border-primary/50"/>Dom</label>
+                  <label class="flex items-center justify-center gap-1.5 cursor-pointer bg-surface p-1.5 rounded border border-primary/40 hover:bg-surface-bright"><input type="checkbox" name="promo-dia" value="Lunes" class="h-3 w-3 bg-surface-container rounded border-primary/50"/>Lun</label>
+                  <label class="flex items-center justify-center gap-1.5 cursor-pointer bg-surface p-1.5 rounded border border-primary/40 hover:bg-surface-bright"><input type="checkbox" name="promo-dia" value="Martes" class="h-3 w-3 bg-surface-container rounded border-primary/50"/>Mar</label>
+                  <label class="flex items-center justify-center gap-1.5 cursor-pointer bg-surface p-1.5 rounded border border-primary/40 hover:bg-surface-bright"><input type="checkbox" name="promo-dia" value="Miércoles" class="h-3 w-3 bg-surface-container rounded border-primary/50"/>Mié</label>
+                  <label class="flex items-center justify-center gap-1.5 cursor-pointer bg-surface p-1.5 rounded border border-primary/40 hover:bg-surface-bright"><input type="checkbox" name="promo-dia" value="Jueves" class="h-3 w-3 bg-surface-container rounded border-primary/50"/>Jue</label>
+                  <label class="flex items-center justify-center gap-1.5 cursor-pointer bg-surface p-1.5 rounded border border-primary/40 hover:bg-surface-bright"><input type="checkbox" name="promo-dia" value="Viernes" class="h-3 w-3 bg-surface-container rounded border-primary/50"/>Vie</label>
+                  <label style="grid-column: span 3;" class="flex items-center justify-center gap-1.5 cursor-pointer bg-surface p-1.5 rounded border border-primary/40 hover:bg-surface-bright"><input type="checkbox" name="promo-dia" value="Sábado" class="h-3 w-3 bg-surface-container rounded border-primary/50"/>Sáb</label>
                 </div>
-
-                <div class="flex flex-col gap-1 mt-2">
+                <div class="flex flex-col gap-1 mt-1">
                   <label class="text-[10px] font-label-bold text-wasabi-green uppercase ml-1">Texto del Beneficio</label>
-                  <input id="item-promo-texto" maxlength="35" class="w-full bg-surface-container-high border border-primary/50 rounded-lg px-3 py-2 text-on-surface focus:border-primary text-sm shadow-inner" type="text" placeholder="Ej: 30% OFF o Bebida Gratis"/>
+                  <input id="item-promo-texto" maxlength="35" class="w-full bg-surface-container-high border border-primary/50 rounded-lg px-3 py-1.5 text-sushi-white focus:border-primary text-sm" type="text"/>
                 </div>
               </div>
             </div>
-            
-            <div class="flex items-center justify-center w-full h-full pt-4 lg:pt-0">
-              <div class="menu-card bg-[#121212] rounded-lg border border-primary-container/20 overflow-hidden flex flex-col w-full max-w-[320px] relative glow-hover transition-all duration-300">
-                <div class="menu-card-img-wrapper h-48 relative bg-surface-container-highest flex items-center justify-center overflow-hidden">
-                  <img id="image-preview" src="" class="absolute inset-0 w-full h-full object-cover hidden transition-transform duration-300 hover:scale-105" />
-                  <span id="preview-placeholder" class="font-label-bold text-on-surface-variant z-0">Sin imagen</span>
-                  
-                  <div class="absolute top-4 right-4 bg-black px-3 py-1 rounded-full font-price-display text-price-display text-sushi-white border border-outline-variant/50 shadow-md z-10">
-                    <span id="preview-price-text">$0</span>
-                  </div>
 
-                  <div class="absolute top-4 left-4 flex flex-col gap-2 pointer-events-none z-10">
-                    <div class="bg-black/60 px-2 py-0.5 rounded-full border border-primary/50 w-fit backdrop-blur-sm">
-                      <span id="preview-cat-text" class="font-label-bold text-[10px] text-tertiary">Categoría</span>
-                    </div>
-                    <div id="preview-promo-banner" class="bg-primary text-sushi-white font-label-bold text-[10px] px-2 py-1 rounded shadow-lg transform -rotate-3 hidden border border-sushi-white/20 w-fit text-center leading-tight"></div>
-                  </div>
-                </div>
-                
-                <div class="p-4 flex flex-col flex-grow bg-[#121212]">
-                  <h3 id="preview-name-text" class="font-headline-lg-mobile text-xl text-primary mb-2 leading-tight">Nombre del Plato</h3>
-                  <p id="preview-desc-text" class="font-body-md text-on-surface-variant text-sm mb-4 flex-grow line-clamp-3">Descripción...</p>
-                  
-                  <div id="preview-picante-container" class="mt-auto pt-2 border-t border-outline-variant/20 flex gap-2 empty:hidden"></div>
-                </div>
-              </div>
+            <!-- CONTENEDOR VACÍO PARA LA VISTA PREVIA (TAMAÑO MÓVIL MAX 320px) -->
+            <div class="flex items-center justify-center w-full h-full pt-4 lg:pt-0">
+               <div id="preview-container" class="w-full max-w-[320px] pointer-events-none">
+                  <!-- JS inyectará la tarjeta aquí -->
+               </div>
             </div>
-            
+
           </div>
         </div>
-        
         <div class="px-4 py-3 border-t border-primary/30 bg-surface flex justify-end items-center gap-3 shrink-0">
-          <button type="button" id="cancel-item-btn" class="px-5 py-2 rounded-lg font-label-bold text-sm border border-primary/40 text-secondary hover:text-sushi-white">Salir</button>
-          <button id="submit-btn" type="submit" class="px-5 py-2 rounded-lg font-label-bold text-sm bg-primary text-sushi-white hover:opacity-90">Guardar Plato</button>
+          <button type="button" id="cancel-item-btn" class="px-5 py-1.5 rounded-lg font-label-bold text-sm border border-primary/40 text-secondary hover:text-sushi-white">Salir</button>
+          <button id="submit-btn" type="submit" class="px-5 py-1.5 rounded-lg font-label-bold text-sm bg-primary-container text-sushi-white hover:opacity-90">Guardar Plato</button>
         </div>
       </form>
     </div>
   </div>
-
+  
   <div id="promoConfigModal" class="fixed inset-0 hidden items-center justify-center p-4 bg-black/90 backdrop-blur-md z-50">
     <div class="w-full bg-surface-container-low rounded-xl shadow-2xl border border-primary/50 flex flex-col overflow-hidden max-h-[95vh] max-w-[544px]">
       <div class="px-4 py-3 border-b border-primary/30 flex justify-between items-center bg-surface shrink-0">

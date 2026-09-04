@@ -282,31 +282,22 @@ const SukidesuAdmin = {
   },
 
   updateModalPreview() {
-    document.getElementById("preview-name-text").innerText = document.getElementById("item-nombre").value || "Nombre Plato";
-    document.getElementById("preview-cat-text").innerText = document.getElementById("item-categoria").value || "Categoría";
-    document.getElementById("preview-desc-text").innerText = document.getElementById("item-descripcion").value || "Descripción...";
-    document.getElementById("preview-price-text").innerText = formatPrice(document.getElementById("item-precio").value || 0);
+    // 1. Recopilar datos en vivo del formulario comprimido
+    const itemEnVivo = {
+      nombre: document.getElementById("item-nombre").value || "Nombre del Plato",
+      categoria: document.getElementById("item-categoria").value || "Categoría",
+      descripcion: document.getElementById("item-descripcion").value || "Descripción del plato...",
+      precio: document.getElementById("item-precio").value || 0,
+      imagen_url: document.getElementById("item-imagen-url").value || "",
+      es_picante: document.getElementById("item-picante").checked,
+      es_pausado: document.getElementById("item-pausado").checked,
+      texto_promo: document.getElementById("item-promo-texto").value.trim()
+    };
 
-    const isPicante = document.getElementById("item-picante").checked;
-    let picanteContainer = document.getElementById("preview-picante-container");
-    if (!picanteContainer) {
-      picanteContainer = document.createElement("div");
-      picanteContainer.id = "preview-picante-container";
-      picanteContainer.className = "flex items-center gap-2 mt-1.5";
-      document.getElementById("preview-name-text").parentNode.appendChild(picanteContainer);
-    }
-    picanteContainer.innerHTML = isPicante 
-      ? `<div class="flex items-center gap-1 bg-primary/20 border border-primary/40 px-2 py-0.5 rounded text-primary text-[9px] font-bold uppercase tracking-wider w-fit"><span class="material-symbols-outlined text-[12px]">local_fire_department</span> Picante</div>` 
-      : '';
-
-    // Lógica para mostrar la etiqueta del banner promocional en vivo
-    const promoText = document.getElementById("item-promo-texto").value.trim();
-    const promoBanner = document.getElementById("preview-promo-banner");
-    if (promoText) {
-      promoBanner.innerText = promoText;
-      promoBanner.classList.remove("hidden");
-    } else {
-      promoBanner.classList.add("hidden");
+    // 2. Pedirle a UI.js el diseño exacto del cliente y meterlo en el lado derecho
+    const contenedor = document.getElementById("preview-container");
+    if (contenedor) {
+      contenedor.innerHTML = UI.generarTarjetaPlato(itemEnVivo, 'preview');
     }
   },
 
@@ -314,10 +305,10 @@ const SukidesuAdmin = {
     const input = document.getElementById("item-link-drive").value.trim();
     const match = input.match(/(?:file\/d\/|id=)([\w-]+)/);
     const finalUrl = match ? `https://drive.google.com/thumbnail?id=${match[1]}&sz=w400` : (input.startsWith('http') ? input.replace('sz=w800', 'sz=w400') : "");
+    
+    // Solo guarda la URL procesada en el input oculto. 
+    // updateModalPreview() se encargará de dibujar la foto en la tarjeta.
     document.getElementById("item-imagen-url").value = finalUrl;
-    const previewImg = document.getElementById("image-preview");
-    if (finalUrl) { previewImg.src = finalUrl; previewImg.classList.remove("hidden"); document.getElementById("preview-placeholder").classList.add("hidden"); }
-    else { previewImg.classList.add("hidden"); document.getElementById("preview-placeholder").classList.remove("hidden"); }
   },
 
   async togglePausado(id) {
