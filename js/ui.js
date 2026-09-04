@@ -9,34 +9,33 @@ const UI = {
     const itemId = item.id || item.nombre;
     const precioFormatted = typeof formatPrice === 'function' ? formatPrice(item.precio) : `$${item.precio}`;
     
-    // 2. COMPONENTES VISUALES COMPARTIDOS (Copias fieles del diseño)
+    // 2. COMPONENTES VISUALES COMPARTIDOS
     const categoriaTag = `<div class="bg-black/70 px-3 py-1 rounded-full border border-primary/50 w-fit backdrop-blur-sm shadow-md"><span class="font-label-bold text-[10px] text-tertiary tracking-wide uppercase">${escapeHTML(item.categoria || 'Entradas')}</span></div>`;
-    const promoTag = hasPromoText ? `<div class="bg-primary text-sushi-white font-label-bold text-[10px] px-2 py-1 rounded shadow-lg transform -rotate-3 border border-sushi-white/20 w-fit text-center leading-tight mt-1">${escapeHTML(item.texto_promo)}</div>` : '';
+    const promoTag = hasPromoText ? `<div class="absolute top-3 right-3 bg-primary text-sushi-white font-label-bold text-[10px] px-2.5 py-1 rounded shadow-lg transform rotate-3 border border-sushi-white/20 w-fit text-center leading-tight z-20 pointer-events-none">${escapeHTML(item.texto_promo)}</div>` : '';
     const picanteTag = isPicante ? `<div class="flex items-center gap-1 bg-primary/20 border border-primary/40 px-2 py-0.5 rounded text-primary text-[9px] font-bold uppercase tracking-wider w-fit"><span class="material-symbols-outlined text-[12px]">local_fire_department</span> Picante</div>` : '';
     const imgTag = optimizedImgUrl ? `<img src="${escapeHTML(optimizedImgUrl)}" alt="${escapeHTML(item.nombre)}" loading="lazy" class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />` : `<span class="font-label-bold text-on-surface-variant z-0">Sin imagen</span>`;
 
     // =========================================================
-    // TRAMPA ABSOLUTA: VISTA PREVIA (MODAL ADMIN)
-    // Devuelve SOLO el esqueleto móvil, sin botones y aborta la función.
+    // MINIATURA PROPORCIONAL PARA VISTA PREVIA (MODAL ADMIN)
     // =========================================================
     if (rol === 'preview') {
       return `
-        <div class="flex flex-col w-full h-full bg-[#121212] rounded-xl border border-primary-container/20 overflow-hidden relative shadow-lg">
-          <div class="aspect-[3/4] w-full relative bg-surface-container-highest flex items-center justify-center overflow-hidden shrink-0">
+        <div class="flex flex-col w-full max-w-[280px] my-auto mx-auto bg-[#121212] rounded-xl border border-primary-container/20 overflow-hidden relative shadow-lg">
+          <div class="aspect-[4/5] w-full relative bg-surface-container-highest flex items-center justify-center overflow-hidden shrink-0">
             ${imgTag}
-            <div class="absolute top-4 left-4 flex flex-col gap-1.5 pointer-events-none z-10">
+            <div class="absolute top-3 left-3 flex flex-col gap-1.5 pointer-events-none z-10">
               ${categoriaTag}
-              ${promoTag}
             </div>
+            ${promoTag}
           </div>
           <div class="p-4 flex flex-col flex-grow bg-[#121212]">
-            <div class="flex items-start justify-between gap-3 mb-2">
-              <h3 class="font-headline-lg-mobile text-xl text-primary leading-tight">${escapeHTML(item.nombre)}</h3>
-              <div class="bg-[#1f1f1f] px-3 py-1 rounded-full font-price-display text-[13px] text-sushi-white border border-outline-variant/30 shadow-md shrink-0">
+            <div class="flex items-start justify-between gap-2 mb-2">
+              <h3 class="font-headline-lg-mobile text-lg text-primary leading-tight line-clamp-2">${escapeHTML(item.nombre)}</h3>
+              <div class="bg-[#1f1f1f] px-2.5 py-1 rounded-full font-price-display text-[13px] text-sushi-white border border-outline-variant/30 shadow-md shrink-0 mt-0.5">
                 ${precioFormatted}
               </div>
             </div>
-            <p class="font-body-md text-on-surface-variant text-sm flex-grow line-clamp-3">${escapeHTML(item.descripcion || '')}</p>
+            <p class="font-body-md text-on-surface-variant text-[12px] flex-grow line-clamp-3 leading-snug">${escapeHTML(item.descripcion || '')}</p>
             <div class="mt-3 flex gap-2 empty:hidden">${picanteTag}</div>
           </div>
         </div>
@@ -86,8 +85,8 @@ const UI = {
           ${imgTag}
           <div class="absolute top-4 left-4 flex flex-col gap-1.5 pointer-events-none z-10">
             ${categoriaTag}
-            ${promoTag}
           </div>
+          ${promoTag}
         </div>
         <div class="p-5 w-full sm:w-3/5 flex flex-col flex-grow">
           <div class="flex items-start justify-between gap-3 mb-2">
@@ -113,8 +112,8 @@ const UI = {
           ${imgTag}
           <div class="absolute top-4 left-4 flex flex-col gap-1.5 pointer-events-none z-10">
             ${categoriaTag}
-            ${promoTag}
           </div>
+          ${promoTag}
         </div>
         <div class="p-4 flex flex-col flex-grow bg-[#121212]">
           <div class="flex items-start justify-between gap-3 mb-2">

@@ -93,19 +93,20 @@
     </div>
   </main>
 
- <!-- Modal Plato REFACTORIZADO (DRY) -->
+ <!-- Modal Plato REFACTORIZADO Y ULTRACOMPACTO -->
   <div id="itemModal" class="fixed inset-0 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md z-50">
-    <div class="w-full max-w-4xl bg-surface-container-low rounded-xl shadow-2xl border border-primary/50 flex flex-col max-h-[95vh] overflow-hidden">
-      <div class="px-4 py-3 border-b border-primary/30 flex justify-between items-center bg-surface shrink-0">
-        <h3 id="modal-title" class="font-headline-lg-mobile text-lg text-primary">Añadir Nuevo Plato</h3>
-        <button id="close-item-btn" class="text-secondary hover:text-primary"><span class="material-symbols-outlined pointer-events-none">close</span></button>
+    <div class="w-full max-w-[760px] bg-surface-container-low rounded-xl shadow-2xl border border-primary/50 flex flex-col max-h-[95vh] overflow-hidden">
+      
+      <!-- Encabezado Reducido -->
+      <div class="px-4 py-1 border-b border-primary/30 flex justify-between items-center bg-surface shrink-0">
+        <h3 id="modal-title" class="font-headline-lg-mobile text-base text-primary">Añadir Nuevo Plato</h3>
+        <button id="close-item-btn" class="text-secondary hover:text-primary"><span class="material-symbols-outlined pointer-events-none text-[20px]">close</span></button>
       </div>
       
       <form id="itemForm" class="flex flex-col flex-1 overflow-hidden">
         <input type="hidden" id="item-id" />
-        <div class="p-4 overflow-y-auto flex-1">
-          <!-- Estructura: 1.5fr (Formulario condensado) | 1fr (Tarjeta Cliente) -->
-          <div class="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-5 items-start h-full">
+        <div class="p-3 overflow-y-auto flex-1">
+          <div class="grid grid-cols-1 md:grid-cols-[1.5fr_1fr] gap-4 items-start h-full">
             
             <!-- FORMULARIO ULTRACOMPACTO -->
             <div class="flex flex-col gap-3">
@@ -165,18 +166,20 @@
               </div>
             </div>
 
-            <!-- CONTENEDOR VACÍO PARA LA VISTA PREVIA (TAMAÑO MÓVIL MAX 320px) -->
-            <div class="flex items-center justify-center w-full h-full pt-4 lg:pt-0">
-               <div id="preview-container" class="w-full max-w-[320px] pointer-events-none">
+            <!-- CONTENEDOR VISTA PREVIA -->
+            <div class="flex items-center justify-center w-full h-full pt-4 md:pt-0">
+               <div id="preview-container" class="w-full pointer-events-none">
                   <!-- JS inyectará la tarjeta aquí -->
                </div>
             </div>
 
           </div>
         </div>
-        <div class="px-4 py-3 border-t border-primary/30 bg-surface flex justify-end items-center gap-3 shrink-0">
-          <button type="button" id="cancel-item-btn" class="px-5 py-1.5 rounded-lg font-label-bold text-sm border border-primary/40 text-secondary hover:text-sushi-white">Salir</button>
-          <button id="submit-btn" type="submit" class="px-5 py-1.5 rounded-lg font-label-bold text-sm bg-primary-container text-sushi-white hover:opacity-90">Guardar Plato</button>
+        
+        <!-- Pie de página Reducido -->
+        <div class="px-4 py-2 border-t border-primary/30 bg-surface flex justify-end items-center gap-2 shrink-0">
+          <button type="button" id="cancel-item-btn" class="px-4 py-1.5 rounded-lg font-label-bold text-xs border border-primary/40 text-secondary hover:text-sushi-white">Salir</button>
+          <button id="submit-btn" type="submit" class="px-4 py-1.5 rounded-lg font-label-bold text-xs bg-primary-container text-sushi-white hover:opacity-90">Guardar Plato</button>
         </div>
       </form>
     </div>
